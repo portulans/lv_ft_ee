@@ -187,6 +187,21 @@ const PRECISION_CLASS = {
 	unknown: "#7b8790"
 };
 
+const LEGEND_ENTRIES = {
+	status: [
+		{ color: STATUS_CLASS.exists, label: "Existant" },
+		{ color: STATUS_CLASS.uncertain, label: "À déterminer" },
+		{ color: STATUS_CLASS.removed, label: "Détruit / Ruiné" }
+	],
+	precision: [
+		{ color: PRECISION_CLASS.exact, label: "Exacte" },
+		{ color: PRECISION_CLASS.refined, label: "Affinée" },
+		{ color: PRECISION_CLASS.approximate, label: "Approximative" },
+		{ color: PRECISION_CLASS.veryApproximate, label: "Très imprécise" },
+		{ color: PRECISION_CLASS.unknown, label: "Inconnue" }
+	]
+};
+
 let selectedLayer = null;
 let defaultStyleByLayer = new WeakMap();
 const visibleLayerGroup = L.layerGroup().addTo(map);
@@ -332,10 +347,31 @@ function applyMarkerStyle(layer, feature) {
 	layer.setStyle(layer === selectedLayer ? selectedMarkerStyle(style) : style);
 }
 
+function updateLegend() {
+	const container = document.getElementById("map-legend");
+	if (!container) return;
+	const mode = colorMode?.value === "precision" ? "precision" : "status";
+	const title = mode === "precision" ? "Précision de localisation" : "Statut";
+	const entries = LEGEND_ENTRIES[mode];
+	const items = entries
+		.map(
+			(e) =>
+				`<li class="map-legend__item">` +
+				`<span class="map-legend__dot" style="background:${e.color}"></span>` +
+				`<span>${e.label}</span>` +
+				`</li>`
+		)
+		.join("");
+	container.innerHTML =
+		`<p class="map-legend__title">${title}</p>` +
+		`<ul class="map-legend__list">${items}</ul>`;
+}
+
 function refreshMarkerColors() {
 	markerEntries.forEach((entry) => {
 		applyMarkerStyle(entry.layer, entry.feature);
 	});
+	updateLegend();
 }
 
 function panelRow(label, value) {
@@ -359,10 +395,10 @@ function updatePanel(feature) {
 	panelMeta.innerHTML = "";
 	panelRow("Identifiant", safeText(props.fid));
 	panelRow("Statut", safeText(props.statut));
-	panelRow("Precision", safeText(props.modif_geom));
+	panelRow("Précision des coordonnées", safeText(props.modif_geom));
 	panelRow("Source", safeText(props.source));
-	panelRow("Plan 1910", toYesNo(props.src_p1910));
-	panelRow("Cadastre 1842", toYesNo(props.src_c1842));
+	panelRow("Trace sur le plan de 1910 ?", toYesNo(props.src_p1910));
+	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
 
 	const description = safeText(props.description, "");
 	const comment = safeText(props.commentaire_st, "");

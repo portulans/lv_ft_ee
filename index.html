@@ -66,21 +66,24 @@
                 <div id="map" aria-label="Carte interactive"></div>
             </div>
 
-            <aside class="info-panel" id="info-panel" aria-live="polite">
-                <div class="panel-header">
-                    <h2>Détails</h2>
-                    <p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
-                </div>
-                <h3 id="feature-title">Aucun point sélectionné</h3>
-                <p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
-                <dl class="feature-meta" id="feature-meta"></dl>
-                <p id="feature-description" class="feature-description"></p>
-                <p id="feature-comment" class="feature-comment"></p>
-            </aside>
+            <div class="panel-column">
+                <aside class="info-panel" id="info-panel" aria-live="polite">
+                    <div class="panel-header">
+                        <h2>Détails</h2>
+                        <p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
+                    </div>
+                    <h3 id="feature-title">Aucun point sélectionné</h3>
+                    <p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
+                    <dl class="feature-meta" id="feature-meta"></dl>
+                    <p id="feature-description" class="feature-description"></p>
+                    <p id="feature-comment" class="feature-comment"></p>
+                </aside>
+                <div id="map-legend" class="map-legend"></div>
+            </div>
         </section>
 
         <article class="references">
-        <p><b>Cette carte est en cours de production, elle peut comporter des erreurs.</b></p>
+        <p><b>Cette carte est en cours de production, elle peut comporter (et comporte certainement) des erreurs.</b></p>
         <h2>Note sur la production des données</h2>
         <p>Le point de départ de la production de cette carte est la carte réalisée à la main par l'association Poull Ha Feuteun en 2010 et <a href="https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255">numérisée par le PNRA et diffusée en 2020</a>. Du fait de cette méthode de production, de l'échelle moyenne de la carte manuelle et du défaut de point de repère qu'elle contient, les points sont positionnés avec une précision très variable.</p>
         <p>A partir des assemblages de photos aériennes produits par l'IGN, du plan au 10 000e de 1910 et du plan du cadastre napoléonien de 1842, j'ai repositionné plus précisément la plupart des points. L'évaluation qualitative de cette précision est indiquée (exacte, affinée, approximative, très imprécise). </p>
@@ -92,6 +95,7 @@
         <ul>
             <li><a href="http://poullhafeunteun.unblog.fr/">Site web de l'ancienne association Poull Ha Feuteun</a></li>
             <li><a href="https://ouessant.forums-actifs.com/f95-les-lavoirs">Forum avec une section sur les lavoirs d'Ouessant (+photos)</a></li>
+            <li><a href="https://photos.ankryan.net/image/1832-fontaine-et-lavoir-renoves-ouessant">Photo de Poull Bridig en bon état</a></li>
         </ul>
         <h3>Articles</h3>
         <ul>
@@ -107,7 +111,7 @@
     </main>
 
     <footer class="site-footer">
-        <p>Solenn Tual. Licence CC BY SA (Creative Commons Attribution-ShareAlike 4.0 International)</p>
+        <p>Solenn Tual. Licence CC BY SA (Creative Commons Attribution-ShareAlike 4.0 International). <a href="mailto:atlasouessant@duck.com">Contact</a></p>
     </footer>
 </body>
 </html>

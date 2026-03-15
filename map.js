@@ -291,10 +291,10 @@ function typeLabel(rawType) {
 
 function markerColorFromStatus(statusRaw) {
 	const status = safeText(statusRaw, "").toLowerCase();
-	if (status.includes("detruit") || status.includes("ruine")) {
+	if (status.includes("détruit") || status.includes("ruine")) {
 		return STATUS_CLASS.removed;
 	}
-	if (status.includes("a determiner") || status.includes("a déterminer")) {
+	if (status.includes("à déterminer") || status.includes("a déterminer")) {
 		return STATUS_CLASS.uncertain;
 	}
 	return STATUS_CLASS.exists;

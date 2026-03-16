@@ -178,6 +178,10 @@ const panelSubtitle = document.getElementById("feature-subtitle");
 const panelMeta = document.getElementById("feature-meta");
 const panelDescription = document.getElementById("feature-description");
 const panelComment = document.getElementById("feature-comment");
+const panelImages = document.getElementById("feature-images");
+const imageViewer = document.getElementById("image-viewer");
+const imageViewerImage = document.getElementById("image-viewer-image");
+const imageViewerCloseButton = document.getElementById("image-viewer-close");
 const searchInput = document.getElementById("search-toponym");
 const filterType = document.getElementById("filter-type");
 const filterStatus = document.getElementById("filter-status");
@@ -229,6 +233,44 @@ const visibleLayerGroup = L.layerGroup().addTo(map);
 const markerEntries = [];
 let userLocationMarker = null;
 let userAccuracyCircle = null;
+let panelImageRequestToken = 0;
+let creditsByImageName = new Map();
+
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG", "WEBP"];
+const MAX_PANEL_NUMBERED_IMAGES = 12;
+
+function parseJsonLoose(text) {
+	const cleaned = text
+		.replace(/,\s*]/g, "]")
+		.replace(/,\s*}/g, "}");
+	return JSON.parse(cleaned);
+}
+
+async function loadImageCredits() {
+	try {
+		const response = await fetch("./data/credits.json");
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+		const text = await response.text();
+		const entries = parseJsonLoose(text);
+		if (!Array.isArray(entries)) return;
+
+		const mapByImage = new Map();
+		entries.forEach((entry) => {
+			const imageName = safeText(entry?.img, "").trim().toLowerCase();
+			if (!imageName) return;
+			mapByImage.set(imageName, {
+				author: safeText(entry?.author, ""),
+				date: safeText(entry?.date, "")
+			});
+		});
+
+		creditsByImageName = mapByImage;
+	} catch (error) {
+		console.warn("Impossible de charger credits.json", error);
+	}
+}
 
 const layerControl = L.control.layers(
 	baseLayers,
@@ -450,9 +492,165 @@ function drawUserLocation(latlng, accuracy) {
 	showLocationFeedback("Position affichée sur la carte");
 }
 
+function clearUserLocation(showFeedback) {
+	if (userLocationMarker) {
+		map.removeLayer(userLocationMarker);
+		userLocationMarker = null;
+	}
+	if (userAccuracyCircle) {
+		map.removeLayer(userAccuracyCircle);
+		userAccuracyCircle = null;
+	}
+	if (locateUserButton) {
+		locateUserButton.classList.remove("is-active");
+	}
+	setLocateButtonState(false, "Ma position");
+	if (showFeedback) {
+		showLocationFeedback("Position masquée");
+	}
+}
+
+function clearPanelImages() {
+	if (!panelImages) return;
+	panelImages.classList.remove("is-visible");
+	panelImages.innerHTML = "";
+}
+
+function openImageViewer(src, altText) {
+	if (!imageViewer || !imageViewerImage) return;
+	imageViewerImage.src = src;
+	imageViewerImage.alt = altText || "Image agrandie";
+	imageViewer.classList.add("is-open");
+	imageViewer.setAttribute("aria-hidden", "false");
+}
+
+function closeImageViewer() {
+	if (!imageViewer || !imageViewerImage) return;
+	imageViewer.classList.remove("is-open");
+	imageViewer.setAttribute("aria-hidden", "true");
+	imageViewerImage.src = "";
+}
+
+function imageNameFromUrl(url) {
+	const cleanedUrl = url.split("?")[0].split("#")[0];
+	const parts = cleanedUrl.split("/");
+	return decodeURIComponent(parts[parts.length - 1] || "").toLowerCase();
+}
+
+function captionTextFromUrl(url) {
+	const imageName = imageNameFromUrl(url);
+	const credit = creditsByImageName.get(imageName);
+	if (!credit) return "";
+
+	const author = safeText(credit.author, "");
+	const date = safeText(credit.date, "");
+	if (author && date) {
+		return `${author} - ${date}`;
+	}
+	return author || date || "";
+}
+
+function probeImage(url) {
+	return new Promise((resolve) => {
+		const image = new Image();
+		image.onload = () => resolve(true);
+		image.onerror = () => resolve(false);
+		image.src = url;
+	});
+}
+
+async function firstExistingImageUrl(basePath) {
+	for (const extension of IMAGE_EXTENSIONS) {
+		const url = `${basePath}.${extension}`;
+		const exists = await probeImage(url);
+		if (exists) {
+			return url;
+		}
+	}
+	return null;
+}
+
+async function resolvePanelImageUrls(fid) {
+	const encodedFid = encodeURIComponent(fid);
+	const urls = [];
+
+	const mainImageUrl = await firstExistingImageUrl(`./imgs/${encodedFid}`);
+	if (mainImageUrl) {
+		urls.push(mainImageUrl);
+	}
+
+	for (let index = 1; index <= MAX_PANEL_NUMBERED_IMAGES; index += 1) {
+		const numberedUrl = await firstExistingImageUrl(`./imgs/${encodedFid}-${index}`);
+		if (numberedUrl) {
+			urls.push(numberedUrl);
+		}
+	}
+
+	return urls;
+}
+
+function renderPanelImages(fidValue) {
+	if (!panelImages) return;
+	clearPanelImages();
+
+	const fid = safeText(fidValue, "").trim();
+	if (!fid) return;
+
+	const currentToken = ++panelImageRequestToken;
+
+	resolvePanelImageUrls(fid).then((urls) => {
+		if (!panelImages || currentToken !== panelImageRequestToken) return;
+		if (!urls.length) {
+			clearPanelImages();
+			return;
+		}
+
+		const title = document.createElement("p");
+		title.className = "feature-images__title";
+		title.textContent = urls.length > 1 ? "Images" : "Image";
+
+		panelImages.innerHTML = "";
+		panelImages.appendChild(title);
+
+		urls.forEach((url, index) => {
+			const image = document.createElement("img");
+			image.loading = "lazy";
+			image.alt =
+				urls.length > 1
+					? `Illustration ${index + 1} du point ${fid}`
+					: `Illustration du point ${fid}`;
+			image.src = url;
+			image.addEventListener("click", () => {
+				openImageViewer(url, image.alt);
+			});
+
+			const figure = document.createElement("figure");
+			figure.className = "feature-images__item";
+			figure.appendChild(image);
+
+			const captionText = captionTextFromUrl(url);
+			if (captionText) {
+				const caption = document.createElement("figcaption");
+				caption.className = "feature-images__caption";
+				caption.textContent = captionText;
+				figure.appendChild(caption);
+			}
+
+			panelImages.appendChild(figure);
+		});
+
+		panelImages.classList.add("is-visible");
+	});
+}
+
 function requestUserLocation() {
 	if (!navigator.geolocation) {
 		showLocationFeedback("Géolocalisation non supportée par ce navigateur");
+		return;
+	}
+
+	if (locateUserButton?.classList.contains("is-active")) {
+		clearUserLocation(true);
 		return;
 	}
 
@@ -470,17 +668,46 @@ map.on("locationfound", (event) => {
 	drawUserLocation(event.latlng, event.accuracy);
 });
 
-map.on("locationerror", () => {
-	setLocateButtonState(false, "Ma position");
-	if (locateUserButton) {
-		locateUserButton.classList.remove("is-active");
+map.on("locationerror", (e) => {
+	clearUserLocation(false);
+	let msg;
+	if (location.protocol !== "https:" && location.hostname !== "localhost") {
+		msg = "La géolocalisation nécessite HTTPS. Accédez à la page via https://…";
+	} else if (e.code === 1) {
+		msg = "Accès à la position refusé. Autorisez la localisation dans les réglages de votre navigateur puis réessayez.";
+	} else if (e.code === 2) {
+		msg = "Position indisponible (GPS ou réseau inaccessible).";
+	} else if (e.code === 3) {
+		msg = "Délai dépassé pour obtenir la position. Réessayez.";
+	} else {
+		msg = "Impossible d'obtenir votre position.";
 	}
-	showLocationFeedback("Impossible d'obtenir votre position");
+	showLocationFeedback(msg);
 });
 
 if (locateUserButton) {
 	locateUserButton.addEventListener("click", requestUserLocation);
 }
+
+if (imageViewerCloseButton) {
+	imageViewerCloseButton.addEventListener("click", closeImageViewer);
+}
+
+if (imageViewer) {
+	imageViewer.addEventListener("click", (event) => {
+		if (event.target === imageViewer) {
+			closeImageViewer();
+		}
+	});
+}
+
+window.addEventListener("keydown", (event) => {
+	if (event.key === "Escape") {
+		closeImageViewer();
+	}
+});
+
+loadImageCredits();
 
 function panelRow(label, value) {
 	const dt = document.createElement("dt");
@@ -524,6 +751,8 @@ function updatePanel(feature) {
 	} else {
 		panelComment.style.display = "none";
 	}
+
+	renderPanelImages(props.fid);
 }
 
 function resetPanel() {
@@ -533,6 +762,7 @@ function resetPanel() {
 	panelMeta.innerHTML = "";
 	panelDescription.style.display = "none";
 	panelComment.style.display = "none";
+	clearPanelImages();
 }
 
 function clearSelection() {

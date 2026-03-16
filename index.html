@@ -78,6 +78,7 @@
                     <dl class="feature-meta" id="feature-meta"></dl>
                     <p id="feature-description" class="feature-description"></p>
                     <p id="feature-comment" class="feature-comment"></p>
+                    <div id="feature-images" class="feature-images" aria-live="polite"></div>
                 </aside>
                 <div id="map-legend" class="map-legend"></div>
             </div>
@@ -115,5 +116,10 @@
     <footer class="site-footer">
         <p>Solenn Tual. Licence CC BY SA (Creative Commons Attribution-ShareAlike 4.0 International). <a href="mailto:solenntual.pro@gmail.com">Contact</a></p>
     </footer>
+
+    <div id="image-viewer" class="image-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Agrandissement de l'image">
+        <button type="button" id="image-viewer-close" class="image-viewer__close" aria-label="Fermer l'image">Fermer</button>
+        <img id="image-viewer-image" class="image-viewer__image" alt="">
+    </div>
 </body>
 </html>

@@ -8,7 +8,7 @@ const map = L.map("map", {
 const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-}).addTo(map);
+});
 
 ///////// Images aériennes //////////
 
@@ -157,11 +157,11 @@ var ign2023 = L.tileLayer(
         maxZoom : 19,
         attribution : "IGN",
         tileSize : 256 // les tuiles du Géooportail font 256x256px
-    });
+    }).addTo(map);
 
 const baseLayers = {
+	"Plan IGN":ign2023,
 	"OpenStreetMap": osm,
-    "Plan IGN":ign2023,
 	"IGN 1950-1965": ignaerial1950,
 	"IGN 1965-1980": ignaerial1965,
 	"IGN Coast 2000": ignaerial2000,
@@ -169,7 +169,7 @@ const baseLayers = {
 	"IGN 2006-2010": ignaerial2009,
 	"IGN 2011-2015": ignaerial2015,
 	"IGN 2018": ignaerial2018,
-	"IGN 2023": ignaerial2023
+	"IGN BD Ortho(récente)": ignaerial2023
 };
 
 const panelType = document.getElementById("feature-type");

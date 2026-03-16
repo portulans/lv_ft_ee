@@ -183,6 +183,7 @@ const filterType = document.getElementById("filter-type");
 const filterStatus = document.getElementById("filter-status");
 const filterPrecision = document.getElementById("filter-precision");
 const colorMode = document.getElementById("color-mode");
+const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
 
@@ -226,6 +227,8 @@ let selectedLayer = null;
 let defaultStyleByLayer = new WeakMap();
 const visibleLayerGroup = L.layerGroup().addTo(map);
 const markerEntries = [];
+let userLocationMarker = null;
+let userAccuracyCircle = null;
 
 const layerControl = L.control.layers(
 	baseLayers,
@@ -392,6 +395,91 @@ function refreshMarkerColors() {
 		applyMarkerStyle(entry.layer, entry.feature);
 	});
 	updateLegend();
+}
+
+function setLocateButtonState(isLoading, label) {
+	if (!locateUserButton) return;
+	locateUserButton.disabled = isLoading;
+	locateUserButton.textContent = label;
+}
+
+function showLocationFeedback(message) {
+	if (!resultsCount) return;
+	resultsCount.textContent = message;
+	window.clearTimeout(showLocationFeedback.timeoutId);
+	showLocationFeedback.timeoutId = window.setTimeout(() => {
+		renderVisibleLayers(false);
+	}, 2500);
+}
+
+showLocationFeedback.timeoutId = null;
+
+function drawUserLocation(latlng, accuracy) {
+	if (userLocationMarker) {
+		map.removeLayer(userLocationMarker);
+	}
+	if (userAccuracyCircle) {
+		map.removeLayer(userAccuracyCircle);
+	}
+
+	userLocationMarker = L.circleMarker(latlng, {
+		radius: 8,
+		color: "#0b4f95",
+		weight: 2,
+		fillColor: "#2c7edb",
+		fillOpacity: 0.9
+	}).addTo(map);
+
+	userAccuracyCircle = L.circle(latlng, {
+		radius: Math.max(accuracy || 0, 10),
+		color: "#2c7edb",
+		weight: 1,
+		fillColor: "#2c7edb",
+		fillOpacity: 0.15
+	}).addTo(map);
+
+	map.fitBounds(userAccuracyCircle.getBounds(), {
+		padding: [24, 24],
+		maxZoom: 17
+	});
+
+	if (locateUserButton) {
+		locateUserButton.classList.add("is-active");
+	}
+	setLocateButtonState(false, "Ma position");
+	showLocationFeedback("Position affichée sur la carte");
+}
+
+function requestUserLocation() {
+	if (!navigator.geolocation) {
+		showLocationFeedback("Géolocalisation non supportée par ce navigateur");
+		return;
+	}
+
+	setLocateButtonState(true, "Localisation...");
+	map.locate({
+		setView: false,
+		watch: false,
+		enableHighAccuracy: true,
+		maximumAge: 0,
+		timeout: 12000
+	});
+}
+
+map.on("locationfound", (event) => {
+	drawUserLocation(event.latlng, event.accuracy);
+});
+
+map.on("locationerror", () => {
+	setLocateButtonState(false, "Ma position");
+	if (locateUserButton) {
+		locateUserButton.classList.remove("is-active");
+	}
+	showLocationFeedback("Impossible d'obtenir votre position");
+});
+
+if (locateUserButton) {
+	locateUserButton.addEventListener("click", requestUserLocation);
 }
 
 function panelRow(label, value) {

@@ -114,7 +114,7 @@ h1 {
 
 .map-toolbar {
 	display: grid;
-	grid-template-columns: 1.6fr repeat(4, minmax(110px, 1fr)) auto;
+	grid-template-columns: 1.6fr repeat(4, minmax(110px, 1fr)) auto auto;
 	gap: 8px;
 	padding: 10px;
 	background: rgba(255, 253, 247, 0.9);
@@ -169,6 +169,32 @@ h1 {
 
 .filters-reset:hover {
 	background: #ebe3d2;
+}
+
+.locate-user {
+	height: 36px;
+	border: 1px solid rgba(0, 127, 115, 0.45);
+	border-radius: 10px;
+	background: rgba(0, 127, 115, 0.12);
+	color: #09514a;
+	font-weight: 700;
+	padding: 0 12px;
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.locate-user:hover {
+	background: rgba(0, 127, 115, 0.2);
+}
+
+.locate-user:disabled {
+	opacity: 0.65;
+	cursor: wait;
+}
+
+.locate-user.is-active {
+	border-color: rgba(9, 81, 74, 0.6);
+	box-shadow: inset 0 0 0 1px rgba(9, 81, 74, 0.18);
 }
 
 .results-count {

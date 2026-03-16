@@ -179,7 +179,7 @@ h1 {
 }
 
 #map {
-	min-height: 72vh;
+	min-height: 80vh;
 	border-radius: var(--radius);
 	border: 1px solid var(--line);
 	box-shadow: var(--shadow);

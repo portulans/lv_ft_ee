@@ -3,6 +3,8 @@ const map = L.map("map", {
 	preferCanvas: true
 });
 
+///////// Plans //////////
+
 const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 	maxZoom: 19,
 	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -140,8 +142,26 @@ var ignaerial2023 = L.tileLayer(
         tileSize : 256 // les tuiles du Géooportail font 256x256px
     });
 
+var ign2023 = L.tileLayer(
+    "https://data.geopf.fr/wmts?" +
+    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
+    "&STYLE=normal" +
+    "&TILEMATRIXSET=PM_0_19" +
+    "&FORMAT=image/png"+
+    "&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2"+
+    "&TILEMATRIX={z}" +
+    "&TILEROW={y}" +
+    "&TILECOL={x}",
+    {
+        minZoom : 0,
+        maxZoom : 19,
+        attribution : "IGN",
+        tileSize : 256 // les tuiles du Géooportail font 256x256px
+    });
+
 const baseLayers = {
 	"OpenStreetMap": osm,
+    "Plan IGN":ign2023,
 	"IGN 1950-1965": ignaerial1950,
 	"IGN 1965-1980": ignaerial1965,
 	"IGN Coast 2000": ignaerial2000,
@@ -389,7 +409,7 @@ function updatePanel(feature) {
 	const props = feature.properties || {};
 
 	panelType.textContent = typeLabel(props.type);
-	panelTitle.textContent = safeText(props.nom, "Nom non renseigne");
+	panelTitle.textContent = safeText(props.nom, "Nom non renseigné");
 	panelSubtitle.textContent = safeText(props["alt-name"], "Aucun nom alternatif");
 
 	panelMeta.innerHTML = "";

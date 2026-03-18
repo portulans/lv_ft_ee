@@ -195,7 +195,8 @@ const TYPE_LABELS = {
 	lavoir: "Lavoir",
 	fontaine: "Fontaine",
 	lavoir_fontaine: "Lavoir et fontaine",
-	"lavoir en bordure de greve": "Lavoir en bordure de greve"
+	"lavoir en bordure de greve": "Lavoir en bordure de greve",
+	inconnu: "Type inconnu"
 };
 
 const STATUS_CLASS = {
@@ -212,6 +213,16 @@ const PRECISION_CLASS = {
 	unknown: "#7b8790"
 };
 
+const TYPE_STYLE = {
+	lavoir: { color: "#2f6f95", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	lavoir_fontaine: { color: "#7a5a9c", radius: 8.5, weight: 2, fillOpacity: 0.88 },
+	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
+	inconnu: { color: "#7b8790", radius: 6.5, weight: 1.5, fillOpacity: 0.82 }
+};
+
+const TYPE_STYLE_DEFAULT = { color: "#7b8790", radius: 6.5, weight: 1.5, fillOpacity: 0.82 };
+
 const LEGEND_ENTRIES = {
 	status: [
 		{ color: STATUS_CLASS.exists, label: "Existant" },
@@ -224,6 +235,13 @@ const LEGEND_ENTRIES = {
 		{ color: PRECISION_CLASS.approximate, label: "Approximative" },
 		{ color: PRECISION_CLASS.veryApproximate, label: "Très imprécise" },
 		{ color: PRECISION_CLASS.unknown, label: "Inconnue" }
+	],
+	type: [
+		{ color: TYPE_STYLE.lavoir.color, label: TYPE_LABELS.lavoir },
+		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
+		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
+		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
+		{ color: TYPE_STYLE.inconnu.color, label: TYPE_LABELS.inconnu }
 	]
 };
 
@@ -236,6 +254,8 @@ let userAccuracyCircle = null;
 let panelImageRequestToken = 0;
 let creditsByImageName = new Map();
 const panelImagesCache = new Map();
+let hydroSurfacesLayer = null;
+let hydroTronconsLayer = null;
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 const MAX_PANEL_NUMBERED_IMAGES = 12;
@@ -283,6 +303,15 @@ const layerControl = L.control.layers(
 		position: "topright"
 	}
 ).addTo(map);
+
+const hydroSurfacePane = map.createPane("hydro-surfaces");
+const hydroTronconPane = map.createPane("hydro-troncons");
+if (hydroSurfacePane) {
+	hydroSurfacePane.style.zIndex = "390";
+}
+if (hydroTronconPane) {
+	hydroTronconPane.style.zIndex = "395";
+}
 
 const layerControlContainer = layerControl.getContainer();
 if (layerControlContainer) {
@@ -383,7 +412,38 @@ function markerColorFromPrecision(precisionRaw) {
 	return PRECISION_CLASS.unknown;
 }
 
+function markerStyleFromType(typeRaw) {
+	const typeKey = normalizeText(typeRaw).replace(/_/g, " ");
+	if (typeKey.includes("lavoir") && typeKey.includes("fontaine")) {
+		return TYPE_STYLE.lavoir_fontaine;
+	}
+	if (typeKey.includes("bordure") && typeKey.includes("greve")) {
+		return TYPE_STYLE["lavoir en bordure de greve"];
+	}
+	if (typeKey.includes("fontaine")) {
+		return TYPE_STYLE.fontaine;
+	}
+	if (typeKey.includes("lavoir")) {
+		return TYPE_STYLE.lavoir;
+	}
+	if (typeKey.includes("inconnu")) {
+		return TYPE_STYLE.inconnu;
+	}
+	return TYPE_STYLE_DEFAULT;
+}
+
 function markerStyleFromFeature(feature) {
+	if (colorMode?.value === "type") {
+		const typeStyle = markerStyleFromType(feature.properties?.type);
+		return {
+			radius: typeStyle.radius,
+			color: typeStyle.color,
+			weight: typeStyle.weight,
+			fillColor: typeStyle.color,
+			fillOpacity: typeStyle.fillOpacity
+		};
+	}
+
 	const color = colorMode?.value === "precision"
 		? markerColorFromPrecision(feature.properties?.modif_geom)
 		: markerColorFromStatus(feature.properties?.statut);
@@ -416,8 +476,16 @@ function applyMarkerStyle(layer, feature) {
 function updateLegend() {
 	const container = document.getElementById("map-legend");
 	if (!container) return;
-	const mode = colorMode?.value === "precision" ? "precision" : "status";
-	const title = mode === "precision" ? "Précision de localisation" : "Statut";
+	const mode = colorMode?.value === "precision"
+		? "precision"
+		: colorMode?.value === "type"
+			? "type"
+			: "status";
+	const title = mode === "precision"
+		? "Précision de localisation"
+		: mode === "type"
+			? "Type de point"
+			: "Statut";
 	const entries = LEGEND_ENTRIES[mode];
 	const items = entries
 		.map(
@@ -727,6 +795,7 @@ window.addEventListener("keydown", (event) => {
 });
 
 loadImageCredits();
+loadHydroLayers();
 
 function panelRow(label, value) {
 	const dt = document.createElement("dt");
@@ -782,6 +851,72 @@ function resetPanel() {
 	panelDescription.style.display = "none";
 	panelComment.style.display = "none";
 	clearPanelImages();
+}
+
+function isExplicitFalse(value) {
+	if (value === false) return true;
+	if (typeof value === "string") {
+		const normalized = normalizeText(value);
+		return normalized === "false";
+	}
+	return false;
+}
+
+function shouldDisplayHydroSurface(feature) {
+	const properties = feature?.properties || {};
+	const displayValue = properties.display ?? properties.disply;
+	return !isExplicitFalse(displayValue);
+}
+
+function loadHydroLayers() {
+	fetch("./data/surfaces_hydro.geojson")
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`Erreur HTTP ${response.status}`);
+			}
+			return response.json();
+		})
+		.then((geojson) => {
+			hydroSurfacesLayer = L.geoJSON(geojson, {
+				pane: "hydro-surfaces",
+				filter: shouldDisplayHydroSurface,
+				style: {
+					color: "#2f6f95",
+					weight: 1,
+					opacity: 0.8,
+					fillColor: "#8fc2df",
+					fillOpacity: 0.35
+				}
+			});
+
+			layerControl.addOverlay(hydroSurfacesLayer, "Surfaces hydrographiques");
+		})
+		.catch((error) => {
+			console.warn("Impossible de charger surfaces_hydro.geojson", error);
+		});
+
+	fetch("./data/troncons_hydro.geojson")
+		.then((response) => {
+			if (!response.ok) {
+				throw new Error(`Erreur HTTP ${response.status}`);
+			}
+			return response.json();
+		})
+		.then((geojson) => {
+			hydroTronconsLayer = L.geoJSON(geojson, {
+				pane: "hydro-troncons",
+				style: {
+					color: "#1b4d74",
+					weight: 2,
+					opacity: 0.95
+				}
+			});
+
+			layerControl.addOverlay(hydroTronconsLayer, "Tronçons hydrographiques");
+		})
+		.catch((error) => {
+			console.warn("Impossible de charger troncons_hydro.geojson", error);
+		});
 }
 
 function clearSelection() {

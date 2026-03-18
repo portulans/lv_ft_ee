@@ -235,8 +235,9 @@ let userLocationMarker = null;
 let userAccuracyCircle = null;
 let panelImageRequestToken = 0;
 let creditsByImageName = new Map();
+const panelImagesCache = new Map();
 
-const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp", "JPG", "JPEG", "PNG", "WEBP"];
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 const MAX_PANEL_NUMBERED_IMAGES = 12;
 
 function parseJsonLoose(text) {
@@ -513,7 +514,21 @@ function clearUserLocation(showFeedback) {
 function clearPanelImages() {
 	if (!panelImages) return;
 	panelImages.classList.remove("is-visible");
+	panelImages.classList.remove("is-loading");
 	panelImages.innerHTML = "";
+}
+
+function showPanelImagesLoading(fid) {
+	if (!panelImages) return;
+
+	panelImages.innerHTML =
+		`<p class="feature-images__title">Images</p>` +
+		`<p class="feature-images__loading" role="status" aria-live="polite">` +
+		`<span class="feature-images__spinner" aria-hidden="true"></span>` +
+		`Chargement des images du point ${fid}...` +
+		`</p>`;
+	panelImages.classList.add("is-visible");
+	panelImages.classList.add("is-loading");
 }
 
 function openImageViewer(src, altText) {
@@ -560,32 +575,29 @@ function probeImage(url) {
 }
 
 async function firstExistingImageUrl(basePath) {
-	for (const extension of IMAGE_EXTENSIONS) {
-		const url = `${basePath}.${extension}`;
-		const exists = await probeImage(url);
-		if (exists) {
-			return url;
-		}
+	const candidates = IMAGE_EXTENSIONS.map((extension) => `${basePath}.${extension}`);
+	const checks = await Promise.all(candidates.map((url) => probeImage(url)));
+	const foundIndex = checks.findIndex(Boolean);
+	if (foundIndex >= 0) {
+		return candidates[foundIndex];
 	}
 	return null;
 }
 
 async function resolvePanelImageUrls(fid) {
+	if (panelImagesCache.has(fid)) {
+		return panelImagesCache.get(fid);
+	}
+
 	const encodedFid = encodeURIComponent(fid);
-	const urls = [];
-
-	const mainImageUrl = await firstExistingImageUrl(`./imgs/${encodedFid}`);
-	if (mainImageUrl) {
-		urls.push(mainImageUrl);
-	}
-
+	const basePaths = [`./imgs/${encodedFid}`];
 	for (let index = 1; index <= MAX_PANEL_NUMBERED_IMAGES; index += 1) {
-		const numberedUrl = await firstExistingImageUrl(`./imgs/${encodedFid}-${index}`);
-		if (numberedUrl) {
-			urls.push(numberedUrl);
-		}
+		basePaths.push(`./imgs/${encodedFid}-${index}`);
 	}
 
+	const resolvedUrls = await Promise.all(basePaths.map((basePath) => firstExistingImageUrl(basePath)));
+	const urls = resolvedUrls.filter(Boolean);
+	panelImagesCache.set(fid, urls);
 	return urls;
 }
 
@@ -596,10 +608,13 @@ function renderPanelImages(fidValue) {
 	const fid = safeText(fidValue, "").trim();
 	if (!fid) return;
 
+	showPanelImagesLoading(fid);
+
 	const currentToken = ++panelImageRequestToken;
 
 	resolvePanelImageUrls(fid).then((urls) => {
 		if (!panelImages || currentToken !== panelImageRequestToken) return;
+		panelImages.classList.remove("is-loading");
 		if (!urls.length) {
 			clearPanelImages();
 			return;
@@ -614,7 +629,11 @@ function renderPanelImages(fidValue) {
 
 		urls.forEach((url, index) => {
 			const image = document.createElement("img");
-			image.loading = "lazy";
+			image.loading = index < 2 ? "eager" : "lazy";
+			image.decoding = "async";
+			if (index === 0) {
+				image.fetchPriority = "high";
+			}
 			image.alt =
 				urls.length > 1
 					? `Illustration ${index + 1} du point ${fid}`

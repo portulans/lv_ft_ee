@@ -412,6 +412,10 @@ h1 {
 	gap: 10px;
 }
 
+.feature-images.is-loading {
+	gap: 8px;
+}
+
 .feature-images__title {
 	margin: 0;
 	font-size: 0.82rem;
@@ -419,6 +423,24 @@ h1 {
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
 	color: var(--ink-soft);
+}
+
+.feature-images__loading {
+	margin: 0;
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 0.86rem;
+	color: var(--ink-soft);
+}
+
+.feature-images__spinner {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 2px solid rgba(0, 127, 115, 0.2);
+	border-top-color: var(--accent);
+	animation: feature-image-spin 0.75s linear infinite;
 }
 
 .feature-images__item {
@@ -444,6 +466,12 @@ h1 {
 	color: var(--ink-soft);
 	background: rgba(243, 238, 226, 0.85);
 	border-top: 1px solid var(--line);
+}
+
+@keyframes feature-image-spin {
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .image-viewer {

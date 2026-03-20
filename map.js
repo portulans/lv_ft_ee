@@ -159,6 +159,24 @@ var ign2023 = L.tileLayer(
         tileSize : 256 // les tuiles du Géooportail font 256x256px
     }).addTo(map);
 
+var lidarhd = L.tileLayer(
+	"https://data.geopf.fr/wmts?" +
+	"&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
+	"&STYLE=normal" +
+	"&FORMAT=image/png" +
+	"&TILEMATRIXSET=PM_0_18" +
+	"&LAYER=IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW" +
+	"&TILEMATRIX={z}" +
+	"&TILEROW={y}" +
+	"&TILECOL={x}",
+	
+	{
+		minZoom : 0,
+		maxZoom : 18,
+		attribution : "IGN",
+	}
+);
+
 const baseLayers = {
 	"Plan IGN":ign2023,
 	"OpenStreetMap": osm,
@@ -169,7 +187,8 @@ const baseLayers = {
 	"IGN 2006-2010": ignaerial2009,
 	"IGN 2011-2015": ignaerial2015,
 	"IGN 2018": ignaerial2018,
-	"IGN BD Ortho(récente)": ignaerial2023
+	"IGN BD Ortho (récente)": ignaerial2023,
+	"MNT (relief 1m)": lidarhd
 };
 
 const panelType = document.getElementById("feature-type");
@@ -216,9 +235,9 @@ const PRECISION_CLASS = {
 const TYPE_STYLE = {
 	lavoir: { color: "#2f6f95", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	lavoir_fontaine: { color: "#7a5a9c", radius: 8.5, weight: 2, fillOpacity: 0.88 },
+	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
-	inconnu: { color: "#7b8790", radius: 6.5, weight: 1.5, fillOpacity: 0.82 }
+	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 }
 };
 
 const TYPE_STYLE_DEFAULT = { color: "#7b8790", radius: 6.5, weight: 1.5, fillOpacity: 0.82 };
@@ -315,6 +334,8 @@ if (hydroTronconPane) {
 
 const layerControlContainer = layerControl.getContainer();
 if (layerControlContainer) {
+	const mobileLayerControlMediaQuery = window.matchMedia("(max-width: 620px)");
+
 	layerControlContainer.classList.add("base-layer-control");
 	layerControlContainer.classList.add("base-layer-control--collapsed");
 
@@ -337,6 +358,10 @@ if (layerControlContainer) {
 
 	const controlForm = layerControlContainer.querySelector(".leaflet-control-layers-form");
 
+	function shouldAutoCollapseLayerControl() {
+		return mobileLayerControlMediaQuery.matches;
+	}
+
 	function setLayerControlCollapsed(isCollapsed) {
 		layerControlContainer.classList.toggle("base-layer-control--collapsed", isCollapsed);
 		controlToggle.setAttribute("aria-expanded", String(!isCollapsed));
@@ -355,6 +380,23 @@ if (layerControlContainer) {
 		setLayerControlCollapsed(
 			!layerControlContainer.classList.contains("base-layer-control--collapsed")
 		);
+	});
+
+	layerControlContainer.addEventListener("change", (event) => {
+		const target = event.target;
+		if (!(target instanceof HTMLInputElement)) return;
+		if (!target.classList.contains("leaflet-control-layers-selector")) return;
+		if (!shouldAutoCollapseLayerControl()) return;
+
+		window.setTimeout(() => {
+			setLayerControlCollapsed(true);
+		}, 0);
+	});
+
+	map.on("click", () => {
+		if (!shouldAutoCollapseLayerControl()) return;
+		if (layerControlContainer.classList.contains("base-layer-control--collapsed")) return;
+		setLayerControlCollapsed(true);
 	});
 }
 

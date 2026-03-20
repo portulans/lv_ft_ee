@@ -226,6 +226,7 @@ h1 {
 	padding: 0;
 	overflow: hidden;
 	min-width: 210px;
+	scrollbar-width: auto;
 }
 
 #map .base-layer-control__header {
@@ -625,6 +626,45 @@ h1 {
 }
 
 @media (max-width: 620px) {
+	#map .leaflet-top.leaflet-right {
+		top: max(8px, env(safe-area-inset-top));
+		right: max(8px, env(safe-area-inset-right));
+	}
+
+	#map .leaflet-control-layers.base-layer-control {
+		max-width: min(88vw, 340px);
+		border-radius: 12px;
+	}
+
+	#map .leaflet-control-layers.base-layer-control:not(.base-layer-control--collapsed) {
+		width: min(88vw, 340px);
+		max-height: min(58vh, 420px);
+	}
+
+	#map .base-layer-control__header {
+		padding: 8px 10px;
+	}
+
+	#map .base-layer-control__toggle {
+		min-height: 36px;
+		padding: 8px 12px;
+	}
+
+	#map .leaflet-control-layers-form {
+		padding: 8px 10px 10px;
+		max-height: calc(min(58vh, 420px) - 52px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		-webkit-overflow-scrolling: touch;
+	}
+
+	#map .leaflet-control-layers-base label,
+	#map .leaflet-control-layers-overlays label {
+		min-height: 34px;
+		font-size: 0.88rem;
+		align-items: flex-start;
+	}
+
 	.map-toolbar {
 		grid-template-columns: 1fr;
 	}

@@ -202,6 +202,7 @@ const imageViewer = document.getElementById("image-viewer");
 const imageViewerImage = document.getElementById("image-viewer-image");
 const imageViewerCloseButton = document.getElementById("image-viewer-close");
 const searchInput = document.getElementById("search-toponym");
+const searchIdInput = document.getElementById("search-id");
 const filterType = document.getElementById("filter-type");
 const filterStatus = document.getElementById("filter-status");
 const filterPrecision = document.getElementById("filter-precision");
@@ -487,7 +488,7 @@ function markerStyleFromFeature(feature) {
 	}
 
 	const color = colorMode?.value === "precision"
-		? markerColorFromPrecision(feature.properties?.modif_geom)
+		? markerColorFromPrecision(feature.properties?.precision_geom)
 		: markerColorFromStatus(feature.properties?.statut);
 
 	return {
@@ -850,8 +851,23 @@ function panelRow(label, value) {
 	panelMeta.appendChild(dd);
 }
 
+function formatCoordinates(feature) {
+	const coordinates = feature?.geometry?.coordinates;
+	if (!Array.isArray(coordinates) || coordinates.length < 2) {
+		return "";
+	}
+
+	const [longitude, latitude] = coordinates;
+	if (!Number.isFinite(longitude) || !Number.isFinite(latitude)) {
+		return "";
+	}
+
+	return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+}
+
 function updatePanel(feature) {
 	const props = feature.properties || {};
+	const coordinatesText = formatCoordinates(feature);
 
 	panelType.textContent = typeLabel(props.type);
 	panelTitle.textContent = safeText(props.nom, "Nom non renseigné");
@@ -860,8 +876,11 @@ function updatePanel(feature) {
 	panelMeta.innerHTML = "";
 	panelRow("Identifiant", safeText(props.fid));
 	panelRow("Statut", safeText(props.statut));
-	panelRow("Précision des coordonnées", safeText(props.modif_geom));
+	panelRow("Précision des coordonnées", safeText(props.precision_geom));
 	panelRow("Source", safeText(props.source));
+	if (coordinatesText) {
+		panelRow("Coordonnées (lat, lon)", coordinatesText);
+	}
 	panelRow("Trace sur le plan de 1910 ?", toYesNo(props.src_p1910));
 	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
 
@@ -997,6 +1016,7 @@ function fillSelectOptions(selectElement, values, allLabel) {
 
 function matchesCurrentFilters(entry) {
 	const query = normalizeText(searchInput.value);
+	const queryId = normalizeText(searchIdInput?.value);
 	const selectedType = normalizeText(filterType.value);
 	const selectedStatus = normalizeText(filterStatus.value);
 	const selectedPrecision = normalizeText(filterPrecision.value);
@@ -1005,8 +1025,9 @@ function matchesCurrentFilters(entry) {
 	const hasStatus = !selectedStatus || entry.statusValue === selectedStatus;
 	const hasPrecision = !selectedPrecision || entry.precisionValue === selectedPrecision;
 	const hasQuery = !query || entry.searchValue.includes(query);
+	const hasId = !queryId || entry.idValue.includes(queryId);
 
-	return hasType && hasStatus && hasPrecision && hasQuery;
+	return hasType && hasStatus && hasPrecision && hasQuery && hasId;
 }
 
 function renderVisibleLayers(zoomToVisible) {
@@ -1052,7 +1073,7 @@ fetch("./data/data.geojson")
 
 		fillSelectOptions(filterType, uniqueSortedValues(features, "type"), "Tous");
 		fillSelectOptions(filterStatus, uniqueSortedValues(features, "statut"), "Tous");
-		fillSelectOptions(filterPrecision, uniqueSortedValues(features, "modif_geom"), "Toutes");
+		fillSelectOptions(filterPrecision, uniqueSortedValues(features, "precision_geom"), "Toutes");
 
 		const pointsLayer = L.geoJSON(geojson, {
 			pointToLayer(feature, latlng) {
@@ -1074,9 +1095,10 @@ fetch("./data/data.geojson")
 				markerEntries.push({
 					layer,
 					feature,
+					idValue: normalizeText(feature.properties?.fid),
 					typeValue: normalizeText(feature.properties?.type),
 					statusValue: normalizeText(feature.properties?.statut),
-					precisionValue: normalizeText(feature.properties?.modif_geom),
+					precisionValue: normalizeText(feature.properties?.precision_geom),
 					searchValue: normalizeText(`${title} ${altName}`)
 				});
 
@@ -1093,7 +1115,8 @@ fetch("./data/data.geojson")
 		renderVisibleLayers(true);
 		refreshMarkerColors();
 
-		[searchInput, filterType, filterStatus, filterPrecision].forEach((element) => {
+		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision].forEach((element) => {
+			if (!element) return;
 			element.addEventListener("input", () => {
 				renderVisibleLayers(false);
 			});
@@ -1109,6 +1132,9 @@ fetch("./data/data.geojson")
 
 		resetFiltersButton.addEventListener("click", () => {
 			searchInput.value = "";
+			if (searchIdInput) {
+				searchIdInput.value = "";
+			}
 			filterType.value = "";
 			filterStatus.value = "";
 			filterPrecision.value = "";

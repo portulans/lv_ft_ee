@@ -1,127 +1,130 @@
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lavoirs et fontaines d'Ouessant</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
-    <link rel="stylesheet" href="style.css">
-    <script src="./libs/leaflet/dist/leaflet-src.js"></script>
-    <script src="map.js" defer></script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Lavoirs et fontaines d'Ouessant</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+	<link rel="stylesheet" href="style.css">
+	<script src="./libs/leaflet/dist/leaflet-src.js"></script>
+	<script src="map.js" defer></script>
 </head>
 <body>
-    <div class="page-bg"></div>
+	<div class="page-bg"></div>
+	<header class="site-header">
+		<div>
+			<p class="eyebrow"></p>
+			<h1>Lavoirs et fontaines d'Ouessant</h1>
+			<p class="subtitle">Informations détaillées sur les lavoirs et fontaines recensées affichées dans le panneau latéral (cliquer sur un point pour afficher les détails).</p>
+		</div>
+		<div class="header-badges">
+			<span class="badge">Dernière mise à jour : <span id="date-maj">20 mars 2026</span></span>
+		</div>
+	</header>
 
-    <header class="site-header">
-        <div>
-            <p class="eyebrow"></p>
-            <h1>Lavoirs et fontaines d'Ouessant</h1>
-            <p class="subtitle">Informations sur les points recensés dans le panneau latéral (cliquer sur un point pour afficher les détails).</p>
-        </div>
-        <div class="header-badges">
-            <span class="badge">Dernière mise à jour : <span id="date-maj">20 mars 2026</span></span>
-        </div>
-    </header>
+	<main>
+		<section class="map-layout" aria-label="Carte des lavoirs et fontaines">
+			<div class="map-column">
+				<form class="map-toolbar" id="map-toolbar" aria-label="Filtres des points" onsubmit="return false;">
+					<label class="toolbar-field" for="search-toponym">
+						<span>Rechercher</span>
+						<input type="search" id="search-toponym" placeholder="Nom ou toponyme..." autocomplete="off">
+					</label>
+					<label class="toolbar-field" for="search-id">
+						<span>Filtrer par ID</span>
+						<input type="search" id="search-id" placeholder="ID du point..." autocomplete="off">
+					</label>
+					<label class="toolbar-field" for="filter-type">
+						<span>Type</span>
+						<select id="filter-type">
+							<option value="">Tous</option>
+						</select>
+					</label>
+					<label class="toolbar-field" for="filter-status">
+						<span>Statut</span>
+						<select id="filter-status">
+							<option value="">Tous</option>
+						</select>
+					</label>
+					<label class="toolbar-field" for="filter-precision">
+						<span>Précision de la localisation</span>
+						<select id="filter-precision">
+							<option value="">Toutes</option>
+						</select>
+					</label>
+					<label class="toolbar-field" for="color-mode">
+						<span>Couleur des points</span>
+						<select id="color-mode">
+							<option value="status">Selon le statut</option>
+							<option value="type">Selon le type</option>
+							<option value="precision" selected>Selon la précision</option>
+						</select>
+					</label>
+					<button type="button" id="locate-user" class="locate-user">Ma position</button>
+					<button type="button" id="filters-reset" class="filters-reset">Réinitialiser</button>
+					<p id="results-count" class="results-count" aria-live="polite"></p>
+				</form>
 
-    <main>
-        <section class="map-layout" aria-label="Carte des lavoirs et fontaines">
-            <div class="map-column">
-                <form class="map-toolbar" id="map-toolbar" aria-label="Filtres des points" onsubmit="return false;">
-                    <label class="toolbar-field" for="search-toponym">
-                        <span>Rechercher</span>
-                        <input type="search" id="search-toponym" placeholder="Nom ou toponyme..." autocomplete="off">
-                    </label>
-                    <label class="toolbar-field" for="filter-type">
-                        <span>Type</span>
-                        <select id="filter-type">
-                            <option value="">Tous</option>
-                        </select>
-                    </label>
-                    <label class="toolbar-field" for="filter-status">
-                        <span>Statut</span>
-                        <select id="filter-status">
-                            <option value="">Tous</option>
-                        </select>
-                    </label>
-                    <label class="toolbar-field" for="filter-precision">
-                        <span>Précision de la localisation</span>
-                        <select id="filter-precision">
-                            <option value="">Toutes</option>
-                        </select>
-                    </label>
-                    <label class="toolbar-field" for="color-mode">
-                        <span>Couleur des points</span>
-                        <select id="color-mode">
-                            <option value="status">Selon le statut</option>
-                            <option value="type">Selon le type</option>
-                            <option value="precision" selected>Selon la précision</option>
-                        </select>
-                    </label>
-                    <button type="button" id="locate-user" class="locate-user">Ma position</button>
-                    <button type="button" id="filters-reset" class="filters-reset">Réinitialiser</button>
-                    <p id="results-count" class="results-count" aria-live="polite"></p>
-                </form>
+				<div id="map" aria-label="Carte interactive"></div>
+			</div>
 
-                <div id="map" aria-label="Carte interactive"></div>
-            </div>
+			<div class="panel-column">
+				<aside class="info-panel" id="info-panel" aria-live="polite">
+					<div class="panel-header">
+						<h2>Détails</h2>
+						<p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
+					</div>
+					<h3 id="feature-title">Aucun point sélectionné</h3>
+					<p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
+					<dl class="feature-meta" id="feature-meta"></dl>
+					<p id="feature-description" class="feature-description"></p>
+					<p id="feature-comment" class="feature-comment"></p>
+					<div id="feature-images" class="feature-images" aria-live="polite"></div>
+				</aside>
+				<div id="map-legend" class="map-legend"></div>
+			</div>
+		</section>
 
-            <div class="panel-column">
-                <aside class="info-panel" id="info-panel" aria-live="polite">
-                    <div class="panel-header">
-                        <h2>Détails</h2>
-                        <p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
-                    </div>
-                    <h3 id="feature-title">Aucun point sélectionné</h3>
-                    <p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
-                    <dl class="feature-meta" id="feature-meta"></dl>
-                    <p id="feature-description" class="feature-description"></p>
-                    <p id="feature-comment" class="feature-comment"></p>
-                    <div id="feature-images" class="feature-images" aria-live="polite"></div>
-                </aside>
-                <div id="map-legend" class="map-legend"></div>
-            </div>
-        </section>
+		<article class="references">
+		<p><b>Cette carte est en cours de production, elle peut comporter (et comporte certainement) des erreurs.</b></p>
+		<h2>Note sur la production des données</h2>
+		<p>Le point de départ de la production de cette carte est une carte réalisée à la main par l'association Poull Ha Feuteun en 2010 et <a href="https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255">géoréférencée par le PNRA en 2013 (données finalisées le 21 octobre 2013)</a>. Cette méthode de production, ainsi que l'échelle moyenne de la carte manuelle et le défaut de points de repères qu'elle contient, implique une précision très variable des points, qui est de qualité globale très moyenne (parfois plusieurs dizaines de mètres d'écarts).</p>
+		<p>A partir des assemblages de photos aériennes anciennes produits par l'IGN, du plan d'Ouessant au 10 000e de 1910 et du plan du cadastre ancien de 1842, j'ai repositionné plus précisément la plupart des points. L'évaluation qualitative de cette précision est indiquée dans les données : exacte, affinée, approximative, très imprécise. </p>
+		<p>Un nombre important de positions et d'emplacements supposés de lavoirs ou fontaines nécessite actuellement (mars 2026) une vérification sur le terrain, qui permettrait de préciser les coordonnées.</p>
+		<p>Certains points (plus rares) ont été ajoutés à partir d'observations personnelles faites sur le terrain ou à partir de sources écrites.</p>
+		<p>Certains points correspondent probablement à des sources, sans aménagement de type lavoir ou source associé.</p>
+		<p>Les noms attribués aux lavoirs et fontaines ne correspondent pas forcément à l'usage. Par méconnaissance, je leur ai attribué le nom d'un toponyme significatif situé à proximité immédiate (souvent issu du cadastre). Ces noms sont certainement appelés à évoluer.</p>
+		<p>A terme, il serait souhaitable de distinguer lavoirs et fontaines et de les positionner précisement et distinctement sur la carte. Actuellement, si lavoir et fontaine(s) associés, un seul point représente l'ensemble.</p>
+		<h2>Références</h2>
+		<h3>Sites webs</h3>
+		<ul>
+			<li><a href="http://poullhafeunteun.unblog.fr/">Site web de l'ancienne association Poull Ha Feuteun</a></li>
+			<li><a href="https://www.facebook.com/profile.php?id=61588590510610">Page facebook de l'association Le Petit Patrimoine Ouessantin</a></li>
+			<li><a href="https://ouessant.forums-actifs.com/f95-les-lavoirs">Forum avec une section sur les lavoirs d'Ouessant (+photos)</a></li>
+			<li><a href="https://photos.ankryan.net/image/1832-fontaine-et-lavoir-renoves-ouessant">Photo de Poull Bridig en bon état</a></li>
+		</ul>
+		<h3>Articles</h3>
+		<ul>
+			<li><a href="https://numerabilis.u-pariscite.fr/s/numerabilis/item/227413">P. Bohéas, Topographie médicale de l'île d'Ouessant, thèse de doctorat, 1883.</a></li>
+			<li><a href="https://theses.hal.science/tel-00281315">Thomas Chiron, <i>Quelle gestion durable des ressources en eau et du risque de penurie sur les petites îles ?</i>, Thèse de doctorat en géographie, 2008.</a> <br> La carte proposée page 198 est intéressante mais la position de certains points (nommés) semble éronée (ou les noms sont ambiguis).</li>
+		</ul>
+		<h3>Autres</h3>
+		<ul>
+			<li><a href="https://www.vers-les-iles.fr/livres/Iroise/Dantec_LeSc.html">Maï Sous Dantec et Gwenc'hlan Le Scouëzec, <i>Enez Eusa, Ouessant mystérieux : petit guide de l'île d'Ouessant</i>, Élisart Éditeur, Quimper, 2001</a></li>
+			<li><b>Archives</b>. Par exemple, les délibérations du conseil municipal conservées aux archives (départementales ?)contiennent des informations sur la gestion de l'eau sur l'île. Certains documents sont listés dans la thèse de Thomas Chiron.</li>
+		</ul>
+	</article>
+	</main>
 
-        <article class="references">
-        <p><b>Cette carte est en cours de production, elle peut comporter (et comporte certainement) des erreurs.</b></p>
-        <h2>Note sur la production des données</h2>
-        <p>Le point de départ de la production de cette carte est une carte réalisée à la main par l'association Poull Ha Feuteun en 2010 et <a href="https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255">géoréférencée par le PNRA en 2013 (données finalisées le 21 octobre 2013)</a>. Cette méthode de production, ainsi que l'échelle moyenne de la carte manuelle et le défaut de points de repères qu'elle contient, implique une précision très variable des points, qui est de qualité globale très moyenne (parfois plusieurs dizaines de mètres d'écarts).</p>
-        <p>A partir des assemblages de photos aériennes anciennes produits par l'IGN, du plan d'Ouessant au 10 000e de 1910 et du plan du cadastre ancien de 1842, j'ai repositionné plus précisément la plupart des points. L'évaluation qualitative de cette précision est indiquée dans les données : exacte, affinée, approximative, très imprécise. </p>
-        <p>Un nombre important de positions et d'emplacements supposés de lavoirs ou fontaines nécessite actuellement (mars 2026) une vérification sur le terrain, qui permettrait de préciser les coordonnées.</p>
-        <p>Certains points (plus rares) ont été ajoutés à partir d'observations personnelles faites sur le terrain ou à partir de sources écrites.</p>
-        <p>Certains points correspondent probablement à des sources, sans aménagement de type lavoir ou source associé.</p>
-        <p>Les noms attribués aux lavoirs et fontaines ne correspondent pas forcément à l'usage. Par méconnaissance, je leur ai attribué le nom d'un toponyme significatif situé à proximité immédiate (souvent issu du cadastre). Ces noms sont certainement appelés à évoluer.</p>
-        <p>A terme, il serait souhaitable de distinguer lavoirs et fontaines et de les positionner précisement et distinctement sur la carte. Actuellement, si lavoir et fontaine(s) associés, un seul point représente l'ensemble.</p>
-        <h2>Références</h2>
-        <h3>Sites webs</h3>
-        <ul>
-            <li><a href="http://poullhafeunteun.unblog.fr/">Site web de l'ancienne association Poull Ha Feuteun</a></li>
-            <li><a href="https://www.facebook.com/profile.php?id=61588590510610">Page facebook de l'association Le Petit Patrimoine Ouessantin</a></li>
-            <li><a href="https://ouessant.forums-actifs.com/f95-les-lavoirs">Forum avec une section sur les lavoirs d'Ouessant (+photos)</a></li>
-            <li><a href="https://photos.ankryan.net/image/1832-fontaine-et-lavoir-renoves-ouessant">Photo de Poull Bridig en bon état</a></li>
-        </ul>
-        <h3>Articles</h3>
-        <ul>
-            <li><a href="https://numerabilis.u-pariscite.fr/s/numerabilis/item/227413">P. Bohéas, Topographie médicale de l'île d'Ouessant, thèse de doctorat, 1883.</a></li>
-            <li><a href="https://theses.hal.science/tel-00281315">Thomas Chiron, <i>Quelle gestion durable des ressources en eau et du risque de penurie sur les petites îles ?</i>, Thèse de doctorat en géographie, 2008.</a> <br> La carte proposée page 198 est intéressante mais la position de certains points (nommés) semble éronée (ou les noms sont ambiguis).</li>
-        </ul>
-        <h3>Autres</h3>
-        <ul>
-            <li><a href="https://www.vers-les-iles.fr/livres/Iroise/Dantec_LeSc.html">Maï Sous Dantec et Gwenc'hlan Le Scouëzec, <i>Enez Eusa, Ouessant mystérieux : petit guide de l'île d'Ouessant</i>, Élisart Éditeur, Quimper, 2001</a></li>
-            <li><b>Archives</b>. Par exemple, les délibérations du conseil municipal conservées aux archives (départementales ?)contiennent des informations sur la gestion de l'eau sur l'île. Certains documents sont listés dans la thèse de Thomas Chiron.</li>
-        </ul>
-    </article>
-    </main>
+	<footer class="site-footer">
+		<p>Solenn Tual. Licence CC BY SA (Creative Commons Attribution-ShareAlike 4.0 International). <a href="mailto:solenntual.pro@gmail.com">Contact</a></p>
+	</footer>
 
-    <footer class="site-footer">
-        <p>Solenn Tual. Licence CC BY SA (Creative Commons Attribution-ShareAlike 4.0 International). <a href="mailto:solenntual.pro@gmail.com">Contact</a></p>
-    </footer>
-
-    <div id="image-viewer" class="image-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Agrandissement de l'image">
-        <button type="button" id="image-viewer-close" class="image-viewer__close" aria-label="Fermer l'image">Fermer</button>
-        <img id="image-viewer-image" class="image-viewer__image" alt="">
-    </div>
+	<div id="image-viewer" class="image-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Agrandissement de l'image">
+		<button type="button" id="image-viewer-close" class="image-viewer__close" aria-label="Fermer l'image">Fermer</button>
+		<img id="image-viewer-image" class="image-viewer__image" alt="">
+	</div>
 </body>
 </html>

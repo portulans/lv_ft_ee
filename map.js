@@ -273,6 +273,7 @@ let userLocationMarker = null;
 let userAccuracyCircle = null;
 let panelImageRequestToken = 0;
 let creditsByImageName = new Map();
+let imageNamesById = new Map();
 const panelImagesCache = new Map();
 let hydroSurfacesLayer = null;
 let hydroTronconsLayer = null;
@@ -298,16 +299,25 @@ async function loadImageCredits() {
 		if (!Array.isArray(entries)) return;
 
 		const mapByImage = new Map();
+		const mapById = new Map();
 		entries.forEach((entry) => {
+			const imageId = safeText(entry?.id, "").trim();
 			const imageName = safeText(entry?.img, "").trim().toLowerCase();
 			if (!imageName) return;
 			mapByImage.set(imageName, {
 				author: safeText(entry?.author, ""),
 				date: safeText(entry?.date, "")
 			});
+
+			if (!imageId) return;
+			if (!mapById.has(imageId)) {
+				mapById.set(imageId, []);
+			}
+			mapById.get(imageId).push(imageName);
 		});
 
 		creditsByImageName = mapByImage;
+		imageNamesById = mapById;
 	} catch (error) {
 		console.warn("Impossible de charger credits.json", error);
 	}
@@ -695,9 +705,31 @@ async function firstExistingImageUrl(basePath) {
 	return null;
 }
 
+async function existingImageUrlFromFileName(fileName) {
+	const trimmedName = safeText(fileName, "").trim();
+	if (!trimmedName) return null;
+
+	const extensionMatch = trimmedName.match(/\.([a-z0-9]+)$/i);
+	if (extensionMatch) {
+		const directPath = `./imgs/${encodeURIComponent(trimmedName)}`;
+		return (await probeImage(directPath)) ? directPath : null;
+	}
+
+	return firstExistingImageUrl(`./imgs/${encodeURIComponent(trimmedName)}`);
+}
+
 async function resolvePanelImageUrls(fid) {
 	if (panelImagesCache.has(fid)) {
 		return panelImagesCache.get(fid);
+	}
+
+	const urlsByCredits = [];
+	const creditedNames = imageNamesById.get(fid) || [];
+	if (creditedNames.length) {
+		const resolvedCreditUrls = await Promise.all(
+			creditedNames.map((imageName) => existingImageUrlFromFileName(imageName))
+		);
+		urlsByCredits.push(...resolvedCreditUrls.filter(Boolean));
 	}
 
 	const encodedFid = encodeURIComponent(fid);
@@ -707,7 +739,8 @@ async function resolvePanelImageUrls(fid) {
 	}
 
 	const resolvedUrls = await Promise.all(basePaths.map((basePath) => firstExistingImageUrl(basePath)));
-	const urls = resolvedUrls.filter(Boolean);
+	const urlsByPattern = resolvedUrls.filter(Boolean);
+	const urls = Array.from(new Set([...urlsByCredits, ...urlsByPattern]));
 	panelImagesCache.set(fid, urls);
 	return urls;
 }
@@ -735,8 +768,12 @@ function renderPanelImages(fidValue) {
 		title.className = "feature-images__title";
 		title.textContent = urls.length > 1 ? "Images" : "Image";
 
+		const gallery = document.createElement("div");
+		gallery.className = "feature-images__gallery";
+
 		panelImages.innerHTML = "";
 		panelImages.appendChild(title);
+		panelImages.appendChild(gallery);
 
 		urls.forEach((url, index) => {
 			const image = document.createElement("img");
@@ -766,7 +803,7 @@ function renderPanelImages(fidValue) {
 				figure.appendChild(caption);
 			}
 
-			panelImages.appendChild(figure);
+			gallery.appendChild(figure);
 		});
 
 		panelImages.classList.add("is-visible");

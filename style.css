@@ -423,6 +423,12 @@ h1 {
 	gap: 10px;
 }
 
+.feature-images__gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 10px;
+}
+
 .feature-images.is-loading {
 	gap: 8px;
 }
@@ -465,7 +471,8 @@ h1 {
 .feature-images__item img {
 	display: block;
 	width: 100%;
-	height: auto;
+	height: 128px;
+	object-fit: cover;
 	cursor: zoom-in;
 }
 

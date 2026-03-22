@@ -216,9 +216,10 @@ const TYPE_LABELS = {
 	fontaine: "Fontaine",
 	lavoir_fontaine: "Lavoir et fontaine",
 	"lavoir en bordure de greve": "Lavoir en bordure de grève",
+	aiguade: "Aiguade",
 	"doué":"Doué",
 	routoir: "Routoir",
-	aiguade: "Aiguade",
+	marre: "Marre",
 	inconnu: "Type inconnu"
 };
 

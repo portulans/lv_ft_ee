@@ -241,9 +241,10 @@ const TYPE_STYLE = {
 	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
+	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"marre": { color: "#f27954", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 }
 };
 
@@ -267,9 +268,10 @@ const LEGEND_ENTRIES = {
 		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
 		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
 		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
+		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
 		{ color: TYPE_STYLE["doué"].color, label: TYPE_LABELS["doué"] },
 		{ color: TYPE_STYLE["routoir"].color, label: TYPE_LABELS["routoir"] },
-		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
+		{ color: TYPE_STYLE["marre"].color, label: TYPE_LABELS["marre"] },
 		{ color: TYPE_STYLE.inconnu.color, label: TYPE_LABELS.inconnu }
 	]
 };
@@ -501,6 +503,9 @@ function markerStyleFromType(typeRaw) {
 	}
 	if (typeKey.includes("aiguade")) {
 		return TYPE_STYLE["aiguade"];
+	}
+	if (typeKey.includes("marre")) {
+		return TYPE_STYLE["marre"];
 	}
 	if (typeKey.includes("inconnu")) {
 		return TYPE_STYLE.inconnu;

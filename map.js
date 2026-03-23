@@ -219,7 +219,7 @@ const TYPE_LABELS = {
 	aiguade: "Aiguade",
 	"doué":"Doué",
 	routoir: "Routoir",
-	marre: "Marre",
+	marre: "Mare",
 	inconnu: "Type inconnu"
 };
 

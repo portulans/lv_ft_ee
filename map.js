@@ -213,6 +213,7 @@ const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
+const dateMajElement = document.getElementById("date-maj");
 
 let currentFeatureId = null;
 
@@ -359,6 +360,83 @@ function parseJsonLoose(text) {
 		.replace(/,\s*]/g, "]")
 		.replace(/,\s*}/g, "}");
 	return JSON.parse(cleaned);
+}
+
+function parseGithubRepoFromLocation() {
+	const host = window.location.hostname || "";
+	if (!host.endsWith(".github.io")) {
+		return null;
+	}
+
+	const owner = host.replace(/\.github\.io$/i, "").trim();
+	const repo = (window.location.pathname || "")
+		.split("/")
+		.filter(Boolean)[0] || "";
+
+	if (!owner || !repo) {
+		return null;
+	}
+
+	return { owner, repo };
+}
+
+function formatFrenchDateTime(isoDate) {
+	const date = new Date(isoDate);
+	if (!Number.isFinite(date.getTime())) {
+		return null;
+	}
+
+	const datePart = new Intl.DateTimeFormat("fr-FR", {
+		day: "2-digit",
+		month: "long",
+		year: "numeric"
+	}).format(date);
+
+	const timePart = new Intl.DateTimeFormat("fr-FR", {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+		timeZone: "Europe/Paris"
+	}).format(date);
+
+	return `${datePart} à ${timePart}`;
+}
+
+async function updateDateMajFromGithub() {
+	if (!dateMajElement) return;
+
+	const repoFromUrl = parseGithubRepoFromLocation();
+	if (!repoFromUrl) {
+		return;
+	}
+
+	const branch = "main";
+	const trackedPath = "data/data.geojson";
+	const commitsUrl =
+		`https://api.github.com/repos/${repoFromUrl.owner}/${repoFromUrl.repo}/commits` +
+		`?sha=${encodeURIComponent(branch)}&path=${encodeURIComponent(trackedPath)}&per_page=1`;
+
+	try {
+		const response = await fetch(commitsUrl, {
+			headers: { Accept: "application/vnd.github+json" }
+		});
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+
+		const commits = await response.json();
+		if (!Array.isArray(commits) || commits.length === 0) {
+			return;
+		}
+
+		const lastCommitDate = commits[0]?.commit?.committer?.date || commits[0]?.commit?.author?.date;
+		const formattedDate = formatFrenchDateTime(lastCommitDate);
+		if (formattedDate) {
+			dateMajElement.textContent = formattedDate;
+		}
+	} catch (error) {
+		console.warn("Impossible de mettre à jour automatiquement la date de mise à jour", error);
+	}
 }
 
 async function loadImageCredits() {
@@ -1136,6 +1214,7 @@ function handlePermalinkHash() {
 
 window.addEventListener("hashchange", handlePermalinkHash);
 
+updateDateMajFromGithub();
 loadImageCredits();
 loadHydroLayers();
 

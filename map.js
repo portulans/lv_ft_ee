@@ -207,6 +207,7 @@ const searchIdInput = document.getElementById("search-id");
 const filterType = document.getElementById("filter-type");
 const filterStatus = document.getElementById("filter-status");
 const filterPrecision = document.getElementById("filter-precision");
+const filterImages = document.getElementById("filter-images");
 const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
@@ -338,6 +339,9 @@ let panelImageRequestToken = 0;
 let creditsByImageName = new Map();
 let imageNamesById = new Map();
 const panelImagesCache = new Map();
+const featuresWithPhotos = new Set();
+const featuresWithPlans = new Set();
+const featuresWithAnyMedia = new Set();
 let hydroSurfacesLayer = null;
 let hydroTronconsLayer = null;
 
@@ -368,9 +372,14 @@ async function loadImageCredits() {
 
 		const mapByImage = new Map();
 		const mapById = new Map();
+		const photosByFeature = new Map();
+		const plansByFeature = new Map();
+		
 		entries.forEach((entry) => {
 			const imageId = safeText(entry?.id, "").trim();
 			const imageName = safeText(entry?.img, "").trim().toLowerCase();
+			const mediaType = safeText(entry?.type, "").trim().toLowerCase();
+			
 			if (!imageName) return;
 			mapByImage.set(imageName, {
 				author: safeText(entry?.author, ""),
@@ -378,14 +387,38 @@ async function loadImageCredits() {
 			});
 
 			if (!imageId) return;
+			
+			// Track by feature ID
 			if (!mapById.has(imageId)) {
 				mapById.set(imageId, []);
 			}
 			mapById.get(imageId).push(imageName);
+			
+			// Track media types by feature
+			featuresWithAnyMedia.add(imageId);
+			
+			if (mediaType === "photo") {
+				featuresWithPhotos.add(imageId);
+				if (!photosByFeature.has(imageId)) {
+					photosByFeature.set(imageId, []);
+				}
+				photosByFeature.get(imageId).push(imageName);
+			} else if (mediaType === "plan cadastral") {
+				featuresWithPlans.add(imageId);
+				if (!plansByFeature.has(imageId)) {
+					plansByFeature.set(imageId, []);
+				}
+				plansByFeature.get(imageId).push(imageName);
+			}
 		});
 
 		creditsByImageName = mapByImage;
 		imageNamesById = mapById;
+		
+		console.log("Media tracking loaded:");
+		console.log("Features with photos:", featuresWithPhotos.size);
+		console.log("Features with plans:", featuresWithPlans.size);
+		console.log("Features with any media:", featuresWithAnyMedia.size);
 	} catch (error) {
 		console.warn("Impossible de charger credits.json", error);
 	}
@@ -889,6 +922,7 @@ function renderPanelImages(fidValue) {
 	resolvePanelImageUrls(fid).then((urls) => {
 		if (!panelImages || currentToken !== panelImageRequestToken) return;
 		panelImages.classList.remove("is-loading");
+		
 		if (!urls.length) {
 			clearPanelImages();
 			return;
@@ -1274,14 +1308,29 @@ function matchesCurrentFilters(entry) {
 	const selectedType = normalizeText(filterType.value);
 	const selectedStatus = normalizeText(filterStatus.value);
 	const selectedPrecision = normalizeText(filterPrecision.value);
+	const selectedMedia = filterImages?.value || "";
 
 	const hasType = !selectedType || entry.typeValue === selectedType;
 	const hasStatus = !selectedStatus || entry.statusValue === selectedStatus;
 	const hasPrecision = !selectedPrecision || entry.precisionValue === selectedPrecision;
 	const hasQuery = !query || entry.searchValue.includes(query);
 	const hasId = !queryId || entry.idValue.includes(queryId);
+	
+	let hasMedia = true;
+	// Convert featureId to string to match the sets (which store string IDs from credits.json)
+	const featureId = String(entry.featureId);
+	
+	if (selectedMedia === "photos-only") {
+		hasMedia = featuresWithPhotos.has(featureId);
+	} else if (selectedMedia === "plans-only") {
+		hasMedia = featuresWithPlans.has(featureId);
+	} else if (selectedMedia === "with-media") {
+		hasMedia = featuresWithAnyMedia.has(featureId);
+	} else if (selectedMedia === "without-media") {
+		hasMedia = !featuresWithAnyMedia.has(featureId);
+	}
 
-	return hasType && hasStatus && hasPrecision && hasQuery && hasId;
+	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasMedia;
 }
 
 function renderVisibleLayers(zoomToVisible) {
@@ -1350,6 +1399,7 @@ fetch("./data/data.geojson")
 				markerEntries.push({
 					layer,
 					feature,
+					featureId: feature.properties?.fid,
 					idValue: normalizeText(feature.properties?.fid),
 					typeValue: normalizeText(feature.properties?.type),
 					statusValue: normalizeText(feature.properties?.statut),
@@ -1380,7 +1430,7 @@ fetch("./data/data.geojson")
 		window.setTimeout(attemptHandlePermalink, 50);
 		window.setTimeout(attemptHandlePermalink, 300);
 
-		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision].forEach((element) => {
+		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterImages].forEach((element) => {
 			if (!element) return;
 			element.addEventListener("input", () => {
 				renderVisibleLayers(false);
@@ -1403,6 +1453,9 @@ fetch("./data/data.geojson")
 			filterType.value = "";
 			filterStatus.value = "";
 			filterPrecision.value = "";
+			if (filterImages) {
+				filterImages.value = "";
+			}
 			colorMode.value = DEFAULT_COLOR_MODE;
 			refreshMarkerColors();
 			renderVisibleLayers(true);

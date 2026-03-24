@@ -411,11 +411,9 @@ async function updateDateMajFromGithub() {
 		return;
 	}
 
-	const branch = "main";
-	const trackedPath = "data/data.geojson";
 	const commitsUrl =
 		`https://api.github.com/repos/${repoFromUrl.owner}/${repoFromUrl.repo}/commits` +
-		`?sha=${encodeURIComponent(branch)}&path=${encodeURIComponent(trackedPath)}&per_page=1`;
+		`?per_page=1`;
 
 	try {
 		const response = await fetch(commitsUrl, {

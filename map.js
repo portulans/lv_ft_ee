@@ -198,6 +198,7 @@ const panelMeta = document.getElementById("feature-meta");
 const panelDescription = document.getElementById("feature-description");
 const panelComment = document.getElementById("feature-comment");
 const panelImages = document.getElementById("feature-images");
+const shareButton = document.getElementById("share-button");
 const imageViewer = document.getElementById("image-viewer");
 const imageViewerImage = document.getElementById("image-viewer-image");
 const imageViewerCloseButton = document.getElementById("image-viewer-close");
@@ -210,6 +211,56 @@ const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
+
+let currentFeatureId = null;
+
+// Initialize image viewer gallery tracking
+if (imageViewer) {
+	imageViewer.currentImageUrls = [];
+	imageViewer.currentImageIndex = 0;
+}
+
+async function copyPermalinkToClipboard(fid) {
+	if (!fid) return;
+	
+	const url = new URL(window.location);
+	url.hash = `feature=${encodeURIComponent(fid)}`;
+	const permalink = url.toString();
+	
+	try {
+		await navigator.clipboard.writeText(permalink);
+		
+		// Visual feedback
+		if (shareButton) {
+			shareButton.classList.add("copied");
+			const originalLabel = shareButton.getAttribute("aria-label");
+			shareButton.setAttribute("aria-label", "Lien copié!");
+			shareButton.textContent = "✓";
+			
+			window.setTimeout(() => {
+				shareButton.classList.remove("copied");
+				shareButton.setAttribute("aria-label", originalLabel);
+				// Restore SVG icon
+				shareButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+					<circle cx="18" cy="5" r="3"></circle>
+					<circle cx="6" cy="12" r="3"></circle>
+					<circle cx="18" cy="19" r="3"></circle>
+					<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+					<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+				</svg>`;
+			}, 2000);
+		}
+	} catch (error) {
+		console.warn("Impossible de copier le lien dans le presse-papiers", error);
+	}
+}
+
+function generatePermalinkUrl(fid) {
+	if (!fid) return null;
+	const url = new URL(window.location);
+	url.hash = `feature=${encodeURIComponent(fid)}`;
+	return url.toString();
+}
 
 const TYPE_LABELS = {
 	lavoir: "Lavoir",
@@ -681,12 +732,62 @@ function showPanelImagesLoading(fid) {
 	panelImages.classList.add("is-loading");
 }
 
-function openImageViewer(src, altText) {
+function openImageViewer(src, altText, imageUrls = [], currentIndex = 0) {
 	if (!imageViewer || !imageViewerImage) return;
+	
+	// Store the gallery info for navigation
+	imageViewer.currentImageUrls = imageUrls;
+	imageViewer.currentImageIndex = currentIndex;
+	
+	// Update image
 	imageViewerImage.src = src;
 	imageViewerImage.alt = altText || "Image agrandie";
+	
+	// Update caption
+	const captionElement = document.getElementById("image-viewer-caption");
+	if (captionElement) {
+		const captionText = captionTextFromUrl(src);
+		captionElement.textContent = captionText;
+	}
+	
+	// Update nav button states
+	updateImageViewerNavigation();
+	
 	imageViewer.classList.add("is-open");
 	imageViewer.setAttribute("aria-hidden", "false");
+}
+
+function navigateImageViewer(direction) {
+	if (!imageViewer || imageViewer.currentImageUrls.length === 0) return;
+	
+	let newIndex = imageViewer.currentImageIndex + direction;
+	
+	// Wrap around
+	if (newIndex < 0) {
+		newIndex = imageViewer.currentImageUrls.length - 1;
+	} else if (newIndex >= imageViewer.currentImageUrls.length) {
+		newIndex = 0;
+	}
+	
+	const newUrl = imageViewer.currentImageUrls[newIndex];
+	const newAlt = `Image ${newIndex + 1} sur ${imageViewer.currentImageUrls.length}`;
+	
+	openImageViewer(newUrl, newAlt, imageViewer.currentImageUrls, newIndex);
+}
+
+function updateImageViewerNavigation() {
+	if (!imageViewer) return;
+	
+	const prevBtn = document.getElementById("image-viewer-prev");
+	const nextBtn = document.getElementById("image-viewer-next");
+	const hasMultiple = imageViewer.currentImageUrls && imageViewer.currentImageUrls.length > 1;
+	
+	if (prevBtn) {
+		prevBtn.style.display = hasMultiple ? "flex" : "none";
+	}
+	if (nextBtn) {
+		nextBtn.style.display = hasMultiple ? "flex" : "none";
+	}
 }
 
 function closeImageViewer() {
@@ -817,7 +918,7 @@ function renderPanelImages(fidValue) {
 					: `Illustration du point ${fid}`;
 			image.src = url;
 			image.addEventListener("click", () => {
-				openImageViewer(url, image.alt);
+				openImageViewer(url, image.alt, urls, index);
 			});
 
 			const figure = document.createElement("figure");
@@ -885,8 +986,31 @@ if (locateUserButton) {
 	locateUserButton.addEventListener("click", requestUserLocation);
 }
 
+if (shareButton) {
+	shareButton.addEventListener("click", () => {
+		if (currentFeatureId) {
+			copyPermalinkToClipboard(currentFeatureId);
+		}
+	});
+}
+
 if (imageViewerCloseButton) {
 	imageViewerCloseButton.addEventListener("click", closeImageViewer);
+}
+
+const imageViewerPrevButton = document.getElementById("image-viewer-prev");
+const imageViewerNextButton = document.getElementById("image-viewer-next");
+
+if (imageViewerPrevButton) {
+	imageViewerPrevButton.addEventListener("click", () => {
+		navigateImageViewer(-1);
+	});
+}
+
+if (imageViewerNextButton) {
+	imageViewerNextButton.addEventListener("click", () => {
+		navigateImageViewer(1);
+	});
 }
 
 if (imageViewer) {
@@ -900,8 +1024,71 @@ if (imageViewer) {
 window.addEventListener("keydown", (event) => {
 	if (event.key === "Escape") {
 		closeImageViewer();
+	} else if (imageViewer && imageViewer.classList.contains("is-open")) {
+		if (event.key === "ArrowLeft") {
+			event.preventDefault();
+			navigateImageViewer(-1);
+		} else if (event.key === "ArrowRight") {
+			event.preventDefault();
+			navigateImageViewer(1);
+		}
 	}
 });
+
+function selectLayerByFeatureId(fid) {
+	if (!fid) return false;
+	
+	console.log("Looking for feature ID:", fid);
+	console.log("Available entries:", markerEntries.length);
+	
+	const entry = markerEntries.find((e) => {
+		const entryFid = safeText(e.feature.properties?.fid, "");
+		if (entryFid === fid) {
+			return true;
+		}
+		return false;
+	});
+	
+	if (entry) {
+		console.log("Found feature:", entry.feature.properties?.nom);
+		
+		// Ensure the layer is in the visible group
+		if (!visibleLayerGroup.hasLayer(entry.layer)) {
+			visibleLayerGroup.addLayer(entry.layer);
+		}
+		
+		// Select the layer and update panel
+		selectLayer(entry.layer, entry.feature);
+		
+		// Zoom to the feature with good zoom level
+		const latlng = entry.layer.getLatLng();
+		if (latlng) {
+			console.log("Setting map view to:", latlng);
+			map.setView(latlng, 15, { animate: true });
+		}
+		return true;
+	}
+	
+	console.log("Feature not found");
+	return false;
+}
+
+function handlePermalinkHash() {
+	const hash = window.location.hash;
+	if (!hash) return;
+	
+	const params = new URLSearchParams(hash.substring(1));
+	const featureId = params.get("feature");
+	
+	if (featureId) {
+		// Decode the feature ID in case it was encoded
+		const decodedId = decodeURIComponent(featureId);
+		return selectLayerByFeatureId(decodedId);
+	}
+	return false;
+}
+
+window.addEventListener("hashchange", handlePermalinkHash);
 
 loadImageCredits();
 loadHydroLayers();
@@ -1051,6 +1238,7 @@ function clearSelection() {
 		selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
 	}
 	selectedLayer = null;
+	currentFeatureId = null;
 	resetPanel();
 }
 
@@ -1124,6 +1312,7 @@ function selectLayer(layer, feature) {
 	selectedLayer = layer;
 	layer.setStyle(selectedMarkerStyle(defaultStyleByLayer.get(layer) || markerStyleFromFeature(feature)));
 
+	currentFeatureId = feature.properties?.fid || null;
 	updatePanel(feature);
 }
 
@@ -1180,6 +1369,16 @@ fetch("./data/data.geojson")
 
 		renderVisibleLayers(true);
 		refreshMarkerColors();
+		
+		// Handle permalink if present in URL (with fallback timing)
+		let permalinkHandled = false;
+		const attemptHandlePermalink = () => {
+			if (!permalinkHandled) {
+				permalinkHandled = handlePermalinkHash();
+			}
+		};
+		window.setTimeout(attemptHandlePermalink, 50);
+		window.setTimeout(attemptHandlePermalink, 300);
 
 		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision].forEach((element) => {
 			if (!element) return;

@@ -73,8 +73,19 @@
 			<div class="panel-column">
 				<aside class="info-panel" id="info-panel" aria-live="polite">
 					<div class="panel-header">
-						<h2>Détails</h2>
-						<p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
+						<div>
+							<h2>Détails</h2>
+							<p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
+						</div>
+						<button type="button" id="share-button" class="share-button" aria-label="Copier le lien du point" title="Copier le lien du point">
+							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+								<circle cx="18" cy="5" r="3"></circle>
+								<circle cx="6" cy="12" r="3"></circle>
+								<circle cx="18" cy="19" r="3"></circle>
+								<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+								<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+							</svg>
+						</button>
 					</div>
 					<h3 id="feature-title">Aucun point sélectionné</h3>
 					<p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
@@ -126,7 +137,20 @@
 
 	<div id="image-viewer" class="image-viewer" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Agrandissement de l'image">
 		<button type="button" id="image-viewer-close" class="image-viewer__close" aria-label="Fermer l'image">Fermer</button>
-		<img id="image-viewer-image" class="image-viewer__image" alt="">
+		<button type="button" id="image-viewer-prev" class="image-viewer__nav image-viewer__nav--prev" aria-label="Image précédente">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="15 18 9 12 15 6"></polyline>
+			</svg>
+		</button>
+		<div class="image-viewer__container">
+			<img id="image-viewer-image" class="image-viewer__image" alt="">
+			<p id="image-viewer-caption" class="image-viewer__caption"></p>
+		</div>
+		<button type="button" id="image-viewer-next" class="image-viewer__nav image-viewer__nav--next" aria-label="Image suivante">
+			<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+				<polyline points="9 18 15 12 9 6"></polyline>
+			</svg>
+		</button>
 	</div>
 </body>
 </html>

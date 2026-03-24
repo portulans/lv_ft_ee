@@ -389,7 +389,8 @@ function formatFrenchDateTime(isoDate) {
 	const datePart = new Intl.DateTimeFormat("fr-FR", {
 		day: "2-digit",
 		month: "long",
-		year: "numeric"
+		year: "numeric",
+		timeZone: "Europe/Paris"
 	}).format(date);
 
 	const timePart = new Intl.DateTimeFormat("fr-FR", {

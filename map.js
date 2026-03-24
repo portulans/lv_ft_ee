@@ -207,6 +207,7 @@ const searchIdInput = document.getElementById("search-id");
 const filterType = document.getElementById("filter-type");
 const filterStatus = document.getElementById("filter-status");
 const filterPrecision = document.getElementById("filter-precision");
+const filterSources = document.getElementById("filter-sources");
 const filterImages = document.getElementById("filter-images");
 const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
@@ -524,6 +525,17 @@ function toYesNo(value) {
 	if (value === true) return "Oui";
 	if (value === false) return "Non";
 	return "Inconnu";
+}
+
+function isSourcePresent(value) {
+	if (value === true) return true;
+	if (value === false || value === null || value === undefined) return false;
+	if (typeof value === "number") return value === 1;
+	if (typeof value === "string") {
+		const normalized = normalizeText(value);
+		return normalized === "true" || normalized === "1" || normalized === "oui";
+	}
+	return false;
 }
 
 function safeText(value, fallback = "Non renseigne") {
@@ -1308,6 +1320,7 @@ function matchesCurrentFilters(entry) {
 	const selectedType = normalizeText(filterType.value);
 	const selectedStatus = normalizeText(filterStatus.value);
 	const selectedPrecision = normalizeText(filterPrecision.value);
+	const selectedSource = filterSources?.value || "";
 	const selectedMedia = filterImages?.value || "";
 
 	const hasType = !selectedType || entry.typeValue === selectedType;
@@ -1315,6 +1328,17 @@ function matchesCurrentFilters(entry) {
 	const hasPrecision = !selectedPrecision || entry.precisionValue === selectedPrecision;
 	const hasQuery = !query || entry.searchValue.includes(query);
 	const hasId = !queryId || entry.idValue.includes(queryId);
+
+	let hasSource = true;
+	if (selectedSource === "plan-1910") {
+		hasSource = entry.hasPlan1910;
+	} else if (selectedSource === "cadastre-1842") {
+		hasSource = entry.hasCadastre1842;
+	} else if (selectedSource === "both-sources") {
+		hasSource = entry.hasPlan1910 && entry.hasCadastre1842;
+	} else if (selectedSource === "no-sources") {
+		hasSource = !entry.hasPlan1910 && !entry.hasCadastre1842;
+	}
 	
 	let hasMedia = true;
 	// Convert featureId to string to match the sets (which store string IDs from credits.json)
@@ -1330,7 +1354,7 @@ function matchesCurrentFilters(entry) {
 		hasMedia = !featuresWithAnyMedia.has(featureId);
 	}
 
-	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasMedia;
+	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasSource && hasMedia;
 }
 
 function renderVisibleLayers(zoomToVisible) {
@@ -1404,6 +1428,8 @@ fetch("./data/data.geojson")
 					typeValue: normalizeText(feature.properties?.type),
 					statusValue: normalizeText(feature.properties?.statut),
 					precisionValue: normalizeText(feature.properties?.precision_geom),
+					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
+					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
 					searchValue: normalizeText(`${title} ${altName}`)
 				});
 
@@ -1430,7 +1456,7 @@ fetch("./data/data.geojson")
 		window.setTimeout(attemptHandlePermalink, 50);
 		window.setTimeout(attemptHandlePermalink, 300);
 
-		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterImages].forEach((element) => {
+		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterSources, filterImages].forEach((element) => {
 			if (!element) return;
 			element.addEventListener("input", () => {
 				renderVisibleLayers(false);
@@ -1453,6 +1479,9 @@ fetch("./data/data.geojson")
 			filterType.value = "";
 			filterStatus.value = "";
 			filterPrecision.value = "";
+			if (filterSources) {
+				filterSources.value = "";
+			}
 			if (filterImages) {
 				filterImages.value = "";
 			}

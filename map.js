@@ -209,6 +209,8 @@ const filterStatus = document.getElementById("filter-status");
 const filterPrecision = document.getElementById("filter-precision");
 const filterSources = document.getElementById("filter-sources");
 const filterImages = document.getElementById("filter-images");
+const filterAcces = document.getElementById("filter-acces");
+const filterEtat = document.getElementById("filter-etat");
 const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
@@ -1376,6 +1378,29 @@ function uniqueSortedValues(features, propertyKey) {
 	);
 }
 
+function uniqueSortedValuesWithInconnu(features, propertyKey) {
+	const values = [];
+	let hasEmpty = false;
+
+	features.forEach((feature) => {
+		const value = feature.properties?.[propertyKey];
+		const safeValue = safeText(value, "");
+		if (safeValue.length > 0) {
+			values.push(safeValue);
+		} else {
+			hasEmpty = true;
+		}
+	});
+
+	if (hasEmpty) {
+		values.push("inconnu");
+	}
+
+	return Array.from(new Set(values)).sort((a, b) =>
+		a.localeCompare(b, "fr", { sensitivity: "base" })
+	);
+}
+
 function fillSelectOptions(selectElement, values, allLabel) {
 	selectElement.innerHTML = "";
 
@@ -1392,20 +1417,39 @@ function fillSelectOptions(selectElement, values, allLabel) {
 	});
 }
 
+function matchesTextPattern(text, pattern) {
+	if (!pattern) return true;
+	
+	try {
+		// Try to use pattern as a regex
+		const regex = new RegExp(pattern, "i");
+		return regex.test(text);
+	} catch (error) {
+		// If regex is invalid, fall back to substring matching
+		return text.includes(pattern);
+	}
+}
+
 function matchesCurrentFilters(entry) {
-	const query = normalizeText(searchInput.value);
-	const queryId = normalizeText(searchIdInput?.value);
+	const queryInput = searchInput.value.trim();
+	const queryIdInput = searchIdInput?.value.trim();
 	const selectedType = normalizeText(filterType.value);
 	const selectedStatus = normalizeText(filterStatus.value);
 	const selectedPrecision = normalizeText(filterPrecision.value);
 	const selectedSource = filterSources?.value || "";
 	const selectedMedia = filterImages?.value || "";
+	const selectedAcces = normalizeText(filterAcces?.value);
+	const selectedEtat = normalizeText(filterEtat?.value);
 
 	const hasType = !selectedType || entry.typeValue === selectedType;
 	const hasStatus = !selectedStatus || entry.statusValue === selectedStatus;
 	const hasPrecision = !selectedPrecision || entry.precisionValue === selectedPrecision;
-	const hasQuery = !query || entry.searchValue.includes(query);
-	const hasId = !queryId || entry.idValue.includes(queryId);
+	const hasQuery = !queryInput || matchesTextPattern(entry.searchValue, queryInput);
+	const hasId = !queryIdInput || matchesTextPattern(entry.idValue, queryIdInput);
+	const accesValue = normalizeText(entry.accesValue || "inconnu");
+	const etatValue = normalizeText(entry.etatValue || "inconnu");
+	const hasAcces = !selectedAcces || accesValue === selectedAcces;
+	const hasEtat = !selectedEtat || etatValue === selectedEtat;
 
 	let hasSource = true;
 	if (selectedSource === "plan-1910") {
@@ -1432,7 +1476,7 @@ function matchesCurrentFilters(entry) {
 		hasMedia = !featuresWithAnyMedia.has(featureId);
 	}
 
-	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasSource && hasMedia;
+	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasSource && hasMedia && hasAcces && hasEtat;
 }
 
 function renderVisibleLayers(zoomToVisible) {
@@ -1480,6 +1524,12 @@ fetch("./data/data.geojson")
 		fillSelectOptions(filterType, uniqueSortedValues(features, "type"), "Tous");
 		fillSelectOptions(filterStatus, uniqueSortedValues(features, "statut"), "Tous");
 		fillSelectOptions(filterPrecision, uniqueSortedValues(features, "precision_geom"), "Toutes");
+		if (filterAcces) {
+			fillSelectOptions(filterAcces, uniqueSortedValuesWithInconnu(features, "acces"), "Tous");
+		}
+		if (filterEtat) {
+			fillSelectOptions(filterEtat, uniqueSortedValuesWithInconnu(features, "existant_etat"), "Tous");
+		}
 
 		const pointsLayer = L.geoJSON(geojson, {
 			pointToLayer(feature, latlng) {
@@ -1506,6 +1556,8 @@ fetch("./data/data.geojson")
 					typeValue: normalizeText(feature.properties?.type),
 					statusValue: normalizeText(feature.properties?.statut),
 					precisionValue: normalizeText(feature.properties?.precision_geom),
+					accesValue: normalizeText(feature.properties?.acces),
+					etatValue: normalizeText(feature.properties?.existant_etat),
 					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
 					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
 					searchValue: normalizeText(`${title} ${altName}`)
@@ -1534,7 +1586,7 @@ fetch("./data/data.geojson")
 		window.setTimeout(attemptHandlePermalink, 50);
 		window.setTimeout(attemptHandlePermalink, 300);
 
-		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterSources, filterImages].forEach((element) => {
+		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterSources, filterImages, filterAcces, filterEtat].forEach((element) => {
 			if (!element) return;
 			element.addEventListener("input", () => {
 				renderVisibleLayers(false);
@@ -1562,6 +1614,12 @@ fetch("./data/data.geojson")
 			}
 			if (filterImages) {
 				filterImages.value = "";
+			}
+			if (filterAcces) {
+				filterAcces.value = "";
+			}
+			if (filterEtat) {
+				filterEtat.value = "";
 			}
 			colorMode.value = DEFAULT_COLOR_MODE;
 			refreshMarkerColors();

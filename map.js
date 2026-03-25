@@ -1228,6 +1228,14 @@ function panelRow(label, value) {
 
 	panelMeta.appendChild(dt);
 	panelMeta.appendChild(dd);
+
+	return { dt, dd };
+}
+
+function hasPanelValue(value) {
+	if (value === null || value === undefined) return false;
+	const text = String(value).trim();
+	return text.length > 0;
 }
 
 function formatCoordinates(feature) {
@@ -1255,6 +1263,26 @@ function updatePanel(feature) {
 	panelMeta.innerHTML = "";
 	panelRow("Identifiant", safeText(props.fid));
 	panelRow("Statut", safeText(props.statut));
+
+	if (hasPanelValue(props.existant_etat)) {
+		panelRow("Etat", safeText(props.existant_etat));
+	}
+
+	const accessValueRaw = hasPanelValue(props.acces)
+		? props.acces
+		: hasPanelValue(props.access)
+			? props.access
+			: null;
+
+	if (hasPanelValue(accessValueRaw)) {
+		const accessValue = safeText(accessValueRaw);
+		const { dd } = panelRow("Acces", accessValue);
+		if (normalizeText(accessValue) === "terrain prive") {
+			dd.style.color = "#b00020";
+			dd.style.fontWeight = "600";
+		}
+	}
+
 	panelRow("Précision des coordonnées", safeText(props.precision_geom));
 	panelRow("Source", safeText(props.source));
 	if (coordinatesText) {

@@ -381,7 +381,7 @@ const SOURCE_FILTER_OPTIONS = [
 const MEDIA_FILTER_OPTIONS = [
 	{ value: "photos-only", label: "Photos" },
 	{ value: "plans-only", label: "Plans cadastraux" },
-	{ value: "with-media", label: "Avec médias" },
+	/*{ value: "with-media", label: "Avec médias" },*/
 	{ value: "without-media", label: "Sans médias" }
 ];
 
@@ -1653,9 +1653,9 @@ function matchesCurrentFilters(entry) {
 			if (selectedMediaOption === "plans-only") {
 				return featuresWithPlans.has(featureId);
 			}
-			if (selectedMediaOption === "with-media") {
+			/*if (selectedMediaOption === "with-media") {
 				return featuresWithAnyMedia.has(featureId);
-			}
+			}*/
 			if (selectedMediaOption === "without-media") {
 				return !featuresWithAnyMedia.has(featureId);
 			}

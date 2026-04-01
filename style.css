@@ -74,6 +74,7 @@ h1 {
 .subtitle {
 	margin: 0;
 	color: var(--ink-soft);
+	max-width: 90ch;
 }
 
 .header-badges {
@@ -646,6 +647,16 @@ h1 {
 	color: var(--ink-soft);
 	background: rgba(243, 238, 226, 0.85);
 	border-top: 1px solid var(--line);
+}
+
+.feature-images__caption-link {
+	color: #066b62;
+	font-weight: 700;
+	text-decoration: underline;
+}
+
+.feature-images__caption-link:hover {
+	color: #0a7f74;
 }
 
 @keyframes feature-image-spin {

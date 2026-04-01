@@ -491,11 +491,14 @@ async function loadImageCredits() {
 			const imageId = safeText(entry?.id, "").trim();
 			const imageName = safeText(entry?.img, "").trim().toLowerCase();
 			const mediaType = safeText(entry?.type, "").trim().toLowerCase();
+			const mediaLink = safeText(entry?.lien, "").trim();
 			
 			if (!imageName) return;
 			mapByImage.set(imageName, {
 				author: safeText(entry?.author, ""),
-				date: safeText(entry?.date, "")
+				date: safeText(entry?.date, ""),
+				type: mediaType,
+				lien: mediaLink
 			});
 
 			if (!imageId) return;
@@ -959,9 +962,13 @@ function imageNameFromUrl(url) {
 	return decodeURIComponent(parts[parts.length - 1] || "").toLowerCase();
 }
 
-function captionTextFromUrl(url) {
+function creditFromUrl(url) {
 	const imageName = imageNameFromUrl(url);
-	const credit = creditsByImageName.get(imageName);
+	return creditsByImageName.get(imageName) || null;
+}
+
+function captionTextFromUrl(url) {
+	const credit = creditFromUrl(url);
 	if (!credit) return "";
 
 	const author = safeText(credit.author, "");
@@ -970,6 +977,13 @@ function captionTextFromUrl(url) {
 		return `${author} - ${date}`;
 	}
 	return author || date || "";
+}
+
+function videoLinkFromUrl(url) {
+	const credit = creditFromUrl(url);
+	if (!credit) return "";
+	if (credit.type !== "screenshot") return "";
+	return safeText(credit.lien, "").trim();
 }
 
 function probeImage(url) {
@@ -1083,10 +1097,28 @@ function renderPanelImages(fidValue) {
 			figure.appendChild(image);
 
 			const captionText = captionTextFromUrl(url);
-			if (captionText) {
+			const videoLink = videoLinkFromUrl(url);
+			if (captionText || videoLink) {
 				const caption = document.createElement("figcaption");
 				caption.className = "feature-images__caption";
-				caption.textContent = captionText;
+				if (captionText) {
+					const textNode = document.createElement("span");
+					textNode.textContent = captionText;
+					caption.appendChild(textNode);
+				}
+
+				if (videoLink) {
+					if (captionText) {
+						caption.appendChild(document.createElement("br"));
+					}
+					const linkNode = document.createElement("a");
+					linkNode.className = "feature-images__caption-link";
+					linkNode.href = videoLink;
+					linkNode.target = "_blank";
+					linkNode.rel = "noopener noreferrer";
+					linkNode.textContent = "Voir la vidéo";
+					caption.appendChild(linkNode);
+				}
 				figure.appendChild(caption);
 			}
 

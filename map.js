@@ -365,6 +365,7 @@ let creditsByImageName = new Map();
 let imageNamesById = new Map();
 const panelImagesCache = new Map();
 const featuresWithPhotos = new Set();
+const featuresWithAerialPhotos = new Set();
 const featuresWithPlans = new Set();
 const featuresWithAnyMedia = new Set();
 let hydroSurfacesLayer = null;
@@ -380,6 +381,7 @@ const SOURCE_FILTER_OPTIONS = [
 ];
 const MEDIA_FILTER_OPTIONS = [
 	{ value: "photos-only", label: "Photos" },
+	{ value: "aerial-photos", label: "Photos aériennes" },
 	{ value: "plans-only", label: "Plans cadastraux" },
 	/*{ value: "with-media", label: "Avec médias" },*/
 	{ value: "without-media", label: "Sans médias" }
@@ -514,6 +516,12 @@ async function loadImageCredits() {
 			
 			if (mediaType === "photo") {
 				featuresWithPhotos.add(imageId);
+				if (!photosByFeature.has(imageId)) {
+					photosByFeature.set(imageId, []);
+				}
+				photosByFeature.get(imageId).push(imageName);
+			} else if (mediaType === "photo aerienne" || mediaType === "photo aérienne") {
+				featuresWithAerialPhotos.add(imageId);
 				if (!photosByFeature.has(imageId)) {
 					photosByFeature.set(imageId, []);
 				}
@@ -979,11 +987,22 @@ function captionTextFromUrl(url) {
 	return author || date || "";
 }
 
-function videoLinkFromUrl(url) {
+function captionLinkFromUrl(url) {
 	const credit = creditFromUrl(url);
-	if (!credit) return "";
-	if (credit.type !== "screenshot") return "";
-	return safeText(credit.lien, "").trim();
+	if (!credit) return null;
+
+	const link = safeText(credit.lien, "").trim();
+	if (!link) return null;
+
+	if (credit.type === "screenshot") {
+		return { href: link, label: "Voir la vidéo" };
+	}
+
+	if (credit.type === "photo") {
+		return { href: link, label: "Voir l'image" };
+	}
+
+	return null;
 }
 
 function probeImage(url) {
@@ -1097,8 +1116,8 @@ function renderPanelImages(fidValue) {
 			figure.appendChild(image);
 
 			const captionText = captionTextFromUrl(url);
-			const videoLink = videoLinkFromUrl(url);
-			if (captionText || videoLink) {
+			const captionLink = captionLinkFromUrl(url);
+			if (captionText || captionLink) {
 				const caption = document.createElement("figcaption");
 				caption.className = "feature-images__caption";
 				if (captionText) {
@@ -1107,16 +1126,16 @@ function renderPanelImages(fidValue) {
 					caption.appendChild(textNode);
 				}
 
-				if (videoLink) {
+				if (captionLink) {
 					if (captionText) {
 						caption.appendChild(document.createElement("br"));
 					}
 					const linkNode = document.createElement("a");
 					linkNode.className = "feature-images__caption-link";
-					linkNode.href = videoLink;
+					linkNode.href = captionLink.href;
 					linkNode.target = "_blank";
 					linkNode.rel = "noopener noreferrer";
-					linkNode.textContent = "Voir la vidéo";
+					linkNode.textContent = captionLink.label;
 					caption.appendChild(linkNode);
 				}
 				figure.appendChild(caption);
@@ -1649,6 +1668,9 @@ function matchesCurrentFilters(entry) {
 		hasMedia = selectedMedia.some((selectedMediaOption) => {
 			if (selectedMediaOption === "photos-only") {
 				return featuresWithPhotos.has(featureId);
+			}
+			if (selectedMediaOption === "aerial-photos") {
+				return featuresWithAerialPhotos.has(featureId);
 			}
 			if (selectedMediaOption === "plans-only") {
 				return featuresWithPlans.has(featureId);

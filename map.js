@@ -1322,7 +1322,7 @@ function updatePanel(feature) {
 
 	panelType.textContent = typeLabel(props.type);
 	panelTitle.textContent = safeText(props.nom, "Nom non renseigné");
-	panelSubtitle.textContent = safeText(props["alt-name"], "Aucun nom alternatif");
+	panelSubtitle.textContent = safeText(props["alt-name"], "");
 
 	panelMeta.innerHTML = "";
 	panelRow("Identifiant", safeText(props.fid));

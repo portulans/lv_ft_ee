@@ -17,7 +17,7 @@
 		<div>
 			<p class="eyebrow"></p>
 			<h1>Lavoirs et fontaines d'Ouessant</h1>
-			<p class="subtitle">Informations détaillées sur les lavoirs et fontaines recensées affichées dans le panneau latéral (cliquer sur un point pour afficher les détails).</p>
+			<p class="subtitle">Cartographie des lavoirs et fontaines de l'île d'Ouessant. Cette carte contient des informations sur des lavoirs et fontaines encore existantes mais aussi sur des éléments (potentiellement) disparus (doués, mares, etc.) depuis le 19ème siècle.</p>
 		</div>
 		<div class="header-badges">
 			<span class="badge">Dernière mise à jour : <span id="date-maj">24 mars 2026 à 21h44</span></span>
@@ -36,56 +36,99 @@
 						<span>Filtrer par ID</span>
 						<input type="search" id="search-id" placeholder="ID du point..." autocomplete="off">
 					</label>
-					<label class="toolbar-field" for="filter-type">
+					<div class="toolbar-field toolbar-field--type">
 						<span>Type</span>
-						<select id="filter-type">
-							<option value="">Tous</option>
-						</select>
-					</label>
-					<label class="toolbar-field" for="filter-status">
+						<details id="filter-type" class="type-dropdown" role="group" aria-label="Filtrer par type">
+							<summary class="type-dropdown__summary">
+								<span id="filter-type-summary">Tous</span>
+							</summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-type-all">
+									<input type="checkbox" id="filter-type-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-type-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
 						<span>Statut</span>
-						<select id="filter-status">
-							<option value="">Tous</option>
-						</select>
-					</label>			
-				<label class="toolbar-field" for="filter-etat">
-					<span>État de conservation</span>
-					<select id="filter-etat">
-						<option value="">Tous</option>
-					</select>
-				</label>
-				<label class="toolbar-field" for="filter-precision">
+						<details id="filter-status" class="type-dropdown" role="group" aria-label="Filtrer par statut">
+							<summary class="type-dropdown__summary"><span id="filter-status-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-status-all">
+									<input type="checkbox" id="filter-status-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-status-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
+						<span>État de conservation</span>
+						<details id="filter-etat" class="type-dropdown" role="group" aria-label="Filtrer par état de conservation">
+							<summary class="type-dropdown__summary"><span id="filter-etat-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-etat-all">
+									<input type="checkbox" id="filter-etat-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-etat-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
 						<span>Précision de la localisation</span>
-						<select id="filter-precision">
-							<option value="">Toutes</option>
-						</select>
-					</label>
-				<label class="toolbar-field" for="filter-acces">
-					<span>Accessibilité</span>
-					<select id="filter-acces">
-						<option value="">Tous</option>
-					</select>
-				</label>
-					<label class="toolbar-field" for="filter-sources">
+						<details id="filter-precision" class="type-dropdown" role="group" aria-label="Filtrer par précision de localisation">
+							<summary class="type-dropdown__summary"><span id="filter-precision-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-precision-all">
+									<input type="checkbox" id="filter-precision-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-precision-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
+						<span>Accessibilité</span>
+						<details id="filter-acces" class="type-dropdown" role="group" aria-label="Filtrer par accessibilité">
+							<summary class="type-dropdown__summary"><span id="filter-acces-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-acces-all">
+									<input type="checkbox" id="filter-acces-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-acces-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
 						<span>Sources historiques</span>
-						<select id="filter-sources">
-							<option value="">Toutes</option>
-							<option value="plan-1910">Plan d'ensemble (1910)</option>
-							<option value="cadastre-1842">Cadastre parcellaire (1842)</option>
-							<option value="both-sources">Toutes</option>
-							<option value="no-sources">Aucune source historique</option>
-						</select>
-					</label>
-					<label class="toolbar-field" for="filter-images">
+						<details id="filter-sources" class="type-dropdown" role="group" aria-label="Filtrer par sources historiques">
+							<summary class="type-dropdown__summary"><span id="filter-sources-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-sources-all">
+									<input type="checkbox" id="filter-sources-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-sources-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>
+					<div class="toolbar-field toolbar-field--multi">
 						<span>Médias</span>
-						<select id="filter-images">
-							<option value="">Tous</option>
-							<option value="photos-only">Photos</option>
-							<option value="plans-only">Plans cadastraux</option>
-							<option value="with-media">Avec médias</option>
-							<option value="without-media">Sans médias</option>
-						</select>
-					</label>				
+						<details id="filter-images" class="type-dropdown" role="group" aria-label="Filtrer par médias">
+							<summary class="type-dropdown__summary"><span id="filter-images-summary">Tous</span></summary>
+							<div class="type-dropdown__panel">
+								<label class="checkbox-option checkbox-option--all" for="filter-images-all">
+									<input type="checkbox" id="filter-images-all" checked>
+									<span>Tous</span>
+								</label>
+								<div id="filter-images-options" class="type-dropdown__options"></div>
+							</div>
+						</details>
+					</div>				
 				<label class="toolbar-field" for="color-mode">
 						<span>Couleur des points</span>
 						<select id="color-mode">

@@ -205,12 +205,33 @@ const imageViewerCloseButton = document.getElementById("image-viewer-close");
 const searchInput = document.getElementById("search-toponym");
 const searchIdInput = document.getElementById("search-id");
 const filterType = document.getElementById("filter-type");
+const filterTypeSummary = document.getElementById("filter-type-summary");
+const filterTypeAll = document.getElementById("filter-type-all");
+const filterTypeOptions = document.getElementById("filter-type-options");
 const filterStatus = document.getElementById("filter-status");
+const filterStatusSummary = document.getElementById("filter-status-summary");
+const filterStatusAll = document.getElementById("filter-status-all");
+const filterStatusOptions = document.getElementById("filter-status-options");
 const filterPrecision = document.getElementById("filter-precision");
+const filterPrecisionSummary = document.getElementById("filter-precision-summary");
+const filterPrecisionAll = document.getElementById("filter-precision-all");
+const filterPrecisionOptions = document.getElementById("filter-precision-options");
 const filterSources = document.getElementById("filter-sources");
+const filterSourcesSummary = document.getElementById("filter-sources-summary");
+const filterSourcesAll = document.getElementById("filter-sources-all");
+const filterSourcesOptions = document.getElementById("filter-sources-options");
 const filterImages = document.getElementById("filter-images");
+const filterImagesSummary = document.getElementById("filter-images-summary");
+const filterImagesAll = document.getElementById("filter-images-all");
+const filterImagesOptions = document.getElementById("filter-images-options");
 const filterAcces = document.getElementById("filter-acces");
+const filterAccesSummary = document.getElementById("filter-acces-summary");
+const filterAccesAll = document.getElementById("filter-acces-all");
+const filterAccesOptions = document.getElementById("filter-acces-options");
 const filterEtat = document.getElementById("filter-etat");
+const filterEtatSummary = document.getElementById("filter-etat-summary");
+const filterEtatAll = document.getElementById("filter-etat-all");
+const filterEtatOptions = document.getElementById("filter-etat-options");
 const colorMode = document.getElementById("color-mode");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
@@ -273,7 +294,7 @@ const TYPE_LABELS = {
 	lavoir_fontaine: "Lavoir et fontaine",
 	"lavoir en bordure de greve": "Lavoir en bordure de grève",
 	aiguade: "Aiguade",
-	"doué":"Doué",
+	"doué":"Douet",
 	routoir: "Routoir",
 	marre: "Mare",
 	inconnu: "Type inconnu"
@@ -352,6 +373,17 @@ let hydroTronconsLayer = null;
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 const MAX_PANEL_NUMBERED_IMAGES = 12;
 const DEFAULT_COLOR_MODE = "type";
+const SOURCE_FILTER_OPTIONS = [
+	{ value: "plan-1910", label: "Plan d'ensemble (1910)" },
+	{ value: "cadastre-1842", label: "Cadastre parcellaire (1842)" },
+	{ value: "no-sources", label: "Aucune source historique" }
+];
+const MEDIA_FILTER_OPTIONS = [
+	{ value: "photos-only", label: "Photos" },
+	{ value: "plans-only", label: "Plans cadastraux" },
+	{ value: "with-media", label: "Avec médias" },
+	{ value: "without-media", label: "Sans médias" }
+];
 
 if (colorMode) {
 	colorMode.value = DEFAULT_COLOR_MODE;
@@ -1429,20 +1461,105 @@ function uniqueSortedValuesWithInconnu(features, propertyKey) {
 	);
 }
 
-function fillSelectOptions(selectElement, values, allLabel) {
-	selectElement.innerHTML = "";
-
-	const allOption = document.createElement("option");
-	allOption.value = "";
-	allOption.textContent = allLabel;
-	selectElement.appendChild(allOption);
+function fillCheckboxOptions(container, values) {
+	if (!container) return;
+	container.innerHTML = "";
+	const containerId = container.id || "filter-options";
 
 	values.forEach((value) => {
-		const option = document.createElement("option");
-		option.value = value;
-		option.textContent = value;
-		selectElement.appendChild(option);
+		const normalizedValue = normalizeText(value);
+		const optionId = `${containerId}-${normalizedValue.replace(/[^a-z0-9]+/g, "-") || "value"}`;
+
+		const optionLabel = document.createElement("label");
+		optionLabel.className = "checkbox-option";
+		optionLabel.setAttribute("for", optionId);
+
+		const optionInput = document.createElement("input");
+		optionInput.type = "checkbox";
+		optionInput.id = optionId;
+		optionInput.name = "filter-type-option";
+		optionInput.value = value;
+		optionInput.checked = true;
+
+		const optionText = document.createElement("span");
+		optionText.textContent = value;
+
+		optionLabel.append(optionInput, optionText);
+		container.appendChild(optionLabel);
 	});
+}
+
+function fillCheckboxOptionsFromEntries(container, entries) {
+	if (!container) return;
+	container.innerHTML = "";
+	const containerId = container.id || "filter-options";
+
+	entries.forEach((entry) => {
+		const normalizedValue = normalizeText(entry.value);
+		const optionId = `${containerId}-${normalizedValue.replace(/[^a-z0-9]+/g, "-") || "value"}`;
+
+		const optionLabel = document.createElement("label");
+		optionLabel.className = "checkbox-option";
+		optionLabel.setAttribute("for", optionId);
+
+		const optionInput = document.createElement("input");
+		optionInput.type = "checkbox";
+		optionInput.id = optionId;
+		optionInput.name = "filter-option";
+		optionInput.value = entry.value;
+		optionInput.checked = true;
+
+		const optionText = document.createElement("span");
+		optionText.textContent = entry.label;
+
+		optionLabel.append(optionInput, optionText);
+		container.appendChild(optionLabel);
+	});
+}
+
+function getSelectedDropdownValues(container, shouldNormalize = true) {
+	if (!container) return [];
+	return Array.from(
+		container.querySelectorAll('input[type="checkbox"]:checked')
+	).map((input) => (shouldNormalize ? normalizeText(input.value) : input.value));
+}
+
+function setAllDropdownCheckboxes(container, checked) {
+	if (!container) return;
+	container
+		.querySelectorAll('input[type="checkbox"]')
+		.forEach((input) => {
+			input.checked = checked;
+		});
+}
+
+function syncDropdownAllCheckboxState(allCheckbox, optionsContainer, summaryElement, singularLabel, pluralLabel) {
+	if (!allCheckbox || !optionsContainer) return;
+
+	const checkboxes = Array.from(optionsContainer.querySelectorAll('input[type="checkbox"]'));
+	if (!checkboxes.length) {
+		allCheckbox.checked = false;
+		allCheckbox.indeterminate = false;
+		if (summaryElement) {
+			summaryElement.textContent = "Aucun";
+		}
+		return;
+	}
+
+	const checkedCount = checkboxes.filter((input) => input.checked).length;
+	allCheckbox.checked = checkedCount === checkboxes.length;
+	allCheckbox.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length;
+
+	if (summaryElement) {
+		if (checkedCount === checkboxes.length) {
+			summaryElement.textContent = "Tous";
+		} else if (checkedCount === 0) {
+			summaryElement.textContent = "Aucun";
+		} else {
+			const label = checkedCount > 1 ? pluralLabel : singularLabel;
+			summaryElement.textContent = `${checkedCount} ${label}`;
+		}
+	}
 }
 
 function matchesTextPattern(text, pattern) {
@@ -1461,47 +1578,57 @@ function matchesTextPattern(text, pattern) {
 function matchesCurrentFilters(entry) {
 	const queryInput = searchInput.value.trim();
 	const queryIdInput = searchIdInput?.value.trim();
-	const selectedType = normalizeText(filterType.value);
-	const selectedStatus = normalizeText(filterStatus.value);
-	const selectedPrecision = normalizeText(filterPrecision.value);
-	const selectedSource = filterSources?.value || "";
-	const selectedMedia = filterImages?.value || "";
-	const selectedAcces = normalizeText(filterAcces?.value);
-	const selectedEtat = normalizeText(filterEtat?.value);
+	const selectedTypes = getSelectedDropdownValues(filterTypeOptions, true);
+	const selectedStatuses = getSelectedDropdownValues(filterStatusOptions, true);
+	const selectedPrecisions = getSelectedDropdownValues(filterPrecisionOptions, true);
+	const selectedSources = getSelectedDropdownValues(filterSourcesOptions, false);
+	const selectedMedia = getSelectedDropdownValues(filterImagesOptions, false);
+	const selectedAcces = getSelectedDropdownValues(filterAccesOptions, true);
+	const selectedEtat = getSelectedDropdownValues(filterEtatOptions, true);
 
-	const hasType = !selectedType || entry.typeValue === selectedType;
-	const hasStatus = !selectedStatus || entry.statusValue === selectedStatus;
-	const hasPrecision = !selectedPrecision || entry.precisionValue === selectedPrecision;
+	const hasType = selectedTypes.length === 0 || selectedTypes.includes(entry.typeValue);
+	const hasStatus = selectedStatuses.length === 0 || selectedStatuses.includes(entry.statusValue);
+	const hasPrecision = selectedPrecisions.length === 0 || selectedPrecisions.includes(entry.precisionValue);
 	const hasQuery = !queryInput || matchesTextPattern(entry.searchValue, queryInput);
 	const hasId = !queryIdInput || matchesTextPattern(entry.idValue, queryIdInput);
 	const accesValue = normalizeText(entry.accesValue || "inconnu");
 	const etatValue = normalizeText(entry.etatValue || "inconnu");
-	const hasAcces = !selectedAcces || accesValue === selectedAcces;
-	const hasEtat = !selectedEtat || etatValue === selectedEtat;
+	const hasAcces = selectedAcces.length === 0 || selectedAcces.includes(accesValue);
+	const hasEtat = selectedEtat.length === 0 || selectedEtat.includes(etatValue);
 
-	let hasSource = true;
-	if (selectedSource === "plan-1910") {
-		hasSource = entry.hasPlan1910;
-	} else if (selectedSource === "cadastre-1842") {
-		hasSource = entry.hasCadastre1842;
-	} else if (selectedSource === "both-sources") {
-		hasSource = entry.hasPlan1910 && entry.hasCadastre1842;
-	} else if (selectedSource === "no-sources") {
-		hasSource = !entry.hasPlan1910 && !entry.hasCadastre1842;
-	}
+	const hasSource = selectedSources.length === 0 || selectedSources.some((selectedSource) => {
+		if (selectedSource === "plan-1910") {
+			return entry.hasPlan1910;
+		}
+		if (selectedSource === "cadastre-1842") {
+			return entry.hasCadastre1842;
+		}
+		if (selectedSource === "no-sources") {
+			return !entry.hasPlan1910 && !entry.hasCadastre1842;
+		}
+		return false;
+	});
 	
-	let hasMedia = true;
+	let hasMedia = selectedMedia.length === 0;
 	// Convert featureId to string to match the sets (which store string IDs from credits.json)
 	const featureId = String(entry.featureId);
-	
-	if (selectedMedia === "photos-only") {
-		hasMedia = featuresWithPhotos.has(featureId);
-	} else if (selectedMedia === "plans-only") {
-		hasMedia = featuresWithPlans.has(featureId);
-	} else if (selectedMedia === "with-media") {
-		hasMedia = featuresWithAnyMedia.has(featureId);
-	} else if (selectedMedia === "without-media") {
-		hasMedia = !featuresWithAnyMedia.has(featureId);
+
+	if (selectedMedia.length > 0) {
+		hasMedia = selectedMedia.some((selectedMediaOption) => {
+			if (selectedMediaOption === "photos-only") {
+				return featuresWithPhotos.has(featureId);
+			}
+			if (selectedMediaOption === "plans-only") {
+				return featuresWithPlans.has(featureId);
+			}
+			if (selectedMediaOption === "with-media") {
+				return featuresWithAnyMedia.has(featureId);
+			}
+			if (selectedMediaOption === "without-media") {
+				return !featuresWithAnyMedia.has(featureId);
+			}
+			return false;
+		});
 	}
 
 	return hasType && hasStatus && hasPrecision && hasQuery && hasId && hasSource && hasMedia && hasAcces && hasEtat;
@@ -1549,15 +1676,21 @@ fetch("./data/data.geojson")
 	.then((geojson) => {
 		const features = geojson.features || [];
 
-		fillSelectOptions(filterType, uniqueSortedValues(features, "type"), "Tous");
-		fillSelectOptions(filterStatus, uniqueSortedValues(features, "statut"), "Tous");
-		fillSelectOptions(filterPrecision, uniqueSortedValues(features, "precision_geom"), "Toutes");
-		if (filterAcces) {
-			fillSelectOptions(filterAcces, uniqueSortedValuesWithInconnu(features, "acces"), "Tous");
-		}
-		if (filterEtat) {
-			fillSelectOptions(filterEtat, uniqueSortedValuesWithInconnu(features, "existant_etat"), "Tous");
-		}
+		fillCheckboxOptions(filterTypeOptions, uniqueSortedValues(features, "type"));
+		fillCheckboxOptions(filterStatusOptions, uniqueSortedValues(features, "statut"));
+		fillCheckboxOptions(filterPrecisionOptions, uniqueSortedValues(features, "precision_geom"));
+		fillCheckboxOptions(filterAccesOptions, uniqueSortedValuesWithInconnu(features, "acces"));
+		fillCheckboxOptions(filterEtatOptions, uniqueSortedValuesWithInconnu(features, "existant_etat"));
+		fillCheckboxOptionsFromEntries(filterSourcesOptions, SOURCE_FILTER_OPTIONS);
+		fillCheckboxOptionsFromEntries(filterImagesOptions, MEDIA_FILTER_OPTIONS);
+
+		syncDropdownAllCheckboxState(filterTypeAll, filterTypeOptions, filterTypeSummary, "type", "types");
+		syncDropdownAllCheckboxState(filterStatusAll, filterStatusOptions, filterStatusSummary, "statut", "statuts");
+		syncDropdownAllCheckboxState(filterPrecisionAll, filterPrecisionOptions, filterPrecisionSummary, "niveau", "niveaux");
+		syncDropdownAllCheckboxState(filterAccesAll, filterAccesOptions, filterAccesSummary, "accès", "accès");
+		syncDropdownAllCheckboxState(filterEtatAll, filterEtatOptions, filterEtatSummary, "état", "états");
+		syncDropdownAllCheckboxState(filterSourcesAll, filterSourcesOptions, filterSourcesSummary, "source", "sources");
+		syncDropdownAllCheckboxState(filterImagesAll, filterImagesOptions, filterImagesSummary, "média", "médias");
 
 		const pointsLayer = L.geoJSON(geojson, {
 			pointToLayer(feature, latlng) {
@@ -1614,7 +1747,38 @@ fetch("./data/data.geojson")
 		window.setTimeout(attemptHandlePermalink, 50);
 		window.setTimeout(attemptHandlePermalink, 300);
 
-		[searchInput, searchIdInput, filterType, filterStatus, filterPrecision, filterSources, filterImages, filterAcces, filterEtat].forEach((element) => {
+		const checkboxDropdownConfigs = [
+			{ details: filterType, all: filterTypeAll, options: filterTypeOptions, summary: filterTypeSummary, singular: "type", plural: "types" },
+			{ details: filterStatus, all: filterStatusAll, options: filterStatusOptions, summary: filterStatusSummary, singular: "statut", plural: "statuts" },
+			{ details: filterPrecision, all: filterPrecisionAll, options: filterPrecisionOptions, summary: filterPrecisionSummary, singular: "niveau", plural: "niveaux" },
+			{ details: filterAcces, all: filterAccesAll, options: filterAccesOptions, summary: filterAccesSummary, singular: "accès", plural: "accès" },
+			{ details: filterEtat, all: filterEtatAll, options: filterEtatOptions, summary: filterEtatSummary, singular: "état", plural: "états" },
+			{ details: filterSources, all: filterSourcesAll, options: filterSourcesOptions, summary: filterSourcesSummary, singular: "source", plural: "sources" },
+			{ details: filterImages, all: filterImagesAll, options: filterImagesOptions, summary: filterImagesSummary, singular: "média", plural: "médias" }
+		];
+
+		checkboxDropdownConfigs.forEach((config) => {
+			if (!config.details || !config.all || !config.options) return;
+			config.details.addEventListener("change", (event) => {
+				const target = event.target;
+				if (!(target instanceof HTMLInputElement)) return;
+
+				if (target === config.all) {
+					setAllDropdownCheckboxes(config.options, target.checked);
+				}
+
+				syncDropdownAllCheckboxState(
+					config.all,
+					config.options,
+					config.summary,
+					config.singular,
+					config.plural
+				);
+				renderVisibleLayers(false);
+			});
+		});
+
+		[searchInput, searchIdInput].forEach((element) => {
 			if (!element) return;
 			element.addEventListener("input", () => {
 				renderVisibleLayers(false);
@@ -1634,21 +1798,20 @@ fetch("./data/data.geojson")
 			if (searchIdInput) {
 				searchIdInput.value = "";
 			}
-			filterType.value = "";
-			filterStatus.value = "";
-			filterPrecision.value = "";
-			if (filterSources) {
-				filterSources.value = "";
-			}
-			if (filterImages) {
-				filterImages.value = "";
-			}
-			if (filterAcces) {
-				filterAcces.value = "";
-			}
-			if (filterEtat) {
-				filterEtat.value = "";
-			}
+
+			[
+				{ all: filterTypeAll, options: filterTypeOptions, summary: filterTypeSummary, singular: "type", plural: "types" },
+				{ all: filterStatusAll, options: filterStatusOptions, summary: filterStatusSummary, singular: "statut", plural: "statuts" },
+				{ all: filterPrecisionAll, options: filterPrecisionOptions, summary: filterPrecisionSummary, singular: "niveau", plural: "niveaux" },
+				{ all: filterAccesAll, options: filterAccesOptions, summary: filterAccesSummary, singular: "accès", plural: "accès" },
+				{ all: filterEtatAll, options: filterEtatOptions, summary: filterEtatSummary, singular: "état", plural: "états" },
+				{ all: filterSourcesAll, options: filterSourcesOptions, summary: filterSourcesSummary, singular: "source", plural: "sources" },
+				{ all: filterImagesAll, options: filterImagesOptions, summary: filterImagesSummary, singular: "média", plural: "médias" }
+			].forEach((config) => {
+				setAllDropdownCheckboxes(config.options, true);
+				syncDropdownAllCheckboxState(config.all, config.options, config.summary, config.singular, config.plural);
+			});
+
 			colorMode.value = DEFAULT_COLOR_MODE;
 			refreshMarkerColors();
 			renderVisibleLayers(true);

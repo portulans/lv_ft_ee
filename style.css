@@ -898,7 +898,7 @@ h1 {
 	content: "-";
 }
 
-.references-accordion #references-content {
+.references-accordion__content {
 	padding: 0 14px 14px;
 	border-top: 1px solid rgba(214, 205, 189, 0.9);
 	background: rgba(255, 253, 247, 0.88);

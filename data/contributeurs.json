@@ -2,7 +2,7 @@
     {
         "id":"1",
         "name":"Solenn Tual",
-        "role":"Cartographie, recherche documentaire, rédaction, développement de l'application"
+        "role":"Recherche documentaire, cartographie, rédaction, photographies, développement de l'application"
     },
     {
         "id":"2",
@@ -12,6 +12,6 @@
     {
         "id":"3",
         "name":"Cédric Caïn",
-        "role":"enquêtes de terrain, cartographie"
+        "role":"Enquêtes de terrain, cartographie"
     }
 ]

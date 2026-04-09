@@ -243,6 +243,7 @@ const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
 const dateMajElement = document.getElementById("date-maj");
 const referencesContent = document.getElementById("references-content");
+const contributorsContent = document.getElementById("contributors-content");
 
 const REFERENCE_TYPE_LABELS = {
 	archives: "Sources historiques (archives)",
@@ -566,6 +567,53 @@ async function loadBibliographyReferences() {
 	} catch (error) {
 		console.warn("Impossible de charger bibliographie.json", error);
 		referencesContent.textContent = "Impossible de charger les références.";
+	}
+}
+
+function renderContributors(entries) {
+	if (!contributorsContent) return;
+	contributorsContent.innerHTML = "";
+
+	if (!Array.isArray(entries) || entries.length === 0) {
+		contributorsContent.textContent = "Aucun contributeur disponible.";
+		return;
+	}
+
+	const sortedEntries = [...entries].sort((a, b) => {
+		const idA = Number(a?.id);
+		const idB = Number(b?.id);
+		if (Number.isFinite(idA) && Number.isFinite(idB)) {
+			return idA - idB;
+		}
+		return safeText(a?.name, "").localeCompare(safeText(b?.name, ""), "fr", { sensitivity: "base" });
+	});
+
+	const list = document.createElement("ul");
+	sortedEntries.forEach((entry) => {
+		const item = document.createElement("li");
+		const name = safeText(entry?.name, "Nom non renseigné");
+		const role = safeText(entry?.role, "");
+		item.textContent = role ? `${name} — ${role}` : name;
+		list.appendChild(item);
+	});
+
+	contributorsContent.appendChild(list);
+}
+
+async function loadContributors() {
+	if (!contributorsContent) return;
+
+	try {
+		const response = await fetch("./data/contributeurs.json");
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+
+		const entries = await response.json();
+		renderContributors(entries);
+	} catch (error) {
+		console.warn("Impossible de charger contributeurs.json", error);
+		contributorsContent.textContent = "Impossible de charger les contributeurs.";
 	}
 }
 
@@ -1480,6 +1528,7 @@ updateDateMajFromGithub();
 loadImageCredits();
 loadHydroLayers();
 loadBibliographyReferences();
+loadContributors();
 
 function panelRow(label, value) {
 	const dt = document.createElement("dt");

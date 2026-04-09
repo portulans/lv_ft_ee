@@ -579,7 +579,18 @@ function renderContributors(entries) {
 		return;
 	}
 
-	const sortedEntries = [...entries].sort((a, b) => {
+	const visibleEntries = entries.filter((entry) => {
+		if (entry?.display === true) return true;
+		if (entry?.display === false) return false;
+		return true;
+	});
+
+	if (visibleEntries.length === 0) {
+		contributorsContent.textContent = "Aucun contributeur à afficher.";
+		return;
+	}
+
+	const sortedEntries = [...visibleEntries].sort((a, b) => {
 		const idA = Number(a?.id);
 		const idB = Number(b?.id);
 		if (Number.isFinite(idA) && Number.isFinite(idB)) {
@@ -598,6 +609,11 @@ function renderContributors(entries) {
 	});
 
 	contributorsContent.appendChild(list);
+
+	const message = document.createElement("p");
+	message.className = "references-accordion__note";
+	message.textContent = "Vous souhaitez ajouter une information ou une illustration ou alors signaler une erreur ? Contactez-nous";
+	contributorsContent.appendChild(message);
 }
 
 async function loadContributors() {

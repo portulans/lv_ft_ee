@@ -138,6 +138,16 @@
         "type":"livre",
         "comment":"Ouvrage d'onomastique rédigé en breton qui contient un inventaire très complet des noms de lieux breton du domaine maritime ouessantin.",
         "url":"https://catalogue.bnf.fr/ark:/12148/cb39168608c"
+    },
+    {
+        "id":15,
+        "author":"P.-L. Appriou",
+        "title":"Approche sociologique et médicale de l'île d'Ouessant",
+        "editor":"Université de Bordeaux",
+        "year":"1979",
+        "type":"these",
+        "comment":"Thèse de médecine",
+        "url":""
     }
 
 ]

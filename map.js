@@ -177,20 +177,6 @@ var lidarhd = L.tileLayer(
 	}
 );
 
-const baseLayers = {
-	"Plan IGN":ign2023,
-	"OpenStreetMap": osm,
-	"IGN 1950-1965": ignaerial1950,
-	"IGN 1965-1980": ignaerial1965,
-	"IGN Coast 2000": ignaerial2000,
-	"IGN 2000-2005": ignaerial2005,
-	"IGN 2006-2010": ignaerial2009,
-	"IGN 2011-2015": ignaerial2015,
-	"IGN 2018": ignaerial2018,
-	"IGN BD Ortho (récente)": ignaerial2023,
-	"MNT (relief 1m)": lidarhd
-};
-
 const panelType = document.getElementById("feature-type");
 const panelTitle = document.getElementById("feature-title");
 const panelSubtitle = document.getElementById("feature-subtitle");
@@ -804,14 +790,14 @@ const advancedLayersControl = L.control.advancedLayers(
 			name: "Photos aériennes",
 			collapsed: true,
 			layers: [
-				{ name: "IGN 1950-1965", layer: ignaerial1950, active: false },
-				{ name: "IGN 1965-1980", layer: ignaerial1965, active: false },
-				{ name: "IGN Coast 2000", layer: ignaerial2000, active: false },
-				{ name: "IGN 2000-2005", layer: ignaerial2005, active: false },
-				{ name: "IGN 2006-2010", layer: ignaerial2009, active: false },
-				{ name: "IGN 2011-2015", layer: ignaerial2015, active: false },
-				{ name: "IGN 2018", layer: ignaerial2018, active: false },
-				{ name: "IGN BD Ortho (récente)", layer: ignaerial2023, active: false },
+				{ name: "1952 (IGN 1950-1965)", layer: ignaerial1950, active: false },
+				{ name: "1975 (IGN 1965-1980)", layer: ignaerial1965, active: false },
+				{ name: "2000 (IGN Coast)", layer: ignaerial2000, active: false },
+				{ name: "2005 (IGN 2000-2005)", layer: ignaerial2005, active: false },
+				{ name: "2009 (IGN 2006-2010)", layer: ignaerial2009, active: false },
+				{ name: "2015 (IGN 2011-2015)", layer: ignaerial2015, active: false },
+				{ name: "2018 (IGN)", layer: ignaerial2018, active: false },
+				{ name: "2021 (IGN)", layer: ignaerial2023, active: false },
 				
 			]
 		},

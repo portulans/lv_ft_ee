@@ -196,7 +196,10 @@ const panelTitle = document.getElementById("feature-title");
 const panelSubtitle = document.getElementById("feature-subtitle");
 const panelMeta = document.getElementById("feature-meta");
 const panelDescription = document.getElementById("feature-description");
+const panelUsages = document.getElementById("feature-usages");
 const panelComment = document.getElementById("feature-comment");
+const panelLegendes = document.getElementById("feature-legendes");
+const panelNomExplication = document.getElementById("feature-nom-explication");
 const panelImages = document.getElementById("feature-images");
 const shareButton = document.getElementById("share-button");
 const imageViewer = document.getElementById("image-viewer");
@@ -233,6 +236,8 @@ const filterEtatSummary = document.getElementById("filter-etat-summary");
 const filterEtatAll = document.getElementById("filter-etat-all");
 const filterEtatOptions = document.getElementById("filter-etat-options");
 const colorMode = document.getElementById("color-mode");
+const filtersToggleButton = document.getElementById("filters-toggle");
+const mapToolbar = document.getElementById("map-toolbar");
 const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
@@ -390,6 +395,52 @@ const MEDIA_FILTER_OPTIONS = [
 if (colorMode) {
 	colorMode.value = DEFAULT_COLOR_MODE;
 }
+
+function setupMobileFiltersToggle() {
+	if (!mapToolbar || !filtersToggleButton || !window.matchMedia) return;
+
+	const mobileFiltersMediaQuery = window.matchMedia("(max-width: 620px)");
+
+	function setFiltersCollapsed(isCollapsed) {
+		if (!mobileFiltersMediaQuery.matches) {
+			mapToolbar.classList.remove("is-collapsed");
+			filtersToggleButton.classList.add("is-active");
+			filtersToggleButton.setAttribute("aria-expanded", "true");
+			filtersToggleButton.setAttribute("aria-label", "Masquer les filtres");
+			const toggleLabelDesktop = filtersToggleButton.querySelector(".filters-toggle__label");
+			if (toggleLabelDesktop) {
+				toggleLabelDesktop.textContent = "Masquer les filtres";
+			}
+			return;
+		}
+
+		mapToolbar.classList.toggle("is-collapsed", isCollapsed);
+		filtersToggleButton.classList.toggle("is-active", !isCollapsed);
+		filtersToggleButton.setAttribute("aria-expanded", String(!isCollapsed));
+		filtersToggleButton.setAttribute(
+			"aria-label",
+			isCollapsed ? "Afficher les filtres" : "Masquer les filtres"
+		);
+
+		const toggleLabel = filtersToggleButton.querySelector(".filters-toggle__label");
+		if (toggleLabel) {
+			toggleLabel.textContent = isCollapsed ? "Afficher les filtres" : "Masquer les filtres";
+		}
+	}
+
+	setFiltersCollapsed(mobileFiltersMediaQuery.matches);
+
+	filtersToggleButton.addEventListener("click", () => {
+		const isCollapsed = mapToolbar.classList.contains("is-collapsed");
+		setFiltersCollapsed(!isCollapsed);
+	});
+
+	mobileFiltersMediaQuery.addEventListener("change", (event) => {
+		setFiltersCollapsed(event.matches);
+	});
+}
+
+setupMobileFiltersToggle();
 
 function parseJsonLoose(text) {
 	const cleaned = text
@@ -1335,6 +1386,17 @@ function formatCoordinates(feature) {
 	return `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
 }
 
+function setPanelTextBlock(element, label, value) {
+	if (!element) return;
+
+	if (hasPanelValue(value)) {
+		element.style.display = "block";
+		element.innerHTML = `<b>${label}:</b> ${safeText(value, "")}`;
+	} else {
+		element.style.display = "none";
+	}
+}
+
 function updatePanel(feature) {
 	const props = feature.properties || {};
 	const coordinatesText = formatCoordinates(feature);
@@ -1359,9 +1421,15 @@ function updatePanel(feature) {
 
 	if (hasPanelValue(accessValueRaw)) {
 		const accessValue = safeText(accessValueRaw);
-		const { dd } = panelRow("Acces", accessValue);
-		if (normalizeText(accessValue) === "terrain prive") {
+		const { dd } = panelRow("Accès", accessValue);
+		if (normalizeText(accessValue) === "terrain prive"  ) {
 			dd.style.color = "#b00020";
+			dd.style.fontWeight = "600";
+		} else if (normalizeText(accessValue) === "libre, pente raide et falaise !" || normalizeText(accessValue) === "traversee de terrains prives ?" || normalizeText(accessValue) === "libre, difficile") {
+			dd.style.color = "#ed7a0f";
+			dd.style.fontWeight = "600";
+		} else if (normalizeText(accessValue) === "libre, bord de route" || normalizeText(accessValue) === "libre") {
+			dd.style.color = "#4caf50";
 			dd.style.fontWeight = "600";
 		}
 	}
@@ -1374,22 +1442,18 @@ function updatePanel(feature) {
 	panelRow("Trace sur le plan de 1910 ?", toYesNo(props.src_p1910));
 	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
 
-	const description = safeText(props.description, "");
-	const comment = safeText(props.commentaire_st, "");
+	const historiqueValue = hasPanelValue(props.commentaire_st)
+		? props.commentaire_st
+		: props["commentaire-st"];
+	const nomExplicationValue = hasPanelValue(props["nom-explication"])
+		? props["nom-explication"]
+		: props.nom_explication;
 
-	if (description) {
-		panelDescription.style.display = "block";
-		panelDescription.textContent = `Description: ${description}`;
-	} else {
-		panelDescription.style.display = "none";
-	}
-
-	if (comment) {
-		panelComment.style.display = "block";
-		panelComment.textContent = `Commentaire: ${comment}`;
-	} else {
-		panelComment.style.display = "none";
-	}
+	setPanelTextBlock(panelDescription, "Description", props.description);
+	setPanelTextBlock(panelUsages, "Traditions et usages", props.usages);
+	setPanelTextBlock(panelComment, "Historique", historiqueValue);
+	setPanelTextBlock(panelLegendes, "Légendes", props.legendes);
+	setPanelTextBlock(panelNomExplication, "Explication du nom", nomExplicationValue);
 
 	renderPanelImages(props.fid);
 }
@@ -1400,7 +1464,10 @@ function resetPanel() {
 	panelSubtitle.textContent = "Cliquez sur un marqueur pour afficher ses informations.";
 	panelMeta.innerHTML = "";
 	panelDescription.style.display = "none";
+	panelUsages.style.display = "none";
 	panelComment.style.display = "none";
+	panelLegendes.style.display = "none";
+	panelNomExplication.style.display = "none";
 	clearPanelImages();
 }
 

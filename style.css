@@ -122,6 +122,50 @@ h1 {
 	min-height: 72vh;
 }
 
+.map-toolbar-shell {
+	display: grid;
+}
+
+.filters-toggle {
+	display: none;
+	height: 38px;
+	border: 1px solid rgba(0, 127, 115, 0.45);
+	border-radius: 10px;
+	background: rgba(0, 127, 115, 0.12);
+	color: #09514a;
+	font: inherit;
+	font-weight: 700;
+	padding: 0 12px;
+	cursor: pointer;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+}
+
+.filters-toggle::before {
+	content: "";
+	width: 14px;
+	height: 10px;
+	border-top: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	box-shadow: inset 0 3px 0 0 currentColor;
+	opacity: 0.92;
+}
+
+.filters-toggle:hover {
+	background: rgba(0, 127, 115, 0.2);
+}
+
+.filters-toggle:focus-visible {
+	outline: 2px solid rgba(0, 127, 115, 0.28);
+	outline-offset: 2px;
+}
+
+.filters-toggle.is-active {
+	border-color: rgba(9, 81, 74, 0.6);
+	box-shadow: inset 0 0 0 1px rgba(9, 81, 74, 0.18);
+}
+
 .map-toolbar {
 	display: grid;
 	grid-template-columns: 1.6fr repeat(4, minmax(110px, 1fr)) auto auto;
@@ -564,6 +608,7 @@ h1 {
 
 .feature-description,
 .feature-comment {
+	display: none;
 	margin: 4px 0 0;
 	background: var(--surface-soft);
 	border-left: 4px solid var(--accent);
@@ -574,6 +619,31 @@ h1 {
 
 .feature-comment {
 	border-left-color: var(--accent-2);
+}
+
+#feature-description {
+	border-left-color: #007f73;
+	background: rgba(0, 127, 115, 0.09);
+}
+
+#feature-usages {
+	border-left-color: #1b4d74;
+	background: rgba(27, 77, 116, 0.1);
+}
+
+#feature-comment {
+	border-left-color: #ca6a2a;
+	background: rgba(202, 106, 42, 0.11);
+}
+
+#feature-legendes {
+	border-left-color: #7a5a9c;
+	background: rgba(122, 90, 156, 0.11);
+}
+
+#feature-nom-explication {
+	border-left-color: #8f3b2c;
+	background: rgba(143, 59, 44, 0.11);
 }
 
 .feature-images {
@@ -917,6 +987,31 @@ h1 {
 }
 
 @media (max-width: 620px) {
+	.filters-toggle {
+		display: inline-flex;
+	}
+
+	.map-toolbar {
+		margin-top: 8px;
+		max-height: 2200px;
+		opacity: 1;
+		overflow: hidden;
+		transform: translateY(0);
+		transition: max-height 0.22s ease, opacity 0.2s ease, transform 0.2s ease, margin-top 0.2s ease;
+	}
+
+	.map-toolbar.is-collapsed {
+		max-height: 0;
+		opacity: 0;
+		pointer-events: none;
+		transform: translateY(-4px);
+		margin-top: 0;
+		padding-top: 0;
+		padding-bottom: 0;
+		border-width: 0;
+		box-shadow: none;
+	}
+
 	#map .leaflet-top.leaflet-right {
 		top: max(8px, env(safe-area-inset-top));
 		right: max(8px, env(safe-area-inset-right));

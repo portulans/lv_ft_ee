@@ -27,6 +27,17 @@
 	<main>
 		<section class="map-layout" aria-label="Carte des lavoirs et fontaines">
 			<div class="map-column">
+				<div class="map-toolbar-shell">
+					<button
+						type="button"
+						id="filters-toggle"
+						class="filters-toggle"
+						aria-controls="map-toolbar"
+						aria-expanded="false"
+						aria-label="Afficher les filtres"
+					>
+						<span class="filters-toggle__label">Afficher les filtres</span>
+					</button>
 				<form class="map-toolbar" id="map-toolbar" aria-label="Filtres des points" onsubmit="return false;">
 					<label class="toolbar-field" for="search-toponym">
 						<span>Rechercher</span>
@@ -141,6 +152,7 @@
 					<button type="button" id="filters-reset" class="filters-reset">Réinitialiser</button>
 					<p id="results-count" class="results-count" aria-live="polite"></p>
 				</form>
+				</div>
 
 				<div id="map" aria-label="Carte interactive"></div>
 			</div>
@@ -166,7 +178,10 @@
 					<p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>
 					<dl class="feature-meta" id="feature-meta"></dl>
 					<p id="feature-description" class="feature-description"></p>
+					<p id="feature-usages" class="feature-description"></p>
 					<p id="feature-comment" class="feature-comment"></p>
+					<p id="feature-legendes" class="feature-comment"></p>
+					<p id="feature-nom-explication" class="feature-description"></p>
 					<div id="feature-images" class="feature-images" aria-live="polite"></div>
 				</aside>
 				<div id="map-legend" class="map-legend"></div>

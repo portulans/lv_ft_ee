@@ -2,11 +2,11 @@
     {
         "id":1,
         "author":"",
-        "title":"Association Poull Ha Feuteun",
+        "title":"Association Poull Ha Feunteun",
         "editor":"",
         "year":"",
         "type":"site web",
-        "comment":"Site de l'ancienne association Poull Ha Feuteun dissoute en 2015 qui a réalisé l'entretien de nombreux lavoirs et fontaines.",
+        "comment":"Site de l'ancienne association Poull Ha Feunteun dissoute en 2015 qui a réalisé l'entretien de nombreux lavoirs et fontaines.",
         "url":"http://poullhafeunteun.unblog.fr/"
     },
     {
@@ -121,12 +121,12 @@
     },
     {
         "id":13,
-        "author":"PNRA / Poull Ha Feuteun",
+        "author":"PNRA / Poull Ha Feunteun",
         "title":"Localisation des lavoirs et fontaines sur Ouessant",
         "editor":"",
         "year":"",
         "type":"données",
-        "comment":"Données géographiques établies d'après une carte-inventaire des lavoirs de l'association Poull Ha Feuteun datant de 2010, géoréférencée en 2013 par le PNRA (imprécision importante des coordonnées).",
+        "comment":"Données géographiques établies d'après une carte-inventaire des lavoirs de l'association Poull Ha Feunteun datant de 2010, géoréférencée en 2013 par le PNRA (imprécision importante des coordonnées).",
         "url":"https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255"
     },
     {

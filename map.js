@@ -762,7 +762,7 @@ const advancedLayersControl = L.control.advancedLayers(
 			layers: [
 				{ name: "Plan IGN", layer: ign2023, active: true },
 				{ name: "OpenStreetMap", layer: osm, active: false },
-				{ name: "Modèle numérique de terrain (relief 1m, IGN)", layer: lidarhd, active: false }
+				{ name: "MNT (relief 1m, IGN)", layer: lidarhd, active: false }
 			]
 		},
 		{

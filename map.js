@@ -284,13 +284,6 @@ async function copyPermalinkToClipboard(fid) {
 	}
 }
 
-function generatePermalinkUrl(fid) {
-	if (!fid) return null;
-	const url = new URL(window.location);
-	url.hash = `feature=${encodeURIComponent(fid)}`;
-	return url.toString();
-}
-
 const TYPE_LABELS = {
 	lavoir: "Lavoir",
 	fontaine: "Fontaine",
@@ -714,8 +707,6 @@ async function loadImageCredits() {
 
 		const mapByImage = new Map();
 		const mapById = new Map();
-		const photosByFeature = new Map();
-		const plansByFeature = new Map();
 		
 		entries.forEach((entry) => {
 			const imageId = safeText(entry?.id, "").trim();
@@ -744,22 +735,10 @@ async function loadImageCredits() {
 			
 			if (mediaType === "photo") {
 				featuresWithPhotos.add(imageId);
-				if (!photosByFeature.has(imageId)) {
-					photosByFeature.set(imageId, []);
-				}
-				photosByFeature.get(imageId).push(imageName);
 			} else if (mediaType === "photo aerienne" || mediaType === "photo aérienne") {
 				featuresWithAerialPhotos.add(imageId);
-				if (!photosByFeature.has(imageId)) {
-					photosByFeature.set(imageId, []);
-				}
-				photosByFeature.get(imageId).push(imageName);
 			} else if (mediaType === "plan cadastral") {
 				featuresWithPlans.add(imageId);
-				if (!plansByFeature.has(imageId)) {
-					plansByFeature.set(imageId, []);
-				}
-				plansByFeature.get(imageId).push(imageName);
 			}
 		});
 

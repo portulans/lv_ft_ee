@@ -128,6 +128,16 @@
         "type":"données",
         "comment":"Données géographiques établies d'après une carte-inventaire des lavoirs de l'association Poull Ha Feuteun datant de 2010, géoréférencée en 2013 par le PNRA (imprécision importante des coordonnées).",
         "url":"https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255"
+    },
+    {
+        "id":14,
+        "author":"Mikael Madeg et Per Pondaven",
+        "title":"Renabl anoiou lehiou inizi Kornog Gouled Leon. Levrenn genta, Tro Enez Eusa",
+        "editor":"Emgleo Breiz : ar Skol",
+        "year":"2004",
+        "type":"livre",
+        "comment":"Ouvrage d'onomastique rédigé en breton qui contient un inventaire très complet des noms de lieux breton du domaine maritime ouessantin.",
+        "url":"https://catalogue.bnf.fr/ark:/12148/cb39168608c"
     }
 
 ]

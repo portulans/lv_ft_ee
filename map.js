@@ -385,8 +385,8 @@ const featuresWithPhotos = new Set();
 const featuresWithAerialPhotos = new Set();
 const featuresWithPlans = new Set();
 const featuresWithAnyMedia = new Set();
-let hydroSurfacesLayer = null;
-let hydroTronconsLayer = null;
+const hydroSurfacesLayer = L.layerGroup();
+const hydroTronconsLayer = L.layerGroup();
 
 const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
 const MAX_PANEL_NUMBERED_IMAGES = 12;
@@ -789,14 +789,48 @@ async function loadImageCredits() {
 	}
 }
 
-const layerControl = L.control.layers(
-	baseLayers,
+const advancedLayersControl = L.control.advancedLayers(
+	[
+		{
+			name: "Cartes et reliefs",
+			collapsed: true,
+			layers: [
+				{ name: "Plan IGN", layer: ign2023, active: true },
+				{ name: "OpenStreetMap", layer: osm, active: false },
+				{ name: "MNT (relief 1m)", layer: lidarhd, active: false }
+			]
+		},
+		{
+			name: "Photos aériennes",
+			collapsed: true,
+			layers: [
+				{ name: "IGN 1950-1965", layer: ignaerial1950, active: false },
+				{ name: "IGN 1965-1980", layer: ignaerial1965, active: false },
+				{ name: "IGN Coast 2000", layer: ignaerial2000, active: false },
+				{ name: "IGN 2000-2005", layer: ignaerial2005, active: false },
+				{ name: "IGN 2006-2010", layer: ignaerial2009, active: false },
+				{ name: "IGN 2011-2015", layer: ignaerial2015, active: false },
+				{ name: "IGN 2018", layer: ignaerial2018, active: false },
+				{ name: "IGN BD Ortho (récente)", layer: ignaerial2023, active: false },
+				
+			]
+		},
+		{
+			name: "Autres données",
+			collapsed: true,
+			layers: [
+				{ name: "Points recensés", layer: visibleLayerGroup, active: true },
+				{ name: "Surfaces hydrographiques (IGN)", layer: hydroSurfacesLayer, active: false },
+				{ name: "Tronçons hydrographiques (IGN)", layer: hydroTronconsLayer, active: false }
+			]
+		}
+	],
 	{
-		"Points recensés": visibleLayerGroup
-	},
-	{
-		collapsed: false,
-		position: "topright"
+		position: "topright",
+		collapsible: true,
+		collapsed: true,
+		color: "#d5c5b4",
+		title: ""
 	}
 ).addTo(map);
 
@@ -809,72 +843,12 @@ if (hydroTronconPane) {
 	hydroTronconPane.style.zIndex = "395";
 }
 
-const layerControlContainer = layerControl.getContainer();
-if (layerControlContainer) {
-	const mobileLayerControlMediaQuery = window.matchMedia("(max-width: 620px)");
-
-	layerControlContainer.classList.add("base-layer-control");
-	layerControlContainer.classList.add("base-layer-control--collapsed");
-
-	const controlHeader = document.createElement("div");
-	controlHeader.className = "base-layer-control__header";
-
-	const controlTitle = document.createElement("span");
-	controlTitle.className = "base-layer-control__title";
-	controlTitle.textContent = "Fonds de carte";
-
-	const controlToggle = document.createElement("button");
-	controlToggle.type = "button";
-	controlToggle.className = "base-layer-control__toggle";
-	controlToggle.setAttribute("aria-expanded", "false");
-	controlToggle.setAttribute("aria-label", "Afficher les fonds de carte");
-	controlToggle.textContent = "Fonds";
-
-	controlHeader.append(controlTitle, controlToggle);
-	layerControlContainer.prepend(controlHeader);
-
-	const controlForm = layerControlContainer.querySelector(".leaflet-control-layers-form");
-
-	function shouldAutoCollapseLayerControl() {
-		return mobileLayerControlMediaQuery.matches;
+if (advancedLayersControl?.getContainer) {
+	const controlContainer = advancedLayersControl.getContainer();
+	if (controlContainer) {
+		L.DomEvent.disableClickPropagation(controlContainer);
+		L.DomEvent.disableScrollPropagation(controlContainer);
 	}
-
-	function setLayerControlCollapsed(isCollapsed) {
-		layerControlContainer.classList.toggle("base-layer-control--collapsed", isCollapsed);
-		controlToggle.setAttribute("aria-expanded", String(!isCollapsed));
-		controlToggle.setAttribute(
-			"aria-label",
-			isCollapsed ? "Afficher les fonds de carte" : "Replier les fonds de carte"
-		);
-		controlToggle.textContent = isCollapsed ? "Fonds" : "Replier";
-		if (controlForm) {
-			controlForm.hidden = isCollapsed;
-		}
-	}
-
-	setLayerControlCollapsed(true);
-	controlToggle.addEventListener("click", () => {
-		setLayerControlCollapsed(
-			!layerControlContainer.classList.contains("base-layer-control--collapsed")
-		);
-	});
-
-	layerControlContainer.addEventListener("change", (event) => {
-		const target = event.target;
-		if (!(target instanceof HTMLInputElement)) return;
-		if (!target.classList.contains("leaflet-control-layers-selector")) return;
-		if (!shouldAutoCollapseLayerControl()) return;
-
-		window.setTimeout(() => {
-			setLayerControlCollapsed(true);
-		}, 0);
-	});
-
-	map.on("click", () => {
-		if (!shouldAutoCollapseLayerControl()) return;
-		if (layerControlContainer.classList.contains("base-layer-control--collapsed")) return;
-		setLayerControlCollapsed(true);
-	});
 }
 
 function normalizeText(value) {
@@ -1688,7 +1662,7 @@ function loadHydroLayers() {
 			return response.json();
 		})
 		.then((geojson) => {
-			hydroSurfacesLayer = L.geoJSON(geojson, {
+			const surfacesGeojsonLayer = L.geoJSON(geojson, {
 				pane: "hydro-surfaces",
 				filter: shouldDisplayHydroSurface,
 				style: {
@@ -1699,8 +1673,8 @@ function loadHydroLayers() {
 					fillOpacity: 0.35
 				}
 			});
-
-			layerControl.addOverlay(hydroSurfacesLayer, "Surfaces hydrographiques");
+			hydroSurfacesLayer.clearLayers();
+			hydroSurfacesLayer.addLayer(surfacesGeojsonLayer);
 		})
 		.catch((error) => {
 			console.warn("Impossible de charger surfaces_hydro.geojson", error);
@@ -1714,7 +1688,7 @@ function loadHydroLayers() {
 			return response.json();
 		})
 		.then((geojson) => {
-			hydroTronconsLayer = L.geoJSON(geojson, {
+			const tronconsGeojsonLayer = L.geoJSON(geojson, {
 				pane: "hydro-troncons",
 				style: {
 					color: "#1b4d74",
@@ -1722,8 +1696,8 @@ function loadHydroLayers() {
 					opacity: 0.95
 				}
 			});
-
-			layerControl.addOverlay(hydroTronconsLayer, "Tronçons hydrographiques");
+			hydroTronconsLayer.clearLayers();
+			hydroTronconsLayer.addLayer(tronconsGeojsonLayer);
 		})
 		.catch((error) => {
 			console.warn("Impossible de charger troncons_hydro.geojson", error);

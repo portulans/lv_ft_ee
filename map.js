@@ -757,7 +757,7 @@ async function loadImageCredits() {
 const advancedLayersControl = L.control.advancedLayers(
 	[
 		{
-			name: "Cartes et reliefs",
+			name: "Cartes et relief",
 			collapsed: true,
 			layers: [
 				{ name: "Plan IGN", layer: ign2023, active: true },
@@ -766,7 +766,7 @@ const advancedLayersControl = L.control.advancedLayers(
 			]
 		},
 		{
-			name: "Photos aériennes",
+			name: "Photographies aériennes",
 			collapsed: true,
 			layers: [
 				{ name: "1952 (IGN 1950-1965)", layer: ignaerial1950, active: false },

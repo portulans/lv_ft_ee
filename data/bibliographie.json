@@ -1,0 +1,133 @@
+[
+    {
+        "id":1,
+        "author":"",
+        "title":"Association Poull Ha Feuteun",
+        "editor":"",
+        "year":"",
+        "type":"site web",
+        "comment":"Site de l'ancienne association Poull Ha Feuteun dissoute en 2015 qui a réalisé l'entretien de nombreux lavoirs et fontaines.",
+        "url":"http://poullhafeunteun.unblog.fr/"
+    },
+    {
+        "id":2,
+        "author":"",
+        "title":"Le Petit Patrimoine Ouessantin",
+        "editor":"",
+        "year":"depuis 2026",
+        "type":"site web",
+        "comment":"Page Facebook de l'association Le Petit Patrimoine Ouessantin fondée en 2026 pour entretenir le petit patrimoine bâti de l'île.",
+        "url":"https://www.facebook.com/profile.php?id=61588590510610"
+    },
+    {
+        "id":3,
+        "author":"",
+        "title":"Ouessant - Les lavoirs",
+        "editor":"",
+        "year":"",
+        "type":"site web",
+        "comment":"Blog contenant diverses photographies de lavoirs et fontaines d'Ouessant.",
+        "url":"https://ouessant.forums-actifs.com/f95-les-lavoirs"
+    },
+    {
+        "id":4,
+        "author":"",
+        "title":"Ile d'Ouessant / Fontaine et lavoir rénovés",
+        "editor":"",
+        "year":"septembre 2005",
+        "type":"site web",
+        "comment":"Photographie de la fontaine et du lavoir de Poull Bridig avant leur destruction.",
+        "url":"https://photos.ankryan.net/image/1832-fontaine-et-lavoir-renoves-ouessant"
+    },
+    {
+        "id":5,
+        "author":"",
+        "title":"Plans parcellaires du cadastre napoléonien (1842).",
+        "editor":"Archives départementales du Finistère",
+        "year":"",
+        "type":"archives",
+        "comment":"",
+        "url":"https://recherche.archives.finistere.fr/archive/resultats/cadastre3/n:144?RECH_commune_Libel=Ouessant%20(Finist%C3%A8re)|&RECH_commune_Md5=18c67f1b218b326bb3bb7d5e24001e90|&type=cadastre3"
+    },
+    {
+        "id":6,
+        "author":"",
+        "title":"Plan d'ensemble de l'île d'Ouessant au 10 000e (1910)",
+        "editor":"",
+        "year":"",
+        "type":"archives",
+        "comment":"Il existe a minima deux éditions différentes de ce plan avec des variations dans les lavoirs et sources représentées.",
+        "url":""
+    },
+    {
+        "id":7,
+        "author":"",
+        "title":"Photographies aériennes anciennes",
+        "editor":"",
+        "year":"",
+        "type":"archives",
+        "comment":"Collection de photographies aériennes anciennes disponibles sur Remonter le temps IGN.",
+        "url":"https://remonterletemps.ign.fr/"
+    },
+    {
+        "id":8,
+        "author":"P. Bohéas",
+        "title":"Topographie médicale de l'île d'Ouessant",
+        "editor":"Faculté de médecine de Paris",
+        "year":"1883",
+        "type":"these",
+        "comment":"Thèse de médecine",
+        "url":"https://numerabilis.u-pariscite.fr/s/numerabilis/item/227413"
+    },
+    {
+        "id":9,
+        "author":"Dominique Moigne Mélard",
+        "title":"Médecine officielle et médecine traditionnelle de l'île d'Ouessant",
+        "editor":"Université Rennes I",
+        "year":"1986",
+        "type":"these",
+        "comment":"Thèse de pharmacologie",
+        "url":"https://www.sudoc.abes.fr/cbs/DB=2.1//SRCH?IKT=12&TRM=042492106"
+    },
+    {
+        "id":10,
+        "author":"Nathalie Guen",
+        "title":"Ouessant : la médecine au bout du monde",
+        "editor":"Université de Bretagne Occidentale",
+        "year":"1994",
+        "type":"these",
+        "comment":"Thèse de médecine",
+        "url":"https://www.sudoc.abes.fr/cbs/DB=2.1/SRCH?IKT=12&TRM=041504674"
+    },
+    {
+        "id":11,
+        "author":"Thomas Chiron",
+        "title":"Quelle gestion durable des ressources en eau et du risque de penurie sur les petites îles ?",
+        "editor":"Université de Bretagne Occidentale",
+        "year":"2008",
+        "type":"these",
+        "comment":"Thèse de géographie. La carte des fontaines et lavoirs proposée page 198 est intéressante mais la position de certains points (nommés) semble éronée (ou les noms sont ambiguis).",
+        "url":"https://theses.hal.science/tel-00281315"
+    },
+    {
+        "id":12,
+        "author":"Maï Sous Dantec et Gwenc'hlan Le Scouëzec",
+        "title":"Enez Eusa, Ouessant mystérieux : petit guide de l'île d'Ouessant",
+        "editor":"Élisart Éditeur",
+        "year":"2001",
+        "type":"livre",
+        "comment":"Ouvrage qui traite des traditions et légendes associées aux sources, fontaines et lavoirs d'Ouessant.",
+        "url":"https://www.vers-les-iles.fr/livres/Iroise/Dantec_LeSc.html"
+    },
+    {
+        "id":13,
+        "author":"PNRA / Poull Ha Feuteun",
+        "title":"Localisation des lavoirs et fontaines sur Ouessant",
+        "editor":"",
+        "year":"",
+        "type":"données",
+        "comment":"Données géographiques établies d'après une carte-inventaire des lavoirs de l'association Poull Ha Feuteun datant de 2010, géoréférencée en 2013 par le PNRA (imprécision importante des coordonnées).",
+        "url":"https://demo.georchestra.org/geonetwork/srv/api/records/85c5d9d5-1a63-4907-9f6b-2149cca82255"
+    }
+
+]

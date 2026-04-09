@@ -858,6 +858,52 @@ h1 {
 	color: #066b62;
 }
 
+.references-accordion {
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	background: rgba(243, 238, 226, 0.65);
+	margin-top: 12px;
+	overflow: hidden;
+}
+
+.references-accordion summary {
+	list-style: none;
+	cursor: pointer;
+	font-family: "Fraunces", Georgia, serif;
+	font-size: 1.5em;
+	font-weight: 700;
+	line-height: 1.15;
+	padding: 12px 14px;
+	position: relative;
+	padding-right: 42px;
+	user-select: none;
+}
+
+.references-accordion summary::-webkit-details-marker {
+	display: none;
+}
+
+.references-accordion summary::after {
+	content: "+";
+	position: absolute;
+	right: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.2rem;
+	line-height: 1;
+	color: var(--ink-soft);
+}
+
+.references-accordion[open] summary::after {
+	content: "-";
+}
+
+.references-accordion #references-content {
+	padding: 0 14px 14px;
+	border-top: 1px solid rgba(214, 205, 189, 0.9);
+	background: rgba(255, 253, 247, 0.88);
+}
+
 .site-footer {
 	color: var(--ink-soft);
 	font-size: 0.92rem;

@@ -242,6 +242,17 @@ const locateUserButton = document.getElementById("locate-user");
 const resetFiltersButton = document.getElementById("filters-reset");
 const resultsCount = document.getElementById("results-count");
 const dateMajElement = document.getElementById("date-maj");
+const referencesContent = document.getElementById("references-content");
+
+const REFERENCE_TYPE_LABELS = {
+	archives: "Sources historiques (archives)",
+	"site web": "Sites web",
+	these: "Thèses",
+	livre: "Livres",
+	donnees: "Données"
+};
+
+const REFERENCE_TYPE_ORDER = ["archives", "site web", "these", "livre", "donnees"];
 
 let currentFeatureId = null;
 
@@ -441,6 +452,122 @@ function setupMobileFiltersToggle() {
 }
 
 setupMobileFiltersToggle();
+
+function normalizeReferenceType(typeValue) {
+	return normalizeText(typeValue || "");
+}
+
+function isNonEmptyText(value) {
+	return safeText(value, "").length > 0;
+}
+
+function renderBibliographyReferences(entries) {
+	if (!referencesContent) return;
+	referencesContent.innerHTML = "";
+
+	if (!Array.isArray(entries) || entries.length === 0) {
+		referencesContent.textContent = "Aucune référence disponible.";
+		return;
+	}
+
+	const sortedEntries = [...entries].sort((a, b) => {
+		const idA = Number(a?.id);
+		const idB = Number(b?.id);
+		if (Number.isFinite(idA) && Number.isFinite(idB)) {
+			return idA - idB;
+		}
+		return safeText(a?.title, "").localeCompare(safeText(b?.title, ""), "fr", { sensitivity: "base" });
+	});
+
+	const groupedByType = new Map();
+	sortedEntries.forEach((entry) => {
+		const typeKey = normalizeReferenceType(entry?.type) || "autres";
+		if (!groupedByType.has(typeKey)) {
+			groupedByType.set(typeKey, []);
+		}
+		groupedByType.get(typeKey).push(entry);
+	});
+
+	const orderedTypes = [
+		...REFERENCE_TYPE_ORDER.filter((type) => groupedByType.has(type)),
+		...Array.from(groupedByType.keys())
+			.filter((type) => !REFERENCE_TYPE_ORDER.includes(type))
+			.sort((a, b) => a.localeCompare(b, "fr", { sensitivity: "base" }))
+	];
+
+	orderedTypes.forEach((typeKey) => {
+		const heading = document.createElement("h3");
+		heading.textContent = REFERENCE_TYPE_LABELS[typeKey] || `Autres (${typeKey})`;
+		referencesContent.appendChild(heading);
+
+		const list = document.createElement("ul");
+		const typeEntries = groupedByType.get(typeKey) || [];
+
+		typeEntries.forEach((entry) => {
+			const item = document.createElement("li");
+
+			const author = safeText(entry?.author, "");
+			const title = safeText(entry?.title, "Sans titre");
+			const editor = safeText(entry?.editor, "");
+			const year = safeText(entry?.year, "");
+			const comment = safeText(entry?.comment, "");
+			const url = safeText(entry?.url, "");
+
+			let mainLabel = title;
+			if (isNonEmptyText(author)) {
+				mainLabel = `${author}, ${mainLabel}`;
+			}
+
+			if (isNonEmptyText(url)) {
+				const link = document.createElement("a");
+				link.href = url;
+				link.target = "_blank";
+				link.rel = "noopener noreferrer";
+				link.textContent = mainLabel;
+				item.appendChild(link);
+			} else {
+				item.appendChild(document.createTextNode(mainLabel));
+			}
+
+			const metadataParts = [];
+			if (isNonEmptyText(editor)) {
+				metadataParts.push(editor);
+			}
+			if (isNonEmptyText(year)) {
+				metadataParts.push(year);
+			}
+
+			if (metadataParts.length > 0) {
+				item.appendChild(document.createTextNode(` (${metadataParts.join(", ")})`));
+			}
+
+			if (isNonEmptyText(comment)) {
+				item.appendChild(document.createTextNode(`. ${comment}`));
+			}
+
+			list.appendChild(item);
+		});
+
+		referencesContent.appendChild(list);
+	});
+}
+
+async function loadBibliographyReferences() {
+	if (!referencesContent) return;
+
+	try {
+		const response = await fetch("./data/bibliographie.json");
+		if (!response.ok) {
+			throw new Error(`Erreur HTTP ${response.status}`);
+		}
+
+		const entries = await response.json();
+		renderBibliographyReferences(entries);
+	} catch (error) {
+		console.warn("Impossible de charger bibliographie.json", error);
+		referencesContent.textContent = "Impossible de charger les références.";
+	}
+}
 
 function parseJsonLoose(text) {
 	const cleaned = text
@@ -1352,6 +1479,7 @@ window.addEventListener("hashchange", handlePermalinkHash);
 updateDateMajFromGithub();
 loadImageCredits();
 loadHydroLayers();
+loadBibliographyReferences();
 
 function panelRow(label, value) {
 	const dt = document.createElement("dt");

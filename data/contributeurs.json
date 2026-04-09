@@ -1,0 +1,17 @@
+[
+    {
+        "id":"1",
+        "name":"Solenn Tual",
+        "role":"Cartographie, recherche documentaire, rédaction, développement de l'application"
+    },
+    {
+        "id":"2",
+        "name":"Françoise Berthelé",
+        "role":"Recherche documentaire, enquêtes de terrain, photographies"
+    },
+    {
+        "id":"3",
+        "name":"Cédric Caïn",
+        "role":"enquêtes de terrain, cartographie"
+    }
+]

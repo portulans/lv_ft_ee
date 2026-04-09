@@ -148,6 +148,16 @@
         "type":"these",
         "comment":"Thèse de médecine",
         "url":""
+    },
+    {
+        "id":16,
+        "author":"",
+        "title":"Lavoirs.org",
+        "editor":"",
+        "year":"",
+        "type":"site web",
+        "comment":"Site participatif de référencement de lavoirs en France, contient plusieurs contributions sur Ouessant.",
+        "url":"https://www.lavoirs.org/departement.php?code_departement=29&page=5&sortBy=city&sortOrder=ASC&perPage=50"
     }
 
 ]

@@ -2,13 +2,13 @@
     {
         "id":"1",
         "name":"Solenn Tual",
-        "role":"Recherche documentaire, cartographie, rédaction, photographies, développement de l'application",
+        "role":"Recherche documentaire, cartographie, rédaction, photographies (-), développement de l'application",
         "display":true
     },
     {
         "id":"2",
         "name":"Françoise Berthelé",
-        "role":"Recherche documentaire, enquêtes de terrain, photographies",
+        "role":"Recherche documentaire, enquêtes de terrain (++), photographies (++)",
         "display":true
     },
     {

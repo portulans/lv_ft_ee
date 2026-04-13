@@ -290,7 +290,7 @@ const TYPE_LABELS = {
 	lavoir_fontaine: "Lavoir et fontaine",
 	"lavoir en bordure de greve": "Lavoir en bordure de grève",
 	aiguade: "Aiguade",
-	"doué":"Douet",
+	"doué":"Douët",
 	routoir: "Routoir",
 	marre: "Mare",
 	inconnu: "Type inconnu"
@@ -376,8 +376,8 @@ const SOURCE_FILTER_OPTIONS = [
 	{ value: "no-sources", label: "Aucune source historique" }
 ];
 const MEDIA_FILTER_OPTIONS = [
-	{ value: "photos-only", label: "Photos" },
-	{ value: "aerial-photos", label: "Photos aériennes" },
+	{ value: "photos-only", label: "Photographies" },
+	{ value: "aerial-photos", label: "Photographies aériennes" },
 	{ value: "plans-only", label: "Plans cadastraux" },
 	/*{ value: "with-media", label: "Avec médias" },*/
 	{ value: "without-media", label: "Sans médias" }
@@ -712,14 +712,15 @@ async function loadImageCredits() {
 			const imageId = safeText(entry?.id, "").trim();
 			const imageName = safeText(entry?.img, "").trim().toLowerCase();
 			const mediaType = safeText(entry?.type, "").trim().toLowerCase();
-			const mediaLink = safeText(entry?.lien, "").trim();
+			const mediaLink = safeText(entry?.url, "").trim();
 			
 			if (!imageName) return;
 			mapByImage.set(imageName, {
 				author: safeText(entry?.author, ""),
 				date: safeText(entry?.date, ""),
+				caption: safeText(entry?.caption, ""),
 				type: mediaType,
-				lien: mediaLink
+				url: mediaLink
 			});
 
 			if (!imageId) return;
@@ -1160,19 +1161,19 @@ function captionTextFromUrl(url) {
 	const credit = creditFromUrl(url);
 	if (!credit) return "";
 
+	const caption = safeText(credit.caption, "");
 	const author = safeText(credit.author, "");
 	const date = safeText(credit.date, "");
-	if (author && date) {
-		return `${author} - ${date}`;
-	}
-	return author || date || "";
+
+	const parts = [caption, author, date].filter(Boolean);
+	return parts.join(" - ");
 }
 
 function captionLinkFromUrl(url) {
 	const credit = creditFromUrl(url);
 	if (!credit) return null;
 
-	const link = safeText(credit.lien, "").trim();
+	const link = safeText(credit.url, "").trim();
 	if (!link) return null;
 
 	if (credit.type === "screenshot") {
@@ -1181,6 +1182,10 @@ function captionLinkFromUrl(url) {
 
 	if (credit.type === "photo") {
 		return { href: link, label: "Voir l'image" };
+	}
+
+	if (credit.type === "photo aerienne" || credit.type === "photo aérienne") {
+		return { href: link, label: "Voir sur Remonter le temps" };
 	}
 
 	return null;

@@ -1401,5 +1401,10 @@
     "author":"IGN",
     "date":"14-04-1963",
     "type":"photo aérienne",
-    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.091636&lat=48.469003&z=16&pointer=true&layer=pva&year=1962&mission=0316-0041"}
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.091636&lat=48.469003&z=16&pointer=true&layer=pva&year=1962&mission=0316-0041"},
+    {"id":"132",
+    "img":"126-1.jpg",
+    "author":"Archives départementales du Finistère (3P 156/1/15)",
+    "date":"Plan cadastral de 1842 (section F, feuille 2).",
+    "type":"plan cadastral"}
 ]

@@ -1,28 +1,32 @@
-# Leaflet Advanced Layers Control Library
+# Leaflet advanced layers control 
 
-## Control Options
+This library is a little tool to control layers on a Leaflet map. It includes layer grouping, optional opacity function associated with each layer and control layer CSS customisation.
+
+## Documentation
+
+### Control options
+- `title` (string): Optional control title.
 - `position` (string): Leaflet control position (e.g. `topright`).
 - `collapsible` (boolean): Enable collapsing/expanding of the control.
 - `collapsed` (boolean): Start the control collapsed when `true`.
-- `title` (string): Optional control title.
 - `color` (string): Accent color used by control buttons (any valid CSS color, e.g. `#d35400`, `rgb(0,120,200)`, `teal`).
 
-## Layer Configuration
-Each layer can now include a `visibleByDefault` property:
+### Layers options
 - `name` (string): Name of the layer.
 - `layer` (Layer): The Leaflet layer instance.
 - `opacityControl` (boolean): Enable an opacity slider for this layer.
-- `removeBackgroundControl` (boolean): Enable a color picker to remove the background color.
 - `visibleByDefault` (boolean): Set whether the layer should be added to the map by default.
 
-## Example Usage
-
-### Layer Initialization
+### Example
 ```javascript
 const layers = {
-    "Base Layers": [
-        { name: "Street Map", layer: L.tileLayer('url1'), visibleByDefault: true },
-        { name: "Satellite Map", layer: L.tileLayer('url2'), visibleByDefault: false, opacityControl: true }
+    "Background maps": [
+        { name: "Street Map", 
+        layer: L.tileLayer('url1'), visibleByDefault: true },
+        { name: "Satellite Map", 
+        layer: L.tileLayer('url2'), 
+        visibleByDefault: false, 
+        opacityControl: true }
     ],
     "Overlays": [
         { name: "Heatmap", layer: L.imageOverlay('url3'), removeBackgroundControl: true, visibleByDefault: true }
@@ -36,3 +40,14 @@ const control = L.control.advancedLayers(layers, {
     color: '#2f6f95',
 }).addTo(map);
 ```
+
+## Aknowledgement
+
+I would like to thanks a lot the leaflet extensions who have inspired this one : 
+* [https://github.com/stefanocudini/leaflet-panel-layers](Stefano Cudini / Leaflet Panel Layers)
+* 
+* 
+
+## Note on use of generative IA 
+
+This application has been developped with the assistance of a generative model. 

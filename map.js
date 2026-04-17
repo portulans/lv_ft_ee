@@ -230,6 +230,11 @@ const resultsCount = document.getElementById("results-count");
 const dateMajElement = document.getElementById("date-maj");
 const referencesContent = document.getElementById("references-content");
 const contributorsContent = document.getElementById("contributors-content");
+const statsAccordion = document.getElementById("stats-accordion");
+const statsTabButtons = Array.from(document.querySelectorAll(".stats-tab[role='tab']"));
+const statsTabPanels = Array.from(document.querySelectorAll(".stats-panel[role='tabpanel']"));
+const histogramByType = document.getElementById("histogram-by-type");
+const histogramByStatut = document.getElementById("histogram-by-statut");
 
 const REFERENCE_TYPE_LABELS = {
 	archives: "Sources historiques (archives)",
@@ -383,6 +388,13 @@ const MEDIA_FILTER_OPTIONS = [
 	{ value: "without-media", label: "Sans médias" }
 ];
 
+const STATS_CHART_STYLE = {
+	text: "#24333b",
+	grid: "rgba(36, 51, 59, 0.12)",
+	barType: "#2f6f95",
+	barStatus: "#ca6a2a"
+};
+
 if (colorMode) {
 	colorMode.value = DEFAULT_COLOR_MODE;
 }
@@ -432,6 +444,239 @@ function setupMobileFiltersToggle() {
 }
 
 setupMobileFiltersToggle();
+
+function hasPlotly() {
+	return typeof window.Plotly !== "undefined" && typeof window.Plotly.react === "function";
+}
+
+function getStatsLabel(propertyKey, value) {
+	if (propertyKey === "type") {
+		return typeLabel(value);
+	}
+
+	if (propertyKey === "statut") {
+		return safeText(value, "Inconnu");
+	}
+
+	return safeText(value, "Inconnu");
+}
+
+function countVisibleEntriesByProperty(entries, propertyKey) {
+	const counts = new Map();
+
+	entries.forEach((entry) => {
+		const rawValue = safeText(entry.feature?.properties?.[propertyKey], "Inconnu");
+		const label = getStatsLabel(propertyKey, rawValue);
+		const previous = counts.get(label) || 0;
+		counts.set(label, previous + 1);
+	});
+
+	return Array.from(counts.entries())
+		.map(([label, count]) => ({ label, count }))
+		.sort((a, b) => {
+			if (b.count !== a.count) {
+				return b.count - a.count;
+			}
+			return a.label.localeCompare(b.label, "fr", { sensitivity: "base" });
+		});
+}
+
+function renderStatsHistogram(container, items, chartTitle, barColor) {
+	if (!container) return;
+
+	if (!hasPlotly()) {
+		container.innerHTML = "<p>Plotly n'est pas disponible pour afficher cet histogramme.</p>";
+		return;
+	}
+
+	if (!Array.isArray(items) || items.length === 0) {
+		container.innerHTML = "<p>Aucune donnée à afficher avec les filtres actuels.</p>";
+		return;
+	}
+
+	const labels = items.map((item) => item.label);
+	const values = items.map((item) => item.count);
+	const chartHeight = Math.max(240, items.length * 34 + 90);
+
+	window.Plotly.react(
+		container,
+		[
+			{
+				type: "bar",
+				orientation: "h",
+				x: values,
+				y: labels,
+				marker: {
+					color: barColor,
+					line: {
+						color: "rgba(23, 35, 40, 0.2)",
+						width: 1
+					}
+				},
+				hovertemplate: "%{y}<br>%{x} points<extra></extra>",
+				text: values,
+				textposition: "outside",
+				cliponaxis: false
+			}
+		],
+		{
+			title: {
+				text: chartTitle,
+				font: {
+					size: 15,
+					color: STATS_CHART_STYLE.text
+				},
+				x: 0,
+				xanchor: "left"
+			},
+			paper_bgcolor: "rgba(0,0,0,0)",
+			plot_bgcolor: "rgba(0,0,0,0)",
+			margin: { t: 42, r: 20, b: 36, l: 150 },
+			height: chartHeight,
+			autosize: true,
+			xaxis: {
+				tickformat: ",d",
+				showgrid: true,
+				gridcolor: STATS_CHART_STYLE.grid,
+				zeroline: false,
+				title: {
+					text: "Nombre de points"
+				}
+			},
+			yaxis: {
+				automargin: true,
+				tickfont: {
+					size: 12,
+					color: STATS_CHART_STYLE.text
+				}
+			},
+			font: {
+				family: "Manrope, Segoe UI, sans-serif",
+				color: STATS_CHART_STYLE.text,
+				size: 12
+			}
+		},
+		{
+			responsive: true,
+			displayModeBar: false
+		}
+	);
+}
+
+function updateStatsHistograms(visibleEntries) {
+	if (!histogramByType || !histogramByStatut) return;
+
+	const entries = Array.isArray(visibleEntries) ? visibleEntries : [];
+	const typeCounts = countVisibleEntriesByProperty(entries, "type");
+	const statusCounts = countVisibleEntriesByProperty(entries, "statut");
+
+	renderStatsHistogram(
+		histogramByType,
+		typeCounts,
+		`Répartition par type (${entries.length})`,
+		STATS_CHART_STYLE.barType
+	);
+	renderStatsHistogram(
+		histogramByStatut,
+		statusCounts,
+		`Répartition par statut (${entries.length})`,
+		STATS_CHART_STYLE.barStatus
+	);
+}
+
+function getActiveStatsTabButton() {
+	return statsTabButtons.find((button) => button.getAttribute("aria-selected") === "true") || statsTabButtons[0] || null;
+}
+
+function getStatsPanelByButton(button) {
+	if (!button) return null;
+	const panelId = button.getAttribute("aria-controls");
+	if (!panelId) return null;
+	return document.getElementById(panelId);
+}
+
+function resizePlotlyInPanel(panel) {
+	if (!panel || !hasPlotly()) return;
+	const chart = panel.querySelector(".stats-histogram");
+	if (!chart) return;
+	window.setTimeout(() => {
+		window.Plotly.Plots.resize(chart);
+	}, 0);
+}
+
+function activateStatsTab(targetButton, moveFocus) {
+	if (!targetButton) return;
+
+	statsTabButtons.forEach((button) => {
+		const isSelected = button === targetButton;
+		button.setAttribute("aria-selected", isSelected ? "true" : "false");
+		button.setAttribute("tabindex", isSelected ? "0" : "-1");
+	});
+
+	statsTabPanels.forEach((panel) => {
+		if (!panel) return;
+		panel.hidden = true;
+	});
+
+	const targetPanel = getStatsPanelByButton(targetButton);
+	if (targetPanel) {
+		targetPanel.hidden = false;
+		resizePlotlyInPanel(targetPanel);
+	}
+
+	if (moveFocus) {
+		targetButton.focus();
+	}
+}
+
+function setupStatsTabs() {
+	if (!statsTabButtons.length || !statsTabPanels.length) return;
+
+	statsTabButtons.forEach((button, index) => {
+		button.addEventListener("click", () => {
+			activateStatsTab(button, false);
+		});
+
+		button.addEventListener("keydown", (event) => {
+			const lastIndex = statsTabButtons.length - 1;
+			let nextIndex = index;
+
+			if (event.key === "ArrowRight") {
+				nextIndex = index === lastIndex ? 0 : index + 1;
+			} else if (event.key === "ArrowLeft") {
+				nextIndex = index === 0 ? lastIndex : index - 1;
+			} else if (event.key === "Home") {
+				nextIndex = 0;
+			} else if (event.key === "End") {
+				nextIndex = lastIndex;
+			} else {
+				return;
+			}
+
+			event.preventDefault();
+			activateStatsTab(statsTabButtons[nextIndex], true);
+		});
+	});
+
+	activateStatsTab(getActiveStatsTabButton(), false);
+
+	if (statsAccordion) {
+		statsAccordion.addEventListener("toggle", () => {
+			if (!statsAccordion.open) return;
+			const activeButton = getActiveStatsTabButton();
+			const activePanel = getStatsPanelByButton(activeButton);
+			resizePlotlyInPanel(activePanel);
+		});
+	}
+
+	window.addEventListener("resize", () => {
+		const activeButton = getActiveStatsTabButton();
+		const activePanel = getStatsPanelByButton(activeButton);
+		resizePlotlyInPanel(activePanel);
+	});
+}
+
+setupStatsTabs();
 
 function normalizeReferenceType(typeValue) {
 	return normalizeText(typeValue || "");
@@ -1899,6 +2144,7 @@ function renderVisibleLayers(zoomToVisible) {
 	visibleEntries.forEach((entry) => {
 		visibleLayerGroup.addLayer(entry.layer);
 	});
+	updateStatsHistograms(visibleEntries);
 
 	resultsCount.textContent = `${visibleEntries.length} / ${markerEntries.length} points affichés`;
 

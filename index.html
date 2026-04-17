@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="style.css">
 	<script src="./libs/leaflet/dist/leaflet-src.js"></script>
 	<script src="./libs/advanced-layers-control/advanced-layers-control.js"></script>
+	<script src="https://cdn.plot.ly/plotly-3.5.0.min.js" charset="utf-8"></script>
 	<script src="map.js" defer></script>
 </head>
 <body>
@@ -200,7 +201,53 @@
 		<p>Certains points correspondent probablement à des sources, sans aménagement de type lavoir ou source associé.</p>
 		<p>Les noms attribués aux lavoirs et fontaines ne correspondent pas forcément à l'usage. Par méconnaissance, je leur ai attribué le nom d'un toponyme significatif situé à proximité immédiate (souvent issu du cadastre). Ces noms sont certainement appelés à évoluer.</p>
 		<p>A terme, il serait souhaitable de distinguer lavoirs et fontaines et de les positionner précisement et distinctement sur la carte. Actuellement, si lavoir et fontaine(s) associés, un seul point représente l'ensemble.</p>
-		<details class="references-accordion" id="references-accordion">
+
+		<details class="references-accordion" id="stats-accordion">
+			<summary>Quelques chiffres</summary>
+			<div id="stats-content" class="references-accordion__content" aria-live="polite">
+				<div class="stats-tabs" role="tablist" aria-label="Histogrammes">
+					<button
+						type="button"
+						id="stats-tab-type"
+						class="stats-tab"
+						role="tab"
+						aria-selected="true"
+						aria-controls="stats-panel-type"
+					>
+						Par type
+					</button>
+					<button
+						type="button"
+						id="stats-tab-statut"
+						class="stats-tab"
+						role="tab"
+						aria-selected="false"
+						aria-controls="stats-panel-statut"
+						tabindex="-1"
+					>
+						Par statut
+					</button>
+				</div>
+				<div
+					id="stats-panel-type"
+					class="stats-panel"
+					role="tabpanel"
+					aria-labelledby="stats-tab-type"
+				>
+					<div id="histogram-by-type" class="stats-histogram" aria-label="Nombre de points par type"></div>
+				</div>
+				<div
+					id="stats-panel-statut"
+					class="stats-panel"
+					role="tabpanel"
+					aria-labelledby="stats-tab-statut"
+					hidden
+				>
+					<div id="histogram-by-statut" class="stats-histogram" aria-label="Nombre de points par statut"></div>
+				</div>
+			</div>
+		</details>
+				<details class="references-accordion" id="references-accordion">
 			<summary>Sources et bibliographie</summary>
 			<div id="references-content" class="references-accordion__content" aria-live="polite">
 				<p>Chargement des références...</p>

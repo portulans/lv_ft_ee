@@ -1508,5 +1508,11 @@
     "author":"Françoise Berthelé",
     "date":"17-04-2026",
     "type":"photo",
-    "caption":"Accès à la fontaine"}
+    "caption":"Accès à la fontaine"},
+    {"id":"136",
+    "img":"136-4.jpg",
+    "author":"IGN",
+    "date":"14-04-1963",
+    "type":"photo aérienne",
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.093889&lat=48.466691&z=16.6&pointer=true&layer=pva&year=1962&mission=0316-0041"}
 ]

@@ -3,6 +3,12 @@ const map = L.map("map", {
 	preferCanvas: true
 });
 
+L.control.locate({
+    setViw:true,
+    strings: {
+    title: "Me situer sur la carte !"
+  }}).addTo(map);
+
 ///////// Plans //////////
 
 const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {

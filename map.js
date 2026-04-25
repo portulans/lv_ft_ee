@@ -300,6 +300,7 @@ async function copyPermalinkToClipboard(fid) {
 const TYPE_LABELS = {
 	lavoir: "Lavoir",
 	fontaine: "Fontaine",
+	source: "Source",
 	lavoir_fontaine: "Lavoir et fontaine",
 	"lavoir en bordure de greve": "Lavoir en bordure de grève",
 	aiguade: "Aiguade",
@@ -334,6 +335,7 @@ const PRECISION_CLASS = {
 const TYPE_STYLE = {
 	lavoir: { color: "#2f6f95", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	source: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
 	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
@@ -361,6 +363,7 @@ const LEGEND_ENTRIES = {
 	type: [
 		{ color: TYPE_STYLE.lavoir.color, label: TYPE_LABELS.lavoir },
 		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
+		{ color: TYPE_STYLE.source.color, label: TYPE_LABELS.source },
 		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
 		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
 		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
@@ -1258,6 +1261,9 @@ function markerStyleFromType(typeRaw) {
 	const typeKey = normalizeText(typeRaw).replace(/_/g, " ");
 	if (typeKey.includes("lavoir") && typeKey.includes("fontaine")) {
 		return TYPE_STYLE.lavoir_fontaine;
+	}
+	if (typeKey.includes("source")) {
+		return TYPE_STYLE.source;
 	}
 	if (typeKey.includes("bordure") && typeKey.includes("greve")) {
 		return TYPE_STYLE["lavoir en bordure de greve"];

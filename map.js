@@ -2301,12 +2301,6 @@ function renderVisibleLayers(zoomToVisible) {
 	puitsLayerGroup.clearLayers();
 
 	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
-	const visibleDataEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
-	const visiblePuitsEntries = visibleEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND);
-	const totalDataEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
-	const totalPuitsEntries = markerEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND).length;
-	const isPuitsLayerVisible = map.hasLayer(puitsLayerGroup);
-
 	visibleEntries.forEach((entry) => {
 		if (entry.layerKind === PUITS_LAYER_KIND) {
 			puitsLayerGroup.addLayer(entry.layer);
@@ -2316,9 +2310,7 @@ function renderVisibleLayers(zoomToVisible) {
 	});
 	updateStatsHistograms(visibleEntries);
 
-	resultsCount.textContent = isPuitsLayerVisible
-		? `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés | Puits : ${visiblePuitsEntries.length} / ${totalPuitsEntries} points affichés`
-		: `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés`;
+	resultsCount.textContent = `${visibleEntries.length} / ${markerEntries.length} points affichés`;
 
 	if (
 		selectedLayer &&
@@ -2333,21 +2325,6 @@ function renderVisibleLayers(zoomToVisible) {
 		map.fitBounds(group.getBounds(), { padding: [25, 25] });
 	}
 }
-
-map.on("layeradd layerremove", () => {
-	if (!resultsCount || markerEntries.length === 0) return;
-
-	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
-	const visibleDataEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
-	const visiblePuitsEntries = visibleEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND);
-	const totalDataEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
-	const totalPuitsEntries = markerEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND).length;
-	const isPuitsLayerVisible = map.hasLayer(puitsLayerGroup);
-
-	resultsCount.textContent = isPuitsLayerVisible
-		? `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés | Puits : ${visiblePuitsEntries.length} / ${totalPuitsEntries} points affichés`
-		: `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés`;
-});
 
 function selectLayer(layer, feature, markerEntry = markerEntryByLayer.get(layer)) {
 	if (selectedLayer) {

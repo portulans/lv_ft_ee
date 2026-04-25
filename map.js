@@ -2301,6 +2301,8 @@ function renderVisibleLayers(zoomToVisible) {
 	puitsLayerGroup.clearLayers();
 
 	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
+	const visibleBaseEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
+	const totalBaseEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
 	visibleEntries.forEach((entry) => {
 		if (entry.layerKind === PUITS_LAYER_KIND) {
 			puitsLayerGroup.addLayer(entry.layer);
@@ -2308,9 +2310,9 @@ function renderVisibleLayers(zoomToVisible) {
 			visibleLayerGroup.addLayer(entry.layer);
 		}
 	});
-	updateStatsHistograms(visibleEntries);
+	updateStatsHistograms(visibleBaseEntries);
 
-	resultsCount.textContent = `${visibleEntries.length} / ${markerEntries.length} points affichés`;
+	resultsCount.textContent = `${visibleBaseEntries.length} / ${totalBaseEntries} points affichés`;
 
 	if (
 		selectedLayer &&

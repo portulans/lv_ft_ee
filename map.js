@@ -251,6 +251,8 @@ const REFERENCE_TYPE_LABELS = {
 };
 
 const REFERENCE_TYPE_ORDER = ["archives", "site web", "these", "livre", "donnees"];
+const BASE_LAYER_KIND = "points";
+const PUITS_LAYER_KIND = "puits";
 
 let currentFeatureId = null;
 
@@ -303,6 +305,14 @@ const TYPE_LABELS = {
 	aiguade: "Aiguade",
 	"doué":"Douët",
 	routoir: "Routoir",
+	puit: "Puit",
+	puits: "Puits",
+	"puit sureleve": "Puit surélevé",
+	"puits sureleve": "Puits surélevé",
+	pompe: "Pompe",
+	"pompe à eau": "Pompe à eau",
+	"pompe manuelle": "Pompe manuelle",
+	"autre type de pompe": "Autre type de pompe",
 	marre: "Mare",
 	inconnu: "Type inconnu"
 };
@@ -364,7 +374,9 @@ const LEGEND_ENTRIES = {
 let selectedLayer = null;
 let defaultStyleByLayer = new WeakMap();
 const visibleLayerGroup = L.layerGroup().addTo(map);
+const puitsLayerGroup = L.layerGroup();
 const markerEntries = [];
+const markerEntryByLayer = new WeakMap();
 let userLocationMarker = null;
 let userAccuracyCircle = null;
 let panelImageRequestToken = 0;
@@ -398,6 +410,30 @@ const STATS_CHART_STYLE = {
 	barType: "#2f6f95",
 	barStatus: "#ca6a2a"
 };
+
+function createPuitsIcon(typeValue, isSelected = false) {
+	const size = isSelected ? 16 : 14;
+	const normalizedType = normalizeText(typeValue);
+	const isPompe = normalizedType.includes("pompe");
+
+	const baseFill = isPompe ? "#c32593" : "#1c70ca";
+	const selectedFill = isPompe ? "#ef0ba7" : "#036def";
+	const baseBorder = isPompe ? "#3a062b" : "#081f3c";
+	const selectedBorder = "#c8dcff";
+
+	const borderColor = isSelected ? selectedBorder : baseBorder;
+	const fillColor = isSelected ? selectedFill : baseFill;
+
+	return L.divIcon({
+		className: "puits-marker-icon",
+		html:
+			`<span style="display:block;width:${size}px;height:${size}px;` +
+			`background:${fillColor};border:2px solid ${borderColor};` +
+			`box-sizing:border-box;border-radius:2px;"></span>`,
+		iconSize: [size, size],
+		iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)]
+	});
+}
 
 if (colorMode) {
 	colorMode.value = DEFAULT_COLOR_MODE;
@@ -944,56 +980,103 @@ async function updateDateMajFromGithub() {
 	}
 }
 
-async function loadImageCredits() {
-	try {
-		const response = await fetch("./data/credits.json");
-		if (!response.ok) {
-			throw new Error(`Erreur HTTP ${response.status}`);
-		}
-		const text = await response.text();
-		const entries = parseJsonLoose(text);
-		if (!Array.isArray(entries)) return;
+function mediaKeyForFeature(layerKind, featureId) {
+	return `${layerKind}:${safeText(featureId, "").trim()}`;
+}
 
-		const mapByImage = new Map();
-		const mapById = new Map();
-		
-		entries.forEach((entry) => {
-			const imageId = safeText(entry?.id, "").trim();
-			const imageName = safeText(entry?.img, "").trim().toLowerCase();
-			const mediaType = safeText(entry?.type, "").trim().toLowerCase();
-			const mediaLink = safeText(entry?.url, "").trim();
-			
-			if (!imageName) return;
-			mapByImage.set(imageName, {
-				author: safeText(entry?.author, ""),
-				date: safeText(entry?.date, ""),
-				caption: safeText(entry?.caption, ""),
-				type: mediaType,
-				url: mediaLink
-			});
+function imageFolderForLayer(layerKind) {
+	return layerKind === PUITS_LAYER_KIND ? "imgs-puits" : "imgs";
+}
 
-			if (!imageId) return;
-			
-			// Track by feature ID
-			if (!mapById.has(imageId)) {
-				mapById.set(imageId, []);
-			}
-			mapById.get(imageId).push(imageName);
-			
-			// Track media types by feature
-			featuresWithAnyMedia.add(imageId);
-			
-			if (mediaType === "photo") {
-				featuresWithPhotos.add(imageId);
-			} else if (mediaType === "photo aerienne" || mediaType === "photo aérienne") {
-				featuresWithAerialPhotos.add(imageId);
-			} else if (mediaType === "plan cadastral") {
-				featuresWithPlans.add(imageId);
-			}
+function imageKeyFromUrl(url) {
+	const cleanedUrl = safeText(url, "")
+		.split("?")[0]
+		.split("#")[0]
+		.replace(/\\/g, "/")
+		.replace(/^\.\//, "");
+
+	const decoded = decodeURIComponent(cleanedUrl).toLowerCase();
+	if (decoded.startsWith("imgs/")) {
+		return decoded.slice("imgs/".length);
+	}
+	return decoded;
+}
+
+function buildImageUrlForLayer(layerKind, imageName) {
+	const trimmedName = safeText(imageName, "").trim();
+	if (!trimmedName) return null;
+
+	const folder = imageFolderForLayer(layerKind);
+	const path = `./${folder}/${encodeURIComponent(trimmedName)}`;
+
+	return path;
+}
+
+async function loadImageCreditsFile(filePath, layerKind) {
+	const response = await fetch(filePath);
+	if (!response.ok) {
+		throw new Error(`Erreur HTTP ${response.status}`);
+	}
+
+	const text = await response.text();
+	if (!text.trim()) {
+		return;
+	}
+
+	const entries = parseJsonLoose(text);
+	if (!Array.isArray(entries)) return;
+
+	entries.forEach((entry) => {
+		const imageId = safeText(entry?.id, "").trim();
+		const imageName = safeText(entry?.img, "").trim();
+		const mediaType = safeText(entry?.type, "").trim().toLowerCase();
+		const mediaLink = safeText(entry?.url, "").trim();
+
+		const imageUrl = buildImageUrlForLayer(layerKind, imageName);
+		if (!imageUrl) return;
+
+		const imageKey = imageKeyFromUrl(imageUrl);
+		creditsByImageName.set(imageKey, {
+			author: safeText(entry?.author, ""),
+			date: safeText(entry?.date, ""),
+			caption: safeText(entry?.caption, ""),
+			type: mediaType,
+			url: mediaLink
 		});
 
-		creditsByImageName = mapByImage;
-		imageNamesById = mapById;
+		if (!imageId) return;
+		const key = mediaKeyForFeature(layerKind, imageId);
+
+		if (!imageNamesById.has(key)) {
+			imageNamesById.set(key, []);
+		}
+		imageNamesById.get(key).push(imageName);
+
+		featuresWithAnyMedia.add(key);
+
+		if (mediaType === "photo") {
+			featuresWithPhotos.add(key);
+		} else if (mediaType === "photo aerienne" || mediaType === "photo aérienne") {
+			featuresWithAerialPhotos.add(key);
+		} else if (mediaType === "plan cadastral") {
+			featuresWithPlans.add(key);
+		}
+	});
+}
+
+async function loadImageCredits() {
+	creditsByImageName = new Map();
+	imageNamesById = new Map();
+	featuresWithPhotos.clear();
+	featuresWithAerialPhotos.clear();
+	featuresWithPlans.clear();
+	featuresWithAnyMedia.clear();
+
+	try {
+		await Promise.all([
+			loadImageCreditsFile("./data/credits.json", BASE_LAYER_KIND),
+			loadImageCreditsFile("./data/credits-puits.json", PUITS_LAYER_KIND)
+		]);
 		
 		console.log("Media tracking loaded:");
 		console.log("Features with photos:", featuresWithPhotos.size);
@@ -1034,7 +1117,8 @@ const advancedLayersControl = L.control.advancedLayers(
 			name: "Données vectorielles",
 			collapsed: true,
 			layers: [
-				{ name: "Points recensés", layer: visibleLayerGroup, active: true },
+				{ name: "Fontaines et lavoirs", layer: visibleLayerGroup, active: true },
+				{ name: "Puits", layer: puitsLayerGroup, active: false },
 				{ name: "Surfaces hydrographiques (IGN)", layer: hydroSurfacesLayer, active: false },
 				{ name: "Tronçons hydrographiques (IGN)", layer: hydroTronconsLayer, active: false }
 			]
@@ -1091,7 +1175,7 @@ function isSourcePresent(value) {
 	return false;
 }
 
-function safeText(value, fallback = "Non renseigne") {
+function safeText(value, fallback = "Non renseigné") {
 	if (value === null || value === undefined) {
 		return fallback;
 	}
@@ -1100,7 +1184,46 @@ function safeText(value, fallback = "Non renseigne") {
 }
 
 function typeLabel(rawType) {
-	return TYPE_LABELS[rawType] || safeText(rawType);
+	const directMatch = TYPE_LABELS[rawType];
+	if (directMatch) return directMatch;
+
+	const normalizedMatch = TYPE_LABELS[normalizeText(rawType)];
+	if (normalizedMatch) return normalizedMatch;
+
+	return safeText(rawType);
+}
+
+function accessValueFromProps(props) {
+	if (!props) return "";
+	if (hasPanelValue(props.acces)) return props.acces;
+	if (hasPanelValue(props.access)) return props.access;
+	return "";
+}
+
+function accessClass(accessValueRaw) {
+	const accessValue = normalizeText(accessValueRaw);
+	if (!accessValue) return "";
+
+	const isPrivate = accessValue.includes("terrain prive");
+	const isVisibleFromRoad = accessValue.includes("visible depuis la route");
+	const isDifficult =
+		accessValue.includes("traversee de terrains prives") ||
+		accessValue.includes("pente raide") ||
+		accessValue.includes("falaise") ||
+		accessValue.includes("difficile");
+	const isFree = accessValue.includes("libre") || accessValue.includes("bordure de route") || accessValue.includes("bord de route");
+
+	if (isPrivate && !isVisibleFromRoad && !isFree) {
+		return "private";
+	}
+	if (isDifficult || (isPrivate && isVisibleFromRoad)) {
+		return "caution";
+	}
+	if (isFree) {
+		return "free";
+	}
+
+	return "";
 }
 
 function markerColorFromStatus(statusRaw) {
@@ -1199,6 +1322,12 @@ function selectedMarkerStyle(baseStyle) {
 }
 
 function applyMarkerStyle(layer, feature) {
+	const markerEntry = markerEntryByLayer.get(layer);
+	if (markerEntry?.layerKind === PUITS_LAYER_KIND && typeof layer.setIcon === "function") {
+		layer.setIcon(createPuitsIcon(feature?.properties?.type, layer === selectedLayer));
+		return;
+	}
+
 	const style = markerStyleFromFeature(feature);
 	defaultStyleByLayer.set(layer, style);
 	layer.setStyle(layer === selectedLayer ? selectedMarkerStyle(style) : style);
@@ -1396,9 +1525,7 @@ function closeImageViewer() {
 }
 
 function imageNameFromUrl(url) {
-	const cleanedUrl = url.split("?")[0].split("#")[0];
-	const parts = cleanedUrl.split("/");
-	return decodeURIComponent(parts[parts.length - 1] || "").toLowerCase();
+	return imageKeyFromUrl(url);
 }
 
 function creditFromUrl(url) {
@@ -1486,9 +1613,9 @@ function createPanelImageFigure(url, altText, urls, index) {
 	return figure;
 }
 
-async function resolvePanelImageUrls(fid, onUrlResolved) {
-	if (panelImagesCache.has(fid)) {
-		const cachedUrls = panelImagesCache.get(fid);
+async function resolvePanelImageUrls(mediaKey, layerKind, onUrlResolved) {
+	if (panelImagesCache.has(mediaKey)) {
+		const cachedUrls = panelImagesCache.get(mediaKey);
 		if (typeof onUrlResolved === "function") {
 			cachedUrls.forEach((url, index) => onUrlResolved(url, index, cachedUrls));
 		}
@@ -1509,23 +1636,22 @@ async function resolvePanelImageUrls(fid, onUrlResolved) {
 		return true;
 	};
 
-	const creditedNames = imageNamesById.get(fid) || [];
+	const creditedNames = imageNamesById.get(mediaKey) || [];
 	for (const imageName of creditedNames) {
-		const trimmedName = safeText(imageName, "").trim();
-		if (!trimmedName) continue;
-		appendUrl(`./imgs/${encodeURIComponent(trimmedName)}`);
+		appendUrl(buildImageUrlForLayer(layerKind, imageName));
 	}
 
-	panelImagesCache.set(fid, urls);
+	panelImagesCache.set(mediaKey, urls);
 	return urls;
 }
 
-function renderPanelImages(fidValue) {
+function renderPanelImages(fidValue, layerKind = BASE_LAYER_KIND) {
 	if (!panelImages) return;
 	clearPanelImages();
 
 	const fid = safeText(fidValue, "").trim();
 	if (!fid) return;
+	const mediaKey = mediaKeyForFeature(layerKind, fid);
 
 	showPanelImagesLoading(fid);
 
@@ -1544,7 +1670,7 @@ function renderPanelImages(fidValue) {
 	panelImages.appendChild(gallery);
 	panelImages.classList.add("is-visible");
 
-	resolvePanelImageUrls(fid, (url, index, urls) => {
+	resolvePanelImageUrls(mediaKey, layerKind, (url, index, urls) => {
 		if (!panelImages || currentToken !== panelImageRequestToken || !url) return;
 
 		resolvedUrls[index] = url;
@@ -1680,13 +1806,17 @@ function selectLayerByFeatureId(fid) {
 	if (entry) {
 		console.log("Found feature:", entry.feature.properties?.nom);
 		
-		// Ensure the layer is in the visible group
-		if (!visibleLayerGroup.hasLayer(entry.layer)) {
+		// Ensure the layer is in the right visible group
+		if (entry.layerKind === PUITS_LAYER_KIND) {
+			if (!puitsLayerGroup.hasLayer(entry.layer)) {
+				puitsLayerGroup.addLayer(entry.layer);
+			}
+		} else if (!visibleLayerGroup.hasLayer(entry.layer)) {
 			visibleLayerGroup.addLayer(entry.layer);
 		}
 		
 		// Select the layer and update panel
-		selectLayer(entry.layer, entry.feature);
+		selectLayer(entry.layer, entry.feature, entry);
 		
 		// Zoom to the feature with good zoom level
 		const latlng = entry.layer.getLatLng();
@@ -1768,7 +1898,7 @@ function setPanelTextBlock(element, label, value) {
 	}
 }
 
-function updatePanel(feature) {
+function updatePanel(feature, markerEntry) {
 	const props = feature.properties || {};
 	const coordinatesText = formatCoordinates(feature);
 
@@ -1784,33 +1914,42 @@ function updatePanel(feature) {
 		panelRow("Etat", safeText(props.existant_etat));
 	}
 
-	const accessValueRaw = hasPanelValue(props.acces)
-		? props.acces
-		: hasPanelValue(props.access)
-			? props.access
-			: null;
+	const accessValueRaw = accessValueFromProps(props);
 
 	if (hasPanelValue(accessValueRaw)) {
 		const accessValue = safeText(accessValueRaw);
 		const { dd } = panelRow("Accès", accessValue);
-		if (normalizeText(accessValue) === "terrain prive"  ) {
+		const accessLevel = accessClass(accessValue);
+		if (accessLevel === "private") {
 			dd.style.color = "#b00020";
 			dd.style.fontWeight = "600";
-		} else if (normalizeText(accessValue) === "libre, pente raide et falaise !" || normalizeText(accessValue) === "traversee de terrains prives ?" || normalizeText(accessValue) === "libre, difficile") {
+		} else if (accessLevel === "caution") {
 			dd.style.color = "#ed7a0f";
 			dd.style.fontWeight = "600";
-		} else if (normalizeText(accessValue) === "libre, bord de route" || normalizeText(accessValue) === "libre") {
+		} else if (accessLevel === "free") {
 			dd.style.color = "#4caf50";
 			dd.style.fontWeight = "600";
 		}
 	}
 
-	panelRow("Précision des coordonnées", safeText(props.precision_geom));
-	panelRow("Source", safeText(props.source));
+	const precisionValue = hasPanelValue(props.precision_geom)
+		? props.precision_geom
+		: hasPanelValue(props.precision)
+			? props.precision
+			: null;
+	const sourceValue = hasPanelValue(props.src_geom)
+		? props.src_geom
+		: hasPanelValue(props.source)
+			? props.source
+			: hasPanelValue(props.src)
+				? props.src
+				: null;
+
+	panelRow("Précision des coordonnées", safeText(precisionValue));
+	panelRow("Source", safeText(sourceValue));
 	if (coordinatesText) {
 		panelRow("Coordonnées (lat, lon)", coordinatesText);
 	}
-	panelRow("Trace sur le plan de 1910 ?", toYesNo(props.src_p1910));
 	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
 
 	const historiqueValue = hasPanelValue(props.commentaire_st)
@@ -1826,7 +1965,8 @@ function updatePanel(feature) {
 	setPanelTextBlock(panelLegendes, "Légendes", props.legendes);
 	setPanelTextBlock(panelNomExplication, "Explication du nom", nomExplicationValue);
 
-	renderPanelImages(props.fid);
+	const layerKind = markerEntry?.layerKind || BASE_LAYER_KIND;
+	renderPanelImages(props.fid, layerKind);
 }
 
 function resetPanel() {
@@ -1909,8 +2049,13 @@ function loadHydroLayers() {
 }
 
 function clearSelection() {
-	if (selectedLayer && defaultStyleByLayer.has(selectedLayer)) {
-		selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
+	if (selectedLayer) {
+		const selectedEntry = markerEntryByLayer.get(selectedLayer);
+		if (selectedEntry?.layerKind === PUITS_LAYER_KIND && typeof selectedLayer.setIcon === "function") {
+			selectedLayer.setIcon(createPuitsIcon(selectedEntry.feature?.properties?.type, false));
+		} else if (defaultStyleByLayer.has(selectedLayer)) {
+			selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
+		}
 	}
 	selectedLayer = null;
 	currentFeatureId = null;
@@ -1934,6 +2079,28 @@ function uniqueSortedValuesWithInconnu(features, propertyKey) {
 	features.forEach((feature) => {
 		const value = feature.properties?.[propertyKey];
 		const safeValue = safeText(value, "");
+		if (safeValue.length > 0) {
+			values.push(safeValue);
+		} else {
+			hasEmpty = true;
+		}
+	});
+
+	if (hasEmpty) {
+		values.push("inconnu");
+	}
+
+	return Array.from(new Set(values)).sort((a, b) =>
+		a.localeCompare(b, "fr", { sensitivity: "base" })
+	);
+}
+
+function uniqueSortedAccessValuesWithInconnu(features) {
+	const values = [];
+	let hasEmpty = false;
+
+	features.forEach((feature) => {
+		const safeValue = safeText(accessValueFromProps(feature.properties || {}), "");
 		if (safeValue.length > 0) {
 			values.push(safeValue);
 		} else {
@@ -2065,6 +2232,10 @@ function matchesTextPattern(text, pattern) {
 }
 
 function matchesCurrentFilters(entry) {
+	if (entry?.layerKind === PUITS_LAYER_KIND) {
+		return true;
+	}
+
 	const queryInput = searchInput.value.trim();
 	const queryIdInput = searchIdInput?.value.trim();
 	const selectedTypes = getSelectedDropdownValues(filterTypeOptions, true);
@@ -2099,25 +2270,24 @@ function matchesCurrentFilters(entry) {
 	});
 	
 	let hasMedia = selectedMedia.length === 0;
-	// Convert featureId to string to match the sets (which store string IDs from credits.json)
-	const featureId = String(entry.featureId);
+	const mediaKey = entry.mediaKey;
 
 	if (selectedMedia.length > 0) {
 		hasMedia = selectedMedia.some((selectedMediaOption) => {
 			if (selectedMediaOption === "photos-only") {
-				return featuresWithPhotos.has(featureId);
+				return featuresWithPhotos.has(mediaKey);
 			}
 			if (selectedMediaOption === "aerial-photos") {
-				return featuresWithAerialPhotos.has(featureId);
+				return featuresWithAerialPhotos.has(mediaKey);
 			}
 			if (selectedMediaOption === "plans-only") {
-				return featuresWithPlans.has(featureId);
+				return featuresWithPlans.has(mediaKey);
 			}
 			/*if (selectedMediaOption === "with-media") {
-				return featuresWithAnyMedia.has(featureId);
+				return featuresWithAnyMedia.has(mediaKey);
 			}*/
 			if (selectedMediaOption === "without-media") {
-				return !featuresWithAnyMedia.has(featureId);
+				return !featuresWithAnyMedia.has(mediaKey);
 			}
 			return false;
 		});
@@ -2128,16 +2298,33 @@ function matchesCurrentFilters(entry) {
 
 function renderVisibleLayers(zoomToVisible) {
 	visibleLayerGroup.clearLayers();
+	puitsLayerGroup.clearLayers();
 
 	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
+	const visibleDataEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
+	const visiblePuitsEntries = visibleEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND);
+	const totalDataEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
+	const totalPuitsEntries = markerEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND).length;
+	const isPuitsLayerVisible = map.hasLayer(puitsLayerGroup);
+
 	visibleEntries.forEach((entry) => {
-		visibleLayerGroup.addLayer(entry.layer);
+		if (entry.layerKind === PUITS_LAYER_KIND) {
+			puitsLayerGroup.addLayer(entry.layer);
+		} else {
+			visibleLayerGroup.addLayer(entry.layer);
+		}
 	});
 	updateStatsHistograms(visibleEntries);
 
-	resultsCount.textContent = `${visibleEntries.length} / ${markerEntries.length} points affichés`;
+	resultsCount.textContent = isPuitsLayerVisible
+		? `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés | Puits : ${visiblePuitsEntries.length} / ${totalPuitsEntries} points affichés`
+		: `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés`;
 
-	if (selectedLayer && !visibleLayerGroup.hasLayer(selectedLayer)) {
+	if (
+		selectedLayer &&
+		!visibleLayerGroup.hasLayer(selectedLayer) &&
+		!puitsLayerGroup.hasLayer(selectedLayer)
+	) {
 		clearSelection();
 	}
 
@@ -2147,16 +2334,40 @@ function renderVisibleLayers(zoomToVisible) {
 	}
 }
 
-function selectLayer(layer, feature) {
-	if (selectedLayer && defaultStyleByLayer.has(selectedLayer)) {
-		selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
+map.on("layeradd layerremove", () => {
+	if (!resultsCount || markerEntries.length === 0) return;
+
+	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
+	const visibleDataEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
+	const visiblePuitsEntries = visibleEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND);
+	const totalDataEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
+	const totalPuitsEntries = markerEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND).length;
+	const isPuitsLayerVisible = map.hasLayer(puitsLayerGroup);
+
+	resultsCount.textContent = isPuitsLayerVisible
+		? `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés | Puits : ${visiblePuitsEntries.length} / ${totalPuitsEntries} points affichés`
+		: `Données : ${visibleDataEntries.length} / ${totalDataEntries} points affichés`;
+});
+
+function selectLayer(layer, feature, markerEntry = markerEntryByLayer.get(layer)) {
+	if (selectedLayer) {
+		const selectedEntry = markerEntryByLayer.get(selectedLayer);
+		if (selectedEntry?.layerKind === PUITS_LAYER_KIND && typeof selectedLayer.setIcon === "function") {
+			selectedLayer.setIcon(createPuitsIcon(selectedEntry.feature?.properties?.type, false));
+		} else if (defaultStyleByLayer.has(selectedLayer)) {
+			selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
+		}
 	}
 
 	selectedLayer = layer;
-	layer.setStyle(selectedMarkerStyle(defaultStyleByLayer.get(layer) || markerStyleFromFeature(feature)));
+	if (markerEntry?.layerKind === PUITS_LAYER_KIND && typeof layer.setIcon === "function") {
+		layer.setIcon(createPuitsIcon(feature?.properties?.type, true));
+	} else {
+		layer.setStyle(selectedMarkerStyle(defaultStyleByLayer.get(layer) || markerStyleFromFeature(feature)));
+	}
 
 	currentFeatureId = feature.properties?.fid || null;
-	updatePanel(feature);
+	updatePanel(feature, markerEntry);
 }
 
 fetch("./data/data.geojson")
@@ -2166,14 +2377,25 @@ fetch("./data/data.geojson")
 		}
 		return response.json();
 	})
-	.then((geojson) => {
-		const features = geojson.features || [];
+	.then((baseGeojson) =>
+		fetch("./data/puits.geojson")
+			.then((response) => {
+				if (!response.ok) {
+					throw new Error(`Erreur HTTP ${response.status}`);
+				}
+				return response.json();
+			})
+			.then((puitsGeojson) => ({ baseGeojson, puitsGeojson }))
+	)
+	.then(({ baseGeojson, puitsGeojson }) => {
+		const baseFeatures = baseGeojson.features || [];
+		const puitsFeatures = puitsGeojson.features || [];
 
-		fillCheckboxOptions(filterTypeOptions, uniqueSortedValues(features, "type"));
-		fillCheckboxOptions(filterStatusOptions, uniqueSortedValues(features, "statut"));
-		fillCheckboxOptions(filterPrecisionOptions, uniqueSortedValues(features, "precision_geom"));
-		fillCheckboxOptions(filterAccesOptions, uniqueSortedValuesWithInconnu(features, "acces"));
-		fillCheckboxOptions(filterEtatOptions, uniqueSortedValuesWithInconnu(features, "existant_etat"));
+		fillCheckboxOptions(filterTypeOptions, uniqueSortedValues(baseFeatures, "type"));
+		fillCheckboxOptions(filterStatusOptions, uniqueSortedValues(baseFeatures, "statut"));
+		fillCheckboxOptions(filterPrecisionOptions, uniqueSortedValues(baseFeatures, "precision_geom"));
+		fillCheckboxOptions(filterAccesOptions, uniqueSortedAccessValuesWithInconnu(baseFeatures));
+		fillCheckboxOptions(filterEtatOptions, uniqueSortedValuesWithInconnu(baseFeatures, "existant_etat"));
 		fillCheckboxOptionsFromEntries(filterSourcesOptions, SOURCE_FILTER_OPTIONS);
 		fillCheckboxOptionsFromEntries(filterImagesOptions, MEDIA_FILTER_OPTIONS);
 
@@ -2185,7 +2407,7 @@ fetch("./data/data.geojson")
 		syncDropdownAllCheckboxState(filterSourcesAll, filterSourcesOptions, filterSourcesSummary, "source", "sources");
 		syncDropdownAllCheckboxState(filterImagesAll, filterImagesOptions, filterImagesSummary, "média", "médias");
 
-		const pointsLayer = L.geoJSON(geojson, {
+		const pointsLayer = L.geoJSON(baseGeojson, {
 			pointToLayer(feature, latlng) {
 				const marker = L.circleMarker(latlng, markerStyleFromFeature(feature));
 
@@ -2193,38 +2415,91 @@ fetch("./data/data.geojson")
 				return marker;
 			},
 			onEachFeature(feature, layer) {
-				const title = safeText(feature.properties?.nom, "Nom non renseigne");
+				const title = safeText(feature.properties?.nom, "Nom non renseigné");
 				const kind = typeLabel(feature.properties?.type);
 				const altName = safeText(feature.properties?.["alt-name"], "");
+				const fid = safeText(feature.properties?.fid, "");
+				const mediaKey = mediaKeyForFeature(BASE_LAYER_KIND, fid);
 				layer.bindTooltip(`${title} (${kind})`, {
 					direction: "top",
 					opacity: 0.95,
 					offset: [0, -6]
 				});
 
-				markerEntries.push({
+				const markerEntry = {
 					layer,
 					feature,
+					layerKind: BASE_LAYER_KIND,
+					mediaKey,
 					featureId: feature.properties?.fid,
 					idValue: normalizeText(feature.properties?.fid),
 					typeValue: normalizeText(feature.properties?.type),
 					statusValue: normalizeText(feature.properties?.statut),
 					precisionValue: normalizeText(feature.properties?.precision_geom),
-					accesValue: normalizeText(feature.properties?.acces),
+					accesValue: normalizeText(accessValueFromProps(feature.properties || {})),
 					etatValue: normalizeText(feature.properties?.existant_etat),
 					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
 					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
 					searchValue: normalizeText(`${title} ${altName}`)
-				});
+				};
+				markerEntries.push(markerEntry);
+				markerEntryByLayer.set(layer, markerEntry);
 
 				layer.on("click", () => {
-					selectLayer(layer, feature);
+					selectLayer(layer, feature, markerEntry);
+				});
+			}
+		});
+
+		const puitsLayer = L.geoJSON(puitsGeojson, {
+			pointToLayer(feature, latlng) {
+				const marker = L.marker(latlng, { icon: createPuitsIcon(feature?.properties?.type, false) });
+				return marker;
+			},
+			onEachFeature(feature, layer) {
+				const rawName = safeText(feature.properties?.nom, "");
+				const title = rawName || "Puit sans nom";
+				const kind = typeLabel(feature.properties?.type);
+				const altName = safeText(feature.properties?.["alt-name"], "");
+				const fid = safeText(feature.properties?.fid, "");
+				const mediaKey = mediaKeyForFeature(PUITS_LAYER_KIND, fid);
+				const tooltipText = rawName ? `${title} (${kind})` : kind;
+				layer.bindTooltip(tooltipText, {
+					direction: "top",
+					opacity: 0.95,
+					offset: [0, -6]
+				});
+
+				const markerEntry = {
+					layer,
+					feature,
+					layerKind: PUITS_LAYER_KIND,
+					mediaKey,
+					featureId: feature.properties?.fid,
+					idValue: normalizeText(feature.properties?.fid),
+					typeValue: normalizeText(feature.properties?.type),
+					statusValue: normalizeText(feature.properties?.statut),
+					precisionValue: normalizeText(feature.properties?.precision_geom),
+					accesValue: normalizeText(accessValueFromProps(feature.properties || {})),
+					etatValue: normalizeText(feature.properties?.existant_etat),
+					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
+					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
+					searchValue: normalizeText(`${title} ${altName}`)
+				};
+				markerEntries.push(markerEntry);
+				markerEntryByLayer.set(layer, markerEntry);
+
+				layer.on("click", () => {
+					selectLayer(layer, feature, markerEntry);
 				});
 			}
 		});
 
 		pointsLayer.eachLayer((layer) => {
 			visibleLayerGroup.addLayer(layer);
+		});
+		puitsLayer.eachLayer((layer) => {
+			puitsLayerGroup.addLayer(layer);
 		});
 
 		renderVisibleLayers(true);

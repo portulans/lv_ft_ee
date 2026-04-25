@@ -378,8 +378,6 @@ const featuresWithAnyMedia = new Set();
 const hydroSurfacesLayer = L.layerGroup();
 const hydroTronconsLayer = L.layerGroup();
 
-const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "webp"];
-const MAX_PANEL_NUMBERED_IMAGES = 12;
 const DEFAULT_COLOR_MODE = "type";
 const SOURCE_FILTER_OPTIONS = [
 	{ value: "plan-1910", label: "Plan d'ensemble (1910)" },
@@ -1442,61 +1440,82 @@ function captionLinkFromUrl(url) {
 	return null;
 }
 
-function probeImage(url) {
-	return new Promise((resolve) => {
-		const image = new Image();
-		image.onload = () => resolve(true);
-		image.onerror = () => resolve(false);
-		image.src = url;
+function createPanelImageFigure(url, altText, urls, index) {
+	const image = document.createElement("img");
+	image.loading = index < 2 ? "eager" : "lazy";
+	image.decoding = "async";
+	if (index === 0) {
+		image.fetchPriority = "high";
+	}
+	image.alt = altText;
+	image.src = url;
+	image.addEventListener("click", () => {
+		openImageViewer(url, altText, urls, index);
 	});
-}
 
-async function firstExistingImageUrl(basePath) {
-	const candidates = IMAGE_EXTENSIONS.map((extension) => `${basePath}.${extension}`);
-	const checks = await Promise.all(candidates.map((url) => probeImage(url)));
-	const foundIndex = checks.findIndex(Boolean);
-	if (foundIndex >= 0) {
-		return candidates[foundIndex];
+	const figure = document.createElement("figure");
+	figure.className = "feature-images__item";
+	figure.appendChild(image);
+
+	const captionText = captionTextFromUrl(url);
+	const captionLink = captionLinkFromUrl(url);
+	if (captionText || captionLink) {
+		const caption = document.createElement("figcaption");
+		caption.className = "feature-images__caption";
+		if (captionText) {
+			const textNode = document.createElement("span");
+			textNode.textContent = captionText;
+			caption.appendChild(textNode);
+		}
+
+		if (captionLink) {
+			if (captionText) {
+				caption.appendChild(document.createElement("br"));
+			}
+			const linkNode = document.createElement("a");
+			linkNode.className = "feature-images__caption-link";
+			linkNode.href = captionLink.href;
+			linkNode.target = "_blank";
+			linkNode.rel = "noopener noreferrer";
+			linkNode.textContent = captionLink.label;
+			caption.appendChild(linkNode);
+		}
+		figure.appendChild(caption);
 	}
-	return null;
+
+	return figure;
 }
 
-async function existingImageUrlFromFileName(fileName) {
-	const trimmedName = safeText(fileName, "").trim();
-	if (!trimmedName) return null;
-
-	const extensionMatch = trimmedName.match(/\.([a-z0-9]+)$/i);
-	if (extensionMatch) {
-		const directPath = `./imgs/${encodeURIComponent(trimmedName)}`;
-		return (await probeImage(directPath)) ? directPath : null;
-	}
-
-	return firstExistingImageUrl(`./imgs/${encodeURIComponent(trimmedName)}`);
-}
-
-async function resolvePanelImageUrls(fid) {
+async function resolvePanelImageUrls(fid, onUrlResolved) {
 	if (panelImagesCache.has(fid)) {
-		return panelImagesCache.get(fid);
+		const cachedUrls = panelImagesCache.get(fid);
+		if (typeof onUrlResolved === "function") {
+			cachedUrls.forEach((url, index) => onUrlResolved(url, index, cachedUrls));
+		}
+		return cachedUrls;
 	}
 
-	const urlsByCredits = [];
+	const urls = [];
+	const seenUrls = new Set();
+	const appendUrl = (url) => {
+		if (!url || seenUrls.has(url)) {
+			return false;
+		}
+		seenUrls.add(url);
+		urls.push(url);
+		if (typeof onUrlResolved === "function") {
+			onUrlResolved(url, urls.length - 1, urls);
+		}
+		return true;
+	};
+
 	const creditedNames = imageNamesById.get(fid) || [];
-	if (creditedNames.length) {
-		const resolvedCreditUrls = await Promise.all(
-			creditedNames.map((imageName) => existingImageUrlFromFileName(imageName))
-		);
-		urlsByCredits.push(...resolvedCreditUrls.filter(Boolean));
+	for (const imageName of creditedNames) {
+		const trimmedName = safeText(imageName, "").trim();
+		if (!trimmedName) continue;
+		appendUrl(`./imgs/${encodeURIComponent(trimmedName)}`);
 	}
 
-	const encodedFid = encodeURIComponent(fid);
-	const basePaths = [`./imgs/${encodedFid}`];
-	for (let index = 1; index <= MAX_PANEL_NUMBERED_IMAGES; index += 1) {
-		basePaths.push(`./imgs/${encodedFid}-${index}`);
-	}
-
-	const resolvedUrls = await Promise.all(basePaths.map((basePath) => firstExistingImageUrl(basePath)));
-	const urlsByPattern = resolvedUrls.filter(Boolean);
-	const urls = Array.from(new Set([...urlsByCredits, ...urlsByPattern]));
 	panelImagesCache.set(fid, urls);
 	return urls;
 }
@@ -1511,8 +1530,31 @@ function renderPanelImages(fidValue) {
 	showPanelImagesLoading(fid);
 
 	const currentToken = ++panelImageRequestToken;
+	const resolvedUrls = [];
 
-	resolvePanelImageUrls(fid).then((urls) => {
+	const title = document.createElement("p");
+	title.className = "feature-images__title";
+	title.textContent = "Images";
+
+	const gallery = document.createElement("div");
+	gallery.className = "feature-images__gallery";
+
+	panelImages.innerHTML = "";
+	panelImages.appendChild(title);
+	panelImages.appendChild(gallery);
+	panelImages.classList.add("is-visible");
+
+	resolvePanelImageUrls(fid, (url, index, urls) => {
+		if (!panelImages || currentToken !== panelImageRequestToken || !url) return;
+
+		resolvedUrls[index] = url;
+		const altText =
+			urls.length > 1
+				? `Illustration ${index + 1} du point ${fid}`
+				: `Illustration du point ${fid}`;
+		gallery.appendChild(createPanelImageFigure(url, altText, resolvedUrls, index));
+		panelImages.classList.remove("is-loading");
+	}).then((urls) => {
 		if (!panelImages || currentToken !== panelImageRequestToken) return;
 		panelImages.classList.remove("is-loading");
 		
@@ -1520,66 +1562,7 @@ function renderPanelImages(fidValue) {
 			clearPanelImages();
 			return;
 		}
-
-		const title = document.createElement("p");
-		title.className = "feature-images__title";
 		title.textContent = urls.length > 1 ? "Images" : "Image";
-
-		const gallery = document.createElement("div");
-		gallery.className = "feature-images__gallery";
-
-		panelImages.innerHTML = "";
-		panelImages.appendChild(title);
-		panelImages.appendChild(gallery);
-
-		urls.forEach((url, index) => {
-			const image = document.createElement("img");
-			image.loading = index < 2 ? "eager" : "lazy";
-			image.decoding = "async";
-			if (index === 0) {
-				image.fetchPriority = "high";
-			}
-			image.alt =
-				urls.length > 1
-					? `Illustration ${index + 1} du point ${fid}`
-					: `Illustration du point ${fid}`;
-			image.src = url;
-			image.addEventListener("click", () => {
-				openImageViewer(url, image.alt, urls, index);
-			});
-
-			const figure = document.createElement("figure");
-			figure.className = "feature-images__item";
-			figure.appendChild(image);
-
-			const captionText = captionTextFromUrl(url);
-			const captionLink = captionLinkFromUrl(url);
-			if (captionText || captionLink) {
-				const caption = document.createElement("figcaption");
-				caption.className = "feature-images__caption";
-				if (captionText) {
-					const textNode = document.createElement("span");
-					textNode.textContent = captionText;
-					caption.appendChild(textNode);
-				}
-
-				if (captionLink) {
-					if (captionText) {
-						caption.appendChild(document.createElement("br"));
-					}
-					const linkNode = document.createElement("a");
-					linkNode.className = "feature-images__caption-link";
-					linkNode.href = captionLink.href;
-					linkNode.target = "_blank";
-					linkNode.rel = "noopener noreferrer";
-					linkNode.textContent = captionLink.label;
-					caption.appendChild(linkNode);
-				}
-				figure.appendChild(caption);
-			}
-
-			gallery.appendChild(figure);
-		});
 
 		panelImages.classList.add("is-visible");
 	});

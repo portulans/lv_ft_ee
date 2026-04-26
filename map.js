@@ -335,7 +335,7 @@ const PRECISION_CLASS = {
 const TYPE_STYLE = {
 	lavoir: { color: "#2f6f95", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	source: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	source: { color: "#b9d007", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
 	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },

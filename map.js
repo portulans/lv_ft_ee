@@ -1956,6 +1956,7 @@ function updatePanel(feature, markerEntry) {
 	if (coordinatesText) {
 		panelRow("Coordonnées (lat, lon)", coordinatesText);
 	}
+	panelRow("Traces sur le plan de 1910 ?", toYesNo(props.src_p1910));
 	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
 
 	const historiqueValue = hasPanelValue(props.commentaire_st)

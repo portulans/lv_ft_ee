@@ -308,6 +308,7 @@ const TYPE_LABELS = {
 	routoir: "Routoir",
 	puit: "Puit",
 	puits: "Puits",
+	lavoir_puit: "Lavoir et puit",
 	"puit sureleve": "Puit surélevé",
 	"puits sureleve": "Puits surélevé",
 	pompe: "Pompe",
@@ -338,6 +339,7 @@ const TYPE_STYLE = {
 	source: { color: "#b9d007", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
+	lavoir_puit: { color: "#ff00ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },
@@ -365,6 +367,7 @@ const LEGEND_ENTRIES = {
 		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
 		{ color: TYPE_STYLE.source.color, label: TYPE_LABELS.source },
 		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
+		{ color: TYPE_STYLE.lavoir_puit.color, label: TYPE_LABELS.lavoir_puit },
 		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
 		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
 		{ color: TYPE_STYLE["doué"].color, label: TYPE_LABELS["doué"] },
@@ -1259,6 +1262,10 @@ function markerColorFromPrecision(precisionRaw) {
 
 function markerStyleFromType(typeRaw) {
 	const typeKey = normalizeText(typeRaw).replace(/_/g, " ");
+	// Handle combined lavoir + puit (and common misspelling 'lavoit')
+	if ((typeKey.includes("lavoir") || typeKey.includes("lavoit")) && typeKey.includes("puit")) {
+		return TYPE_STYLE.lavoir_puit;
+	}
 	if (typeKey.includes("lavoir") && typeKey.includes("fontaine")) {
 		return TYPE_STYLE.lavoir_fontaine;
 	}

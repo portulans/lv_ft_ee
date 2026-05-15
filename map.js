@@ -2384,7 +2384,9 @@ fetch("./data/data.geojson")
 		const baseFeatures = baseGeojson.features || [];
 		const puitsFeatures = puitsGeojson.features || [];
 
-		fillCheckboxOptions(filterTypeOptions, uniqueSortedValues(baseFeatures, "type"));
+		const typeValues = uniqueSortedValues(baseFeatures, "type");
+		const typeEntries = typeValues.map((v) => ({ value: v, label: TYPE_LABELS[v] || v }));
+		fillCheckboxOptionsFromEntries(filterTypeOptions, typeEntries);
 		fillCheckboxOptions(filterStatusOptions, uniqueSortedValues(baseFeatures, "statut"));
 		fillCheckboxOptions(filterPrecisionOptions, uniqueSortedValues(baseFeatures, "precision_geom"));
 		fillCheckboxOptions(filterAccesOptions, uniqueSortedAccessValuesWithInconnu(baseFeatures));

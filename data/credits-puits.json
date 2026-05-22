@@ -4,6 +4,24 @@
     "author":"Goachet",
     "date":"vers 1948",
     "type":"photo ancienne"},
+    {"id":"2",
+    "img":"2-2.jpg",
+    "author":"Solenn Tual",
+    "date":"05-2026",
+    "type":"photo"
+    },
+    {"id":"2",
+    "img":"2-3.jpg",
+    "author":"Solenn Tual",
+    "date":"05-2026",
+    "type":"photo"
+    },
+    {"id":"2",
+    "img":"2-4.jpg",
+    "author":"Solenn Tual",
+    "date":"05-2026",
+    "type":"photo"
+    },
     {"id":"4",
     "img":"4-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/29)",
@@ -96,6 +114,18 @@
     "author":"Archives départementales du Finistère (3P 156/1/31)",
     "date":"Plan cadastral de 1842 (section M, feuille 1).",
     "type":"plan cadastral"},
+    {"id":"36",
+    "img":"36-1.jpg",
+    "author":"Solenn Tual",
+    "date":"05-2026",
+    "type":"photo"
+    },
+    {"id":"36",
+    "img":"36-2.jpg",
+    "author":"Solenn Tual",
+    "date":"05-2026",
+    "type":"photo"
+    },
     {"id":"38",
     "img":"38-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/31)",
@@ -105,5 +135,53 @@
     "img":"39-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/31)",
     "date":"Plan cadastral de 1842 (section M, feuille 1).",
-    "type":"plan cadastral"}
+    "type":"plan cadastral"},
+    {"id":"46",
+    "img":"46-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"22-05-2026",
+    "type":"photo"
+    },
+    {"id":"46",
+    "img":"46-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"22-05-2026",
+    "type":"photo"
+    },
+    {"id":"46",
+    "img":"46-3.jpg",
+    "author":"Françoise Berthélé",
+    "date":"22-05-2026",
+    "type":"photo"
+    },
+    {"id":"47",
+    "img":"47-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"22-05-2026",
+    "type":"photo"
+    },
+    {"id":"47",
+    "img":"47-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"22-05-2026",
+    "type":"photo"
+    },
+    {"id":"48",
+    "img":"48-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"05-2026",
+    "type":"photo"
+    },
+    {"id":"49",
+    "img":"49-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"05-2026",
+    "type":"photo"
+    },
+    {"id":"49",
+    "img":"49-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"05-2026",
+    "type":"photo"
+    }
 ]

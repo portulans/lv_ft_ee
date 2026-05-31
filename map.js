@@ -339,7 +339,7 @@ const TYPE_STYLE = {
 	source: { color: "#b9d007", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
 	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
-	lavoir_puit: { color: "#ff00ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	lavoir_puit: { color: "#e8a6e8", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },

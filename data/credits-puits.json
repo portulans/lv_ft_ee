@@ -72,6 +72,12 @@
     "author":"Archives départementales du Finistère (3P 156/1/31)",
     "date":"Plan cadastral de 1842 (section M, feuille 1).",
     "type":"plan cadastral"},
+    {"id":"13",
+    "img":"13-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"04-06-2026",
+    "type":"photo"
+    },
     {"id":"14",
     "img":"14-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/36)",
@@ -234,6 +240,12 @@
     },
     {"id":"53",
     "img":"53-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"06-2026",
+    "type":"photo"
+    },
+    {"id":"54",
+    "img":"54-1.jpg",
     "author":"Françoise Berthélé",
     "date":"06-2026",
     "type":"photo"

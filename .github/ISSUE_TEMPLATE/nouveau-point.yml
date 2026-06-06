@@ -9,7 +9,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Utilisez ce formulaire uniquement si le point n'existe pas deja dans la liste des IDs.
+        Utilisez ce formulaire uniquement si le point n'existe pas déjà dans la liste des IDs.
 
   - type: input
     id: nom
@@ -24,7 +24,8 @@ body:
       options:
         - lavoir
         - fontaine
-        - lavoir_fontaine
+        - lavoir et fontaine
+        - lavoir et puit
         - source
         - doue
         - routoir
@@ -37,7 +38,7 @@ body:
     id: localisation
     attributes:
       label: Localisation
-      description: Coordonnees GPS, repere cadastral, capture de carte, description d'acces
+      description: Coordonnees GPS, repère cadastral, capture de carte, description d'accès
       placeholder: |
         Exemple:
         - GPS: 48.xxxxx, -5.xxxxx

@@ -1,14 +1,14 @@
 # Contributions participatives via GitHub
 
-Ce depot est configure pour permettre des contributions sans infrastructure backend dediee.
+Ce dépôt est configure pour permettre des contributions sans infrastructure backend dédiée.
 
 ## Formulaires disponibles
 
 - `Completer un lavoir existant`:
-	- force la selection d'un ID existant (`fid`) via une liste deroulante
-	- sert a corriger/enrichir un point deja present
+	- force la sélection d'un ID existant (`fid`) via une liste déroulante
+	- sert à corriger/enrichir un point deja présent
 - `Proposer un nouveau point`:
-	- sert a declarer un point non reference
+	- sert à déclarer un point non référence
 
 Les formulaires se trouvent dans `.github/ISSUE_TEMPLATE/`.
 
@@ -16,7 +16,7 @@ Les formulaires se trouvent dans `.github/ISSUE_TEMPLATE/`.
 
 La liste des IDs provient de `data/data.geojson`, champ `properties.fid`.
 
-Le fichier genere est:
+Le fichier genéré est:
 
 - `.github/ISSUE_TEMPLATE/contribution-lavoir-existant.yml`
 
@@ -36,5 +36,5 @@ node scripts/generate-issue-template-existing-fids.js
 
 ## Automatisation GitHub Actions
 
-Le workflow `.github/workflows/update-issue-template-fids.yml` regenere automatiquement le formulaire quand `data/data.geojson` change, puis commit le fichier genere.
+Le workflow `.github/workflows/update-issue-template-fids.yml` regénère automatiquement le formulaire quand `data/data.geojson` change, puis commit le fichier genéré.
 

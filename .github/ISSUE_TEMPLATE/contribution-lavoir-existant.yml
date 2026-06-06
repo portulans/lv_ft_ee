@@ -205,9 +205,13 @@ body:
   - type: input
     id: contact
     attributes:
-      label: Nom ou pseudo
-      email: Votre email (optionnel)
-      date: Date des prises de vue (optionnelle)
+      label: Nom ou pseudo (optionnel)
+      description: Pour les crédits si votre contribution est integrée
+  
+  - type: input
+    id: date
+    attributes:
+      label: Date des prises de vue
       description: Pour les crédits si votre contribution est integrée
 
   - type: checkboxes
@@ -215,5 +219,5 @@ body:
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce dépôt sous licence ouverte (avec attribution) et leur publication dans l'application en ligne 
+        - label: J'autorise l'utilisation des informations transmises dans ce dépôt sous la licence CC-BY-SA 4.0 (attribution, partage dans les mêmes conditions)
           required: true

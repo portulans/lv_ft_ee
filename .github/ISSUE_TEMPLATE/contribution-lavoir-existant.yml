@@ -197,22 +197,25 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, témoignage, date, relevé terrain, photo, etc.)
+      description: Indiquez une source (archive, témoignage, relevé terrain, etc.)
       placeholder: Auteur, date, lien, référence
+    validations:
+      required: true
+
+  - type: textarea
+    id: images
+    attributes:
+      label: Images et document(s)
+      description: Ici, vous pouvez ajouter une ou plusieurs images (photos, scan de document, etc.) en les hébergeant sur un service d'hébergement d'images (ex: google drive) et en collant les liens ici. Toutes les images prises par les contributeurs seront publiées sous licence ouverte (réutilisation libre avec attribution).
+      placeholder: Auteur, date, légende, lien (si image externe)
     validations:
       required: true
 
   - type: input
     id: contact
     attributes:
-      label: Nom ou pseudo (optionnel)
-      description: Pour les crédits si votre contribution est integrée
-  
-  - type: input
-    id: date
-    attributes:
-      label: Date des prises de vue
-      description: Pour les crédits si votre contribution est integrée
+      label: Nom ou pseudo
+      description: Pour les crédits si votre contribution est intégrée dans l'application
 
   - type: checkboxes
     id: rights

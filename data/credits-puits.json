@@ -83,6 +83,24 @@
     "author":"Archives départementales du Finistère (3P 156/1/36)",
     "date":"Plan cadastral de 1842 (section N, feuille 3).",
     "type":"plan cadastral"},
+    {"id":"17",
+    "img":"17-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-2026",
+    "type":"photo"
+    },
+    {"id":"17",
+    "img":"17-2.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-2026",
+    "type":"photo"
+    },
+    {"id":"17",
+    "img":"17-3.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-2026",
+    "type":"photo"
+    },
     {"id":"19",
     "img":"19-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/31)",
@@ -249,5 +267,30 @@
     "author":"Françoise Berthélé",
     "date":"06-2026",
     "type":"photo"
-    }
+    },
+    {"id":"55",
+    "img":"55-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"06-2026",
+    "type":"photo"
+    },
+    {"id":"56",
+    "img":"56-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"06-2026",
+    "type":"photo"
+    },
+    {"id":"58",
+    "img":"58-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-2026",
+    "type":"photo",
+   "caption":"Puit."
+    },
+   {"id":"58",
+    "img":"58-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-2026",
+    "type":"photo",
+   "caption":"Intérieur du puit."}
 ]

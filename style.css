@@ -319,9 +319,35 @@ h1 {
 
 .checkbox-option input {
 	margin: 0;
-	accent-color: var(--accent);
+	appearance: none;
+	-webkit-appearance: none;
+	border: 1px solid rgba(67, 79, 86, 0.55);
+	border-radius: 3px;
+	background-color: #fff;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-size: 10px 10px;
 	width: 13px;
 	height: 13px;
+	flex: 0 0 13px;
+	cursor: pointer;
+}
+
+.checkbox-option input:checked {
+	border-color: var(--accent);
+	background-color: var(--accent);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.2l2.1 2.1L10 2.7' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.checkbox-option input:indeterminate {
+	border-color: var(--accent);
+	background-color: #fff5ef;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 2.4l7.2 7.2M9.6 2.4l-7.2 7.2' fill='none' stroke='%23c95d3a' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.checkbox-option input:focus-visible {
+	outline: 2px solid rgba(47, 111, 149, 0.35);
+	outline-offset: 2px;
 }
 
 .checkbox-option--all {

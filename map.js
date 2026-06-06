@@ -194,6 +194,7 @@ const panelLegendes = document.getElementById("feature-legendes");
 const panelNomExplication = document.getElementById("feature-nom-explication");
 const panelImages = document.getElementById("feature-images");
 const shareButton = document.getElementById("share-button");
+const contributeButton = document.getElementById("contribute-button");
 const imageViewer = document.getElementById("image-viewer");
 const imageViewerImage = document.getElementById("image-viewer-image");
 const imageViewerCloseButton = document.getElementById("image-viewer-close");
@@ -295,6 +296,103 @@ async function copyPermalinkToClipboard(fid) {
 	} catch (error) {
 		console.warn("Impossible de copier le lien dans le presse-papiers", error);
 	}
+}
+
+function featurePermalink(fid) {
+	if (!fid) return "";
+	const url = new URL(window.location);
+	url.hash = `feature=${encodeURIComponent(fid)}`;
+	return url.toString();
+}
+
+function inferGithubRepoSlug() {
+	const host = window.location.hostname || "";
+	if (!host.endsWith("github.io")) {
+		return "";
+	}
+
+	const owner = host.split(".")[0] || "";
+	const segments = window.location.pathname.split("/").filter(Boolean);
+	const repo = segments[0] || "";
+
+	if (!owner || !repo) {
+		return "";
+	}
+
+	return `${owner}/${repo}`;
+}
+
+function githubRepoSlug() {
+	const htmlRepo = document.body?.dataset?.githubRepo;
+	const text = safeText(htmlRepo, "").trim();
+	return text || inferGithubRepoSlug();
+}
+
+function contributionIssueBaseUrl() {
+	const slug = githubRepoSlug();
+	if (!slug) return "";
+	return `https://github.com/${slug}/issues/new`;
+}
+
+function isLocalPreview() {
+	const host = (window.location.hostname || "").toLowerCase();
+	return host === "localhost" || host === "127.0.0.1";
+}
+
+function buildContributionIssueUrl(feature) {
+	const props = feature?.properties || {};
+	const fid = safeText(props.fid, "").trim();
+	if (!fid) return "";
+
+	const baseUrl = contributionIssueBaseUrl();
+	if (!baseUrl) return "";
+
+	const name = safeText(props.nom, "Sans nom").trim();
+	const permalink = featurePermalink(fid);
+
+	const title = `[Contribution] ID ${fid} - ${name}`;
+	const body = [
+		`ID existant: ${fid}`,
+		`Nom actuel: ${name}`,
+		permalink ? `Permalien: ${permalink}` : "",
+		"",
+		"Type de contribution:",
+		"- [ ] correction",
+		"- [ ] ajout d'information",
+		"",
+		"Description:"
+	]
+		.filter(Boolean)
+		.join("\n");
+
+	const issueUrl = new URL(baseUrl);
+	issueUrl.searchParams.set("template", "contribution-lavoir-existant.yml");
+	issueUrl.searchParams.set("title", title);
+	issueUrl.searchParams.set("body", body);
+	return issueUrl.toString();
+}
+
+function updateContributeButton(feature) {
+	if (!contributeButton) return;
+
+	const issueUrl = buildContributionIssueUrl(feature);
+	if (!issueUrl) {
+		contributeButton.disabled = true;
+		if (!githubRepoSlug()) {
+			if (isLocalPreview()) {
+				contributeButton.title = "Contribution indisponible en local: publiez le depot sur GitHub puis configurez data-github-repo";
+			} else {
+				contributeButton.title = "Configurer data-github-repo dans la balise body";
+			}
+		} else {
+			contributeButton.title = "Selectionnez un point pour contribuer";
+		}
+		return;
+	}
+
+	const fid = safeText(feature?.properties?.fid, "").trim();
+	contributeButton.disabled = false;
+	contributeButton.title = `Contribuer sur le point ${fid}`;
 }
 
 const TYPE_LABELS = {
@@ -1761,6 +1859,16 @@ if (shareButton) {
 	});
 }
 
+if (contributeButton) {
+	contributeButton.addEventListener("click", () => {
+		if (!selectedLayer) return;
+		const selectedEntry = markerEntryByLayer.get(selectedLayer);
+		const issueUrl = buildContributionIssueUrl(selectedEntry?.feature);
+		if (!issueUrl) return;
+		window.open(issueUrl, "_blank", "noopener,noreferrer");
+	});
+}
+
 if (imageViewerCloseButton) {
 	imageViewerCloseButton.addEventListener("click", closeImageViewer);
 }
@@ -1914,6 +2022,7 @@ function setPanelTextBlock(element, label, value) {
 function updatePanel(feature, markerEntry) {
 	const props = feature.properties || {};
 	const coordinatesText = formatCoordinates(feature);
+	updateContributeButton(feature);
 
 	panelType.textContent = typeLabel(props.type);
 	panelTitle.textContent = safeText(props.nom, "Nom non renseigné");
@@ -1987,6 +2096,7 @@ function resetPanel() {
 	panelType.textContent = "Sélectionnez un point sur la carte";
 	panelTitle.textContent = "Aucun point sélectionné";
 	panelSubtitle.textContent = "Cliquez sur un marqueur pour afficher ses informations.";
+	updateContributeButton(null);
 	panelMeta.innerHTML = "";
 	panelDescription.style.display = "none";
 	panelUsages.style.display = "none";

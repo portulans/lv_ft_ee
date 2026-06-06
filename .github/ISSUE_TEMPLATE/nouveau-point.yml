@@ -1,0 +1,70 @@
+name: Proposer un nouveau point
+description: Signaler un lavoir/fontaine/point d'eau qui n'existe pas encore dans la base
+title: "[Nouveau point] <nom ou lieu>"
+labels:
+  - contribution
+  - nouveau-point
+  - a-verifier
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Utilisez ce formulaire uniquement si le point n'existe pas deja dans la liste des IDs.
+
+  - type: input
+    id: nom
+    attributes:
+      label: Nom du point (si connu)
+      placeholder: Exemple: Lavoir de ...
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - lavoir
+        - fontaine
+        - lavoir_fontaine
+        - source
+        - doue
+        - routoir
+        - marre
+        - inconnu
+    validations:
+      required: true
+
+  - type: textarea
+    id: localisation
+    attributes:
+      label: Localisation
+      description: Coordonnees GPS, repere cadastral, capture de carte, description d'acces
+      placeholder: |
+        Exemple:
+        - GPS: 48.xxxxx, -5.xxxxx
+        - Repere: a 30m au sud de ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Etat, contexte, remarques utiles
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source(s)
+      description: Archive, temoignage date, releve terrain, photo, lien
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Autorisation
+      options:
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
+          required: true

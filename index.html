@@ -16,7 +16,7 @@
 	<script src="https://cdn.plot.ly/plotly-3.5.0.min.js" charset="utf-8"></script>
 	<script src="map.js" defer></script>
 </head>
-<body>
+<body data-github-repo="portulans/lv_ft_ee">
 	<div class="page-bg"></div>
 	<header class="site-header">
 		<div>
@@ -169,15 +169,18 @@
 							<h2>Détails</h2>
 							<p id="feature-type" class="feature-type">Sélectionnez un point sur la carte</p>
 						</div>
-						<button type="button" id="share-button" class="share-button" aria-label="Copier le lien du point" title="Copier le lien du point">
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="18" cy="5" r="3"></circle>
-								<circle cx="6" cy="12" r="3"></circle>
-								<circle cx="18" cy="19" r="3"></circle>
-								<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-								<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-							</svg>
-						</button>
+						<div class="panel-actions">
+							<button type="button" id="contribute-button" class="contribute-button" aria-label="Contribuer sur ce point" title="Contribuer sur ce point" disabled>Contribuer</button>
+							<button type="button" id="share-button" class="share-button" aria-label="Copier le lien du point" title="Copier le lien du point">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+									<circle cx="18" cy="5" r="3"></circle>
+									<circle cx="6" cy="12" r="3"></circle>
+									<circle cx="18" cy="19" r="3"></circle>
+									<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+									<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+								</svg>
+							</button>
+						</div>
 					</div>
 					<h3 id="feature-title">Aucun point sélectionné</h3>
 					<p id="feature-subtitle" class="muted">Cliquez sur un marqueur pour afficher ses informations.</p>

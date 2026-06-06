@@ -548,9 +548,40 @@ h1 {
 	flex: 1;
 }
 
+.panel-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .panel-header h2 {
 	margin: 0;
 	font-size: 1.12rem;
+}
+
+.contribute-button {
+	height: 32px;
+	padding: 0 11px;
+	border: 1px solid rgba(0, 127, 115, 0.45);
+	background: rgba(0, 127, 115, 0.12);
+	border-radius: 8px;
+	cursor: pointer;
+	font: inherit;
+	font-size: 0.84rem;
+	font-weight: 700;
+	color: #09514a;
+	white-space: nowrap;
+	transition: all 0.2s ease;
+}
+
+.contribute-button:hover {
+	background: rgba(0, 127, 115, 0.2);
+	border-color: rgba(9, 81, 74, 0.55);
+}
+
+.contribute-button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 
 .share-button {

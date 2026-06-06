@@ -1,0 +1,217 @@
+name: Completer un lavoir existant
+description: Proposer une correction, precision ou ajout d'information pour un point deja reference
+title: "[Contribution] ID <a choisir> - <resume>"
+labels:
+  - contribution
+  - id-existant
+  - a-verifier
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci pour votre contribution.
+
+        Ce formulaire sert uniquement a completer un point deja present dans la base.
+        Si le lavoir n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
+
+  - type: dropdown
+    id: fid
+    attributes:
+      label: ID du lavoir (obligatoire)
+      description: Choisissez un ID existant dans la liste
+      options:
+        - '1 - Fontaine du Croazou'
+        - '2 - Fontaine et lavoir de Stang Pen Ar Lan'
+        - '3 - Lavoir de Stang ar Stiff'
+        - '4 - Fontaine Saint-Gildas'
+        - '5 - Fontaine de Poull Féas'
+        - '6 - Poull ar C''hrakou'
+        - '7 - Lavoir d''ar Yourn (?)'
+        - '8 - Lavoir de Kernevez'
+        - '9 - (?) - An Aod Bihan'
+        - '10 - Lavoir de Prat Doulou (?)'
+        - '11 - Lavoir de Poull Dragas'
+        - '12 - Lavoir de Pennorz'
+        - '13 - Lavoir de Stang Ar Glan'
+        - '14 - Lavoir de Kernnonen - Liorzou St Annaic'
+        - '15 - Lavoir du Kernic'
+        - '16 - Lavoir de Lan Parcou Zini (?)'
+        - '17 - Poull Ar Wern'
+        - '18 - Lavoir et fontaine de Keridreux'
+        - '19 - Lavoir et fontaine de Porz Guéguen'
+        - '20 - Lavoir du Niou Huella'
+        - '21 - Lavoir de Picard'
+        - '22 - Lavoir de Poull Jiliou'
+        - '23 - Lavoir de Kerzoncou - Prat Melchen'
+        - '24 - Lavoir de Bougue Feunteun'
+        - '25 - Sans nom'
+        - '26 - Lavoir Kadoran'
+        - '27 - Lavoir et fontaine du Stiff'
+        - '28 - Lavoir et fontaine de Pen ar Lann'
+        - '29 - Lavoir et fontaine de Poull Bojer'
+        - '30 - Lavoir de Keryégu'
+        - '31 - Lavoir de Zourn'
+        - '32 - Lavoir de Kerhuel'
+        - '33 - Lavoir et fontaine de Lann ar C''hrac''h'
+        - '34 - Lavoir et fontaine de Porz Gwenn'
+        - '35 - Fontaine et lavoir de Poull Koz'
+        - '36 - Lavoir et fontaines du Prat'
+        - '37 - Fontaine et lavoir de Porz Noan'
+        - '38 - Lavoir et fontaine du port'
+        - '39 - Lavoir de Kermeïn'
+        - '40 - Lavoir de Kernonnen - Ar Poul'
+        - '41 - Lavoir de Poull Brag'
+        - '42 - Lavoir de Kermeïn #2 (Liors ar Prat)'
+        - '43 - Lavoir et fontaine du Merdy'
+        - '44 - Lavoir de Poul Mekanik'
+        - '45 - Lavoir et fontaine de Pount Salaün'
+        - '46 - Lavoir de Frugullou'
+        - '47 - Lavoir de Feunteun Ven (?)'
+        - '48 - Lavoir et fontaine de Poull Bridic'
+        - '49 - Lavoir de Pors Kinzy'
+        - '50 - Lavoir de Bougue Vigne (?)'
+        - '51 - Lavoir de bordure de grève du Goubars'
+        - '52 - Lavoir de Kéjou'
+        - '53 - Lavoir de bordure de grève de Poull An Naroudin'
+        - '54 - Lavoir de Bouge Lagougn'
+        - '55 - Lavoir de Stang Ar C''héré (?)'
+        - '56 - Fontaine de Toull Aroz'
+        - '57 - Fontaine de Keranchas'
+        - '58 - Feuteun Willerm'
+        - '59 - Lavoir du haut du Bourg'
+        - '60 - Stang Laedron'
+        - '61 - Lavoir de bord de grève de Porz Guéguen'
+        - '62 - Lavoir et fontaine de Parc Nevez'
+        - '63 - Lavoir et fontaine de Kervasdoué (?)'
+        - '65 - Poull Audren'
+        - '66 - Lavoir de Poull Koz'
+        - '67 - Sans nom'
+        - '68 - Sans nom'
+        - '69 - Sans nom'
+        - '70 - Sans nom'
+        - '71 - Lavoir de Prat ar Vitanes (?)'
+        - '72 - Lavoir de Kernigou (Nord)'
+        - '73 - Sans nom'
+        - '74 - ? de Stang Ar Raden'
+        - '75 - Sans nom'
+        - '76 - Sans nom'
+        - '77 - Sans nom'
+        - '78 - Sans nom'
+        - '79 - Sans nom'
+        - '80 - ? de Kermorvan'
+        - '81 - ? de Kernonen - Pont Miguel'
+        - '82 - Lavoir de Kernonen - Liors Poull Quiloch'
+        - '83 - Fontaine du lavoir de Kadoran'
+        - '84 - Routoir de Stang ar Merdy'
+        - '85 - Sans nom'
+        - '86 - ? de Liorsou ar Gavan'
+        - '87 - Sans nom'
+        - '88 - Lavoir de Kerivin'
+        - '89 - Lavoir du phare du Stiff'
+        - '90 - Lavoir et fontaine de Cost Ar Prat'
+        - '91 - Sans nom'
+        - '92 - Sans nom'
+        - '93 - Routoir de Poul ar normand'
+        - '94 - Sans nom'
+        - '95 - Fontaine du Stankou'
+        - '96 - Sans nom'
+        - '97 - Fontaine de Stang ar Feunteun (?)'
+        - '98 - Lavoir de Prat ar Run (?)'
+        - '99 - Sans nom'
+        - '100 - Sans nom'
+        - '101 - Sans nom'
+        - '102 - Prad Kerhéré'
+        - '103 - Sans nom'
+        - '104 - Kergoff'
+        - '105 - Sans nom'
+        - '106 - Sans nom'
+        - '107 - Sans nom'
+        - '108 - Sans nom'
+        - '109 - Sans nom'
+        - '110 - Sans nom'
+        - '111 - Sans nom'
+        - '113 - Sans nom'
+        - '114 - Lavoir et puit de Cleuz Pors Noan'
+        - '115 - Sans nom'
+        - '116 - Fontaine du Doulou'
+        - '117 - Sans nom'
+        - '118 - Sans nom'
+        - '119 - Sans nom'
+        - '120 - Sans nom'
+        - '121 - Lavoir du Croazou'
+        - '122 - Fontaine de Frugullou'
+        - '123 - Fontaine de Poull Brag'
+        - '124 - Sans nom'
+        - '125 - Lavoir de Kerzoncou'
+        - '129 - Routoir de Bouge Boull Lin'
+        - '130 - Lavoir et puit du placen de Porz Gwen'
+        - '131 - Sans nom'
+        - '132 - Stang Veur'
+        - '133 - Sans nom'
+        - '134 - Fontaine Sainte-Geneviève'
+        - '135 - Sans nom'
+        - '136 - Sans nom'
+        - '137 - Lavoir et fontaine de Lanvian'
+        - '138 - Fontaine de Bougue Feunteun'
+        - '139 - Feunteun Sant-Paol'
+        - '140 - Aod ar Feunteun (Keller)'
+        - '141 - Poull Lin Stang Korz'
+        - '142 - Lavoir et puit de Loqueltas'
+        - '143 - Lavoir et puit de Kerhéré'
+        - '144 - Sans nom'
+        - '145 - Sans nom'
+        - '146 - Fontaine du Niou Huella'
+        - '147 - Lavoir du Gouzoul'
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: update_type
+    attributes:
+      label: Type de contribution
+      options:
+        - label: Correction de nom / toponyme
+        - label: Correction de position
+        - label: Correction de type (lavoir, fontaine, etc.)
+        - label: Mise a jour du statut (existant, detruit, a determiner)
+        - label: Ajout de description / usages / legendes
+        - label: Ajout de source bibliographique
+        - label: Ajout de photo / media
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposition
+    attributes:
+      label: Information proposee
+      description: Decrivez precisement ce qui doit etre modifie
+      placeholder: |
+        Exemple:
+        - Nouveau nom: ...
+        - Correction proposee: ...
+        - Contexte: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source(s)
+      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
+      placeholder: Auteur, date, lien, reference
+    validations:
+      required: true
+
+  - type: input
+    id: contact
+    attributes:
+      label: Nom ou pseudo (optionnel)
+      description: Pour les credits si votre contribution est integree
+
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Autorisation
+      options:
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
+          required: true

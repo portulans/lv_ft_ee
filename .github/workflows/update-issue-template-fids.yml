@@ -1,0 +1,32 @@
+name: Update Issue Template IDs
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - data/data.geojson
+      - scripts/generate-issue-template-existing-fids.js
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Regenerate issue template
+        run: node scripts/generate-issue-template-existing-fids.js
+
+      - name: Commit updated template
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update issue template IDs"
+          file_pattern: .github/ISSUE_TEMPLATE/contribution-lavoir-existant.yml

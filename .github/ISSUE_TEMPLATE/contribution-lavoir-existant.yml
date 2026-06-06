@@ -202,16 +202,25 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: source
+    attributes:
+      label: Source(s)
+      description: Partager une image (hébergée sur un site tiers, que vous possédez ou non. Vous devez être l'auteur de l'image. Si vous n'êtes pas l'auteur, assurez-vous que l'image est sous licence libre ou que vous avez la permission de la partager.)
+      placeholder: Pour chaque image : Lien vers le fichier, auteur, date, description, code (si document d'archive)
+    validations:
+      required: true
+
   - type: input
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les credits si votre contribution est integree
+      description: Pour les crédits si votre contribution est integrée dans l'application
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce depot
+        - label: J'autorise l'utilisation des informations transmises dans ce dépôt sous licence CC-BY-SA 4.0 (réutilisation libre avec attribution et repartage dans les mêmes conditions).
           required: true

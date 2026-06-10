@@ -1,5 +1,5 @@
-name: Compléter un lavoir existant
-description: Proposer une correction, précision ou ajout d'information pour un point déjà référencé
+name: Completer un lavoir existant
+description: Proposer une correction, precision ou ajout d'information pour un point deja reference
 title: "[Contribution] ID <a choisir> - <resume>"
 labels:
   - contribution
@@ -11,7 +11,7 @@ body:
       value: |
         Merci pour votre contribution.
 
-        Ce formulaire sert uniquement à completer un point déjà présent dans la base.
+        Ce formulaire sert uniquement a completer un point deja present dans la base.
         Si le lavoir n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
 
   - type: dropdown
@@ -85,7 +85,6 @@ body:
         - '63 - Lavoir et fontaine de Kervasdoué (?)'
         - '65 - Poull Audren'
         - '66 - Lavoir de Poull Koz'
-        - '67 - Sans nom'
         - '68 - Sans nom'
         - '69 - Sans nom'
         - '70 - Sans nom'
@@ -170,11 +169,11 @@ body:
     attributes:
       label: Type de contribution
       options:
-        - label: Correction de nom ou toponyme associé au lavoir
-        - label: Correction de la position du lavoir
-        - label: Correction du type (lavoir, fontaine, etc.)
-        - label: Mise à jour du statut (existant, détruit, à déterminer)
-        - label: Ajout d'une description / d'usages / de légendes
+        - label: Correction de nom / toponyme
+        - label: Correction de position
+        - label: Correction de type (lavoir, fontaine, etc.)
+        - label: Mise a jour du statut (existant, detruit, a determiner)
+        - label: Ajout de description / usages / legendes
         - label: Ajout de source bibliographique
         - label: Ajout de photo / media
     validations:
@@ -183,12 +182,12 @@ body:
   - type: textarea
     id: proposition
     attributes:
-      label: Information proposée
-      description: Décrivez précisement ce qui doit être modifié
+      label: Information proposee
+      description: Decrivez precisement ce qui doit etre modifie
       placeholder: |
         Exemple:
         - Nouveau nom: ...
-        - Correction proposée: ...
+        - Correction proposee: ...
         - Contexte: ...
     validations:
       required: true
@@ -197,17 +196,8 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, témoignage, date, relevé terrain, photo, etc.)
-      placeholder: Auteur, date, lien, référence
-    validations:
-      required: true
-
-  - type: textarea
-    id: source
-    attributes:
-      label: Source(s)
-      description: Partager une image (hébergée sur un site tiers, que vous possédez ou non. Vous devez être l'auteur de l'image. Si vous n'êtes pas l'auteur, assurez-vous que l'image est sous licence libre ou que vous avez la permission de la partager.)
-      placeholder: Pour chaque image : Lien vers le fichier, auteur, date, description, code (si document d'archive)
+      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
+      placeholder: Auteur, date, lien, reference
     validations:
       required: true
 
@@ -215,12 +205,12 @@ body:
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les crédits si votre contribution est integrée dans l'application
+      description: Pour les credits si votre contribution est integree
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce dépôt sous licence CC-BY-SA 4.0 (réutilisation libre avec attribution et repartage dans les mêmes conditions).
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
           required: true

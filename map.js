@@ -2526,7 +2526,7 @@ fetch("./data/data.geojson")
 				return marker;
 			},
 			onEachFeature(feature, layer) {
-				const title = safeText(feature.properties?.nom, "Nom non renseigné");
+				const title = safeText(feature.properties?.nom);
 				const kind = typeLabel(feature.properties?.type);
 				const altName = safeText(feature.properties?.["alt-name"], "");
 				const fid = safeText(feature.properties?.fid, "");

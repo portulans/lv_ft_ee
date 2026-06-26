@@ -595,11 +595,11 @@
     "caption":"Lavoir et début du canal d'écoulement."
     },
     {"id":"28",
-    "img":"28-7.jpg",
+    "img":"156-1.jpg",
     "author":"Françoise Berthelé",
     "date":"04-06-2026",
     "type":"photo",
-    "caption":"Abreuvoir"
+    "caption":"Abreuvoir situé près du lavoir."
     },
     {"id":"28",
     "img":"28-2.jpg",
@@ -2150,5 +2150,10 @@
     "date":"04-06-2026",
     "type":"photo",
     "caption":"Abreuvoir"
-    }
+    },
+    {"id":"156",
+    "img":"28-2.jpg",
+    "author":"Archives départementales du Finistère (3P 156/1/25)",
+    "date":"Plan cadastral de 1842 (section J, feuille 2).",
+    "type":"plan cadastral"}
 ]

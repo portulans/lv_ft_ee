@@ -407,6 +407,7 @@ const TYPE_LABELS = {
 	puit: "Puit",
 	puits: "Puits",
 	lavoir_puit: "Lavoir et puit",
+	abreuvoir: "Abreuvoir",
 	"puit sureleve": "Puit surélevé",
 	"puits sureleve": "Puits surélevé",
 	pompe: "Pompe",
@@ -442,6 +443,7 @@ const TYPE_STYLE = {
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"marre": { color: "#f27954", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	abreuvoir: { color: "#8ecef6", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 }
 };
 
@@ -471,6 +473,7 @@ const LEGEND_ENTRIES = {
 		{ color: TYPE_STYLE["doué"].color, label: TYPE_LABELS["doué"] },
 		{ color: TYPE_STYLE["routoir"].color, label: TYPE_LABELS["routoir"] },
 		{ color: TYPE_STYLE["marre"].color, label: TYPE_LABELS["marre"] },
+		{ color: TYPE_STYLE.abreuvoir.color, label: TYPE_LABELS.abreuvoir },
 		{ color: TYPE_STYLE.inconnu.color, label: TYPE_LABELS.inconnu }
 	]
 };
@@ -1363,6 +1366,9 @@ function markerStyleFromType(typeRaw) {
 	// Handle combined lavoir + puit (and common misspelling 'lavoit')
 	if ((typeKey.includes("lavoir") || typeKey.includes("lavoit")) && typeKey.includes("puit")) {
 		return TYPE_STYLE.lavoir_puit;
+	}
+	if (typeKey.includes("abreuvoir")) {
+		return TYPE_STYLE.abreuvoir;
 	}
 	if (typeKey.includes("lavoir") && typeKey.includes("fontaine")) {
 		return TYPE_STYLE.lavoir_fontaine;

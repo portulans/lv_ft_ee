@@ -599,7 +599,7 @@
     "author":"Françoise Berthelé",
     "date":"04-06-2026",
     "type":"photo",
-    "caption":"Abreuvoir ?"
+    "caption":"Abreuvoir"
     },
     {"id":"28",
     "img":"28-2.jpg",
@@ -2143,5 +2143,12 @@
     "author":"IGN",
     "date":"14-04-1963",
     "type":"photo aérienne",
-    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.059805&lat=48.456696&z=14.9&pointer=true&layer=pva&year=1962&mission=0316-0041"}
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.059805&lat=48.456696&z=14.9&pointer=true&layer=pva&year=1962&mission=0316-0041"},
+    {"id":"156",
+    "img":"156-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"04-06-2026",
+    "type":"photo",
+    "caption":"Abreuvoir"
+    }
 ]

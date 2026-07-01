@@ -117,7 +117,7 @@ body:
         - '98 - Lavoir de Prat ar Run (?)'
         - '99 - Sans nom'
         - '100 - Sans nom'
-        - '101 - Sans nom'
+        - '101 - Stang Martin'
         - '102 - Prad Kerhéré'
         - '103 - Sans nom'
         - '104 - Kergoff'
@@ -169,6 +169,7 @@ body:
         - '154 - Sans nom'
         - '155 - Fontaine du lavoir de Pen Arlan'
         - '156 - Abreuvoir du lavoir de Pen Arlan'
+        - '157 - Fontaine de Lann ar C''hrac''h'
     validations:
       required: true
 

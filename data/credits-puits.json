@@ -318,5 +318,10 @@
     "author":"IGN",
     "date":"14-04-1963",
     "type":"photo aérienne",
-    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.117533&lat=48.457682&z=15.8&pointer=true&layer=pva&year=1962&mission=0316-0041"}
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.117533&lat=48.457682&z=15.8&pointer=true&layer=pva&year=1962&mission=0316-0041"},
+    {"id":"60",
+    "img":"60-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"09-06-2026",
+    "type":"photo"}
 ]

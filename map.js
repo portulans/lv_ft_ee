@@ -183,6 +183,24 @@ var lidarhd = L.tileLayer(
 	}
 );
 
+var pciexpress = L.tileLayer(
+	"https://data.geopf.fr/wmts?" +
+	"&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
+	"&STYLE=normal" +
+	"&FORMAT=image/png" +
+	"&TILEMATRIXSET=PM_0_19" +
+	"&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS" +
+	"&TILEMATRIX={z}" +
+	"&TILEROW={y}" +
+	"&TILECOL={x}",
+	{
+		minZoom : 0,
+		maxZoom : 19,
+		attribution : "IGN",
+	}
+);
+
+
 const panelType = document.getElementById("feature-type");
 const panelTitle = document.getElementById("feature-title");
 const panelSubtitle = document.getElementById("feature-subtitle");
@@ -1202,6 +1220,7 @@ const advancedLayersControl = L.control.advancedLayers(
 			layers: [
 				{ name: "Plan IGN", layer: ign2023, active: true },
 				{ name: "OpenStreetMap", layer: osm, active: false },
+				{ name: "Plan cadastral", layer: pciexpress, active: false },
 				{ name: "MNT (relief 1m, IGN)", layer: lidarhd, active: false }
 			]
 		},

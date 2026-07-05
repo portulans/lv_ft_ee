@@ -537,7 +537,7 @@ const STATS_CHART_STYLE = {
 };
 
 function createPuitsIcon(typeValue, isSelected = false) {
-	const size = isSelected ? 16 : 14;
+	const size = isSelected ? 14 : 12;
 	const normalizedType = normalizeText(typeValue);
 	const isPompe = normalizedType.includes("pompe");
 
@@ -553,7 +553,7 @@ function createPuitsIcon(typeValue, isSelected = false) {
 		className: "puits-marker-icon",
 		html:
 			`<span style="display:block;width:${size}px;height:${size}px;` +
-			`background:${fillColor};border:2px solid ${borderColor};` +
+			`background:${fillColor};border:1px solid ${borderColor};` +
 			`box-sizing:border-box;border-radius:2px;"></span>`,
 		iconSize: [size, size],
 		iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)]

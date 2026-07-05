@@ -353,5 +353,17 @@
     "img":"60-1.jpg",
     "author":"Françoise Berthelé",
     "date":"09-06-2026",
-    "type":"photo"}
+    "type":"photo"},
+    {"id":"61",
+    "img":"61-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"03-07-2026",
+    "type":"photo"
+    },
+    {"id":"61",
+    "img":"61-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"03-07-2026",
+    "type":"photo"
+    }
 ]

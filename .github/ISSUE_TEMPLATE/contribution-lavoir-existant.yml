@@ -46,7 +46,7 @@ body:
         - '24 - Lavoir de Bougue Feunteun'
         - '25 - Sans nom'
         - '26 - Lavoir Kadoran'
-        - '27 - Lavoir et fontaine du Stiff'
+        - '27 - Lavoir du Stiff'
         - '28 - Lavoir de Pen ar Lann'
         - '29 - Lavoir de Poull Bojer'
         - '30 - Lavoir de Keryégu'
@@ -57,7 +57,7 @@ body:
         - '35 - Fontaine et lavoir de Poull Koz'
         - '36 - Lavoir du Prat'
         - '37 - Fontaine de Porz Noan'
-        - '38 - Lavoir et fontaine du port'
+        - '38 - Lavoir du port'
         - '39 - Lavoir de Kermeïn'
         - '40 - Lavoir de Kernonnen - Ar Poul'
         - '41 - Lavoir de Poull Brag'
@@ -170,6 +170,9 @@ body:
         - '155 - Fontaine du lavoir de Pen Arlan'
         - '156 - Abreuvoir du lavoir de Pen Arlan'
         - '157 - Fontaine de Lann ar C''hrac''h'
+        - '158 - Fontaine du port'
+        - '159 - Fontaine de Kerhuel'
+        - '160 - Fontaine du Stiff'
     validations:
       required: true
 

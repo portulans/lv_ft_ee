@@ -414,17 +414,17 @@ function updateContributeButton(feature) {
 }
 
 const TYPE_LABELS = {
-	lavoir: "Lavoir",
 	fontaine: "Fontaine",
 	source: "Source",
-	lavoir_fontaine: "Lavoir et fontaine",
+	lavoir_fontaine: "Lavoir avec fontaine",
 	"lavoir en bordure de greve": "Lavoir en bordure de grève",
 	aiguade: "Aiguade",
 	"doué":"Douët",
 	routoir: "Routoir",
 	puit: "Puit",
 	puits: "Puits",
-	lavoir_puit: "Lavoir et puit",
+	lavoir: "Lavoir",
+	lavoir_puit: "Lavoir avec puit",
 	abreuvoir: "Abreuvoir",
 	"puit sureleve": "Puit surélevé",
 	"puits sureleve": "Puits surélevé",
@@ -451,17 +451,17 @@ const PRECISION_CLASS = {
 };
 
 const TYPE_STYLE = {
-	lavoir: { color: "#2f6f95", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	fontaine: { color: "#3f9d68", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	source: { color: "#b9d007", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
-	"lavoir en bordure de greve": { color: "#c95d3a", radius: 8, weight: 2, fillOpacity: 0.88 },
-	lavoir_puit: { color: "#e8a6e8", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	fontaine: { color: "#097b2d", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	source: { color: "#7cc450", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	abreuvoir: { color: "#8ecef6", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	aiguade: { color: "#1e90ff", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	lavoir: { color: "#bc2a4a", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	lavoir_fontaine: { color: "#7a5a9c", radius: 7, weight: 2, fillOpacity: 0.88 },
+	"lavoir en bordure de greve": { color: "#ea7294", radius: 8, weight: 2, fillOpacity: 0.88 },
+	lavoir_puit: { color: "#e8a6e8", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"marre": { color: "#f27954", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	abreuvoir: { color: "#8ecef6", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 }
 };
 
@@ -481,17 +481,17 @@ const LEGEND_ENTRIES = {
 		{ color: PRECISION_CLASS.unknown, label: "Inconnue" }
 	],
 	type: [
-		{ color: TYPE_STYLE.lavoir.color, label: TYPE_LABELS.lavoir },
-		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
 		{ color: TYPE_STYLE.source.color, label: TYPE_LABELS.source },
+		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
+		{ color: TYPE_STYLE.lavoir.color, label: TYPE_LABELS.lavoir },
 		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
 		{ color: TYPE_STYLE.lavoir_puit.color, label: TYPE_LABELS.lavoir_puit },
 		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
-		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
 		{ color: TYPE_STYLE["doué"].color, label: TYPE_LABELS["doué"] },
+		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
+		{ color: TYPE_STYLE.abreuvoir.color, label: TYPE_LABELS.abreuvoir },
 		{ color: TYPE_STYLE["routoir"].color, label: TYPE_LABELS["routoir"] },
 		{ color: TYPE_STYLE["marre"].color, label: TYPE_LABELS["marre"] },
-		{ color: TYPE_STYLE.abreuvoir.color, label: TYPE_LABELS.abreuvoir },
 		{ color: TYPE_STYLE.inconnu.color, label: TYPE_LABELS.inconnu }
 	]
 };
@@ -541,8 +541,8 @@ function createPuitsIcon(typeValue, isSelected = false) {
 	const normalizedType = normalizeText(typeValue);
 	const isPompe = normalizedType.includes("pompe");
 
-	const baseFill = isPompe ? "#c32593" : "#1c70ca";
-	const selectedFill = isPompe ? "#ef0ba7" : "#036def";
+	const baseFill = isPompe ? "#f99908" : "#1c70ca";
+	const selectedFill = isPompe ? "#d57c07" : "#036def";
 	const baseBorder = isPompe ? "#3a062b" : "#081f3c";
 	const selectedBorder = "#c8dcff";
 
@@ -1211,6 +1211,9 @@ async function loadImageCredits() {
 		console.warn("Impossible de charger credits.json", error);
 	}
 }
+
+//var markerclusterLavoirs = L.markerClusterGroup();
+//markerclusterLavoirs.addLayer(visibleLayerGroup);
 
 const advancedLayersControl = L.control.advancedLayers(
 	[
@@ -2550,7 +2553,13 @@ fetch("./data/data.geojson")
 				const altName = safeText(feature.properties?.["alt-name"], "");
 				const fid = safeText(feature.properties?.fid, "");
 				const mediaKey = mediaKeyForFeature(BASE_LAYER_KIND, fid);
-				layer.bindTooltip(`${title} (${kind})`, {
+				const toolTipLabel = '';
+				if (title !== null && title.length > 0) {
+					tooltiplabel = `${title}`;
+				} else {
+					tooltiplabel = `${kind}`;
+				}
+				layer.bindTooltip(tooltiplabel, {
 					direction: "top",
 					opacity: 0.95,
 					offset: [0, -6]

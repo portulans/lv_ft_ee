@@ -365,5 +365,30 @@
     "author":"Françoise Berthélé",
     "date":"03-07-2026",
     "type":"photo"
+    },
+    {"id":"62",
+    "img":"62-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"62",
+    "img":"62-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"62",
+    "img":"62-3.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"62",
+    "img":"62-4.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo",
+    "caption":"Intérieur du puit."
     }
 ]

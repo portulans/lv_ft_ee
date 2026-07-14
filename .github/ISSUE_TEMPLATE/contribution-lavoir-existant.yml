@@ -137,7 +137,7 @@ body:
         - '119 - Sans nom'
         - '120 - Sans nom'
         - '121 - Lavoir du Croazou'
-        - '122 - Fontaine de Frugullou'
+        - '122 - Fontaine du lavoir de Frugullou'
         - '123 - Fontaine de Poull Brag'
         - '124 - Sans nom'
         - '125 - Lavoir de Kerzoncou'
@@ -185,6 +185,7 @@ body:
         - '170 - Sans nom'
         - '171 - Fontaine du lavoir de Kermeïn Nord (Liors ar Prat)'
         - '172 - Fontaine du lavoir de Lanvian'
+        - '173 - Fontaine du lavoir de Stang Ar Stiff'
     validations:
       required: true
 

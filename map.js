@@ -2016,6 +2016,26 @@ function panelRow(label, value) {
 	return { dt, dd };
 }
 
+function panelRowWithLink(label, value, url) {
+	const dt = document.createElement("dt");
+	dt.textContent = label;
+
+	const dd = document.createElement("dd");
+	if (url) {
+		const link = document.createElement("a");
+		link.href = url;
+		link.target = "_blank";
+		link.rel = "noopener noreferrer";
+		link.textContent = value;
+		dd.appendChild(link);
+	}
+
+	panelMeta.appendChild(dt);
+	panelMeta.appendChild(dd);
+
+	return { dt, dd };
+}
+
 function hasPanelValue(value) {
 	if (value === null || value === undefined) return false;
 	const text = String(value).trim();
@@ -2102,6 +2122,9 @@ function updatePanel(feature, markerEntry) {
 	}
 	panelRow("Traces sur le plan de 1910 ?", toYesNo(props.src_p1910));
 	panelRow("Trace sur le cadastre de 1842 ?", toYesNo(props.src_c1842));
+	if (props.panoramax !== undefined) {
+		panelRowWithLink("Vue 360°", "Voir sur Panoramax", props.panoramax);
+	}
 
 	const historiqueValue = hasPanelValue(props.commentaire_st)
 		? props.commentaire_st

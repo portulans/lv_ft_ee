@@ -525,7 +525,7 @@ const MEDIA_FILTER_OPTIONS = [
 	{ value: "photos-only", label: "Photographies" },
 	{ value: "aerial-photos", label: "Photographies aériennes" },
 	{ value: "plans-only", label: "Plans cadastraux" },
-	/*{ value: "with-media", label: "Avec médias" },*/
+	{ value: "panoramax", label: "Vue 360°" },
 	{ value: "without-media", label: "Sans médias" }
 ];
 

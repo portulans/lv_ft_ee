@@ -22,6 +22,18 @@
     "date":"05-2026",
     "type":"photo"
     },
+    {"id":"3",
+    "img":"3-1.jpg",
+    "author":"Solenn Tual",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"3",
+    "img":"3-2.jpg",
+    "author":"Solenn Tual",
+    "date":"07-2026",
+    "type":"photo"
+    },
     {"id":"4",
     "img":"4-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/29)",

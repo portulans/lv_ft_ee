@@ -58,27 +58,6 @@
     "caption":"Lavoir"
     },
     {"id":"3",
-    "img":"3-6.jpg",
-    "author":"Françoise Berthelé",
-    "date":"06-06-2026",
-    "type":"photo",
-    "caption":"Lavoir"
-    },
-    {"id":"3",
-    "img":"3-7.jpg",
-    "author":"Françoise Berthelé",
-    "date":"06-06-2026",
-    "type":"photo",
-    "caption":"Lavoir"
-    },
-    {"id":"3",
-    "img":"3-8.jpg",
-    "author":"Françoise Berthelé",
-    "date":"06-06-2026",
-    "type":"photo",
-    "caption":"Lavoir"
-    },
-    {"id":"3",
     "img":"3-2.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/24)",
     "date":"Plan cadastral de 1842 (section J, feuille 1).",
@@ -2297,5 +2276,28 @@
     "date":"14-04-1963",
     "type":"photo aérienne",
     "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.085043&lat=48.460685&z=16.6&pointer=true&layer=pva&year=1962&mission=0316-0041"},
-    
+    {"id":"173",
+    "img":"173-3.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-06-2026",
+    "type":"photo"
+    },
+    {"id":"173",
+    "img":"173-4.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-06-2026",
+    "type":"photo"
+    },
+    {"id":"173",
+    "img":"3-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-06-2026",
+    "type":"photo"
+    },
+    {"id":"173",
+    "img":"173-2.jpg",
+    "author":"Françoise Berthelé",
+    "date":"06-06-2026",
+    "type":"photo"
+    }
 ]

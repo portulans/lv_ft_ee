@@ -428,6 +428,7 @@ const TYPE_LABELS = {
 	abreuvoir: "Abreuvoir",
 	"puit sureleve": "Puit surélevé",
 	"puits sureleve": "Puits surélevé",
+	citerne:"citerne",
 	pompe: "Pompe",
 	"pompe à eau": "Pompe à eau",
 	"pompe manuelle": "Pompe manuelle",
@@ -511,6 +512,7 @@ const panelImagesCache = new Map();
 const featuresWithPhotos = new Set();
 const featuresWithAerialPhotos = new Set();
 const featuresWithPlans = new Set();
+const featuresWithPanoramax = new Set();
 const featuresWithAnyMedia = new Set();
 const hydroSurfacesLayer = L.layerGroup();
 const hydroTronconsLayer = L.layerGroup();
@@ -2458,6 +2460,9 @@ function matchesCurrentFilters(entry) {
 			if (selectedMediaOption === "plans-only") {
 				return featuresWithPlans.has(mediaKey);
 			}
+			if (selectedMediaOption === "panoramax") {
+				return entry.hasPanoramax;
+			}
 			/*if (selectedMediaOption === "with-media") {
 				return featuresWithAnyMedia.has(mediaKey);
 			}*/
@@ -2545,6 +2550,32 @@ fetch("./data/data.geojson")
 		const baseFeatures = baseGeojson.features || [];
 		const puitsFeatures = puitsGeojson.features || [];
 
+		// Populate featuresWithPanoramax from feature properties
+		baseFeatures.forEach((feature) => {
+			const fid = safeText(feature.properties?.fid, "").trim();
+			if (!fid) return;
+			const hasPanoramaxUrl = feature.properties?.panoramax != null && 
+				feature.properties.panoramax !== undefined && 
+				String(feature.properties.panoramax).trim() !== "";
+			if (hasPanoramaxUrl) {
+				const mediaKey = mediaKeyForFeature(BASE_LAYER_KIND, fid);
+				featuresWithPanoramax.add(mediaKey);
+				featuresWithAnyMedia.add(mediaKey);
+			}
+		});
+		puitsFeatures.forEach((feature) => {
+			const fid = safeText(feature.properties?.fid, "").trim();
+			if (!fid) return;
+			const hasPanoramaxUrl = feature.properties?.panoramax != null && 
+				feature.properties.panoramax !== undefined && 
+				String(feature.properties.panoramax).trim() !== "";
+			if (hasPanoramaxUrl) {
+				const mediaKey = mediaKeyForFeature(PUITS_LAYER_KIND, fid);
+				featuresWithPanoramax.add(mediaKey);
+				featuresWithAnyMedia.add(mediaKey);
+			}
+		});
+
 		const typeValues = uniqueSortedValues(baseFeatures, "type");
 		const typeEntries = typeValues.map((v) => ({ value: v, label: TYPE_LABELS[v] || v }));
 		fillCheckboxOptionsFromEntries(filterTypeOptions, typeEntries);
@@ -2588,6 +2619,10 @@ fetch("./data/data.geojson")
 					offset: [0, -6]
 				});
 
+				const hasPanoramaxUrl = feature.properties?.panoramax != null && 
+					feature.properties.panoramax !== undefined && 
+					String(feature.properties.panoramax).trim() !== "";
+
 				const markerEntry = {
 					layer,
 					feature,
@@ -2602,6 +2637,7 @@ fetch("./data/data.geojson")
 					etatValue: normalizeText(feature.properties?.existant_etat),
 					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
 					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
+					hasPanoramax: hasPanoramaxUrl,
 					searchValue: normalizeText(`${title} ${altName}`)
 				};
 				markerEntries.push(markerEntry);
@@ -2632,6 +2668,10 @@ fetch("./data/data.geojson")
 					offset: [0, -6]
 				});
 
+				const hasPanoramaxUrl = feature.properties?.panoramax != null && 
+					feature.properties.panoramax !== undefined && 
+					String(feature.properties.panoramax).trim() !== "";
+
 				const markerEntry = {
 					layer,
 					feature,
@@ -2646,6 +2686,7 @@ fetch("./data/data.geojson")
 					etatValue: normalizeText(feature.properties?.existant_etat),
 					hasPlan1910: isSourcePresent(feature.properties?.src_p1910),
 					hasCadastre1842: isSourcePresent(feature.properties?.src_c1842),
+					hasPanoramax: hasPanoramaxUrl,
 					searchValue: normalizeText(`${title} ${altName}`)
 				};
 				markerEntries.push(markerEntry);

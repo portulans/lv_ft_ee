@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - data/data.geojson
-      - data/puits.geojson
       - scripts/generate-issue-template-existing-fids.js
 
 permissions:

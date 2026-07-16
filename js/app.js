@@ -74,6 +74,7 @@ const BASE_LAYER_KIND = "points";
 const PUITS_LAYER_KIND = "puits";
 
 let currentFeatureId = null;
+let currentFeatureLayerKind = BASE_LAYER_KIND;
 
 // Initialize image viewer gallery tracking
 if (imageViewer) {
@@ -81,11 +82,11 @@ if (imageViewer) {
 	imageViewer.currentImageIndex = 0;
 }
 
-async function copyPermalinkToClipboard(fid) {
+async function copyPermalinkToClipboard(fid, layerKind = BASE_LAYER_KIND) {
 	if (!fid) return;
 	
 	const url = new URL(window.location);
-	url.hash = `feature=${encodeURIComponent(fid)}`;
+	url.hash = `feature=${encodeURIComponent(layerKind)}:${encodeURIComponent(fid)}`;
 	const permalink = url.toString();
 	
 	try {
@@ -116,10 +117,10 @@ async function copyPermalinkToClipboard(fid) {
 	}
 }
 
-function featurePermalink(fid) {
+function featurePermalink(fid, layerKind = BASE_LAYER_KIND) {
 	if (!fid) return "";
 	const url = new URL(window.location);
-	url.hash = `feature=${encodeURIComponent(fid)}`;
+	url.hash = `feature=${encodeURIComponent(layerKind)}:${encodeURIComponent(fid)}`;
 	return url.toString();
 }
 
@@ -190,6 +191,8 @@ function buildContributionIssueUrl(feature, layerKind = BASE_LAYER_KIND) {
 	issueUrl.searchParams.set("template", templateName);
 	issueUrl.searchParams.set("title", title);
 	issueUrl.searchParams.set("body", body);
+	// Pre-select the fid in the dropdown
+	issueUrl.searchParams.set("fid", fid);
 	return issueUrl.toString();
 }
 
@@ -312,7 +315,21 @@ const LEGEND_ENTRIES = {
 
 let selectedLayer = null;
 let defaultStyleByLayer = new WeakMap();
-const visibleLayerGroup = L.layerGroup().addTo(map);
+const visibleLayerGroup = L.markerClusterGroup({
+	maxClusterRadius: 2,
+	spiderfyOnMaxZoom: true,
+	showCoverageOnHover: true,
+	zoomToBoundsOnClick: true,
+	iconCreateFunction: function(cluster) {
+		const markers = cluster.getAllChildMarkers();
+		const count = markers.length;
+		return L.divIcon({
+			html: `<div><span>${count}</span></div>`,
+			className: 'marker-cluster-custom',
+			iconSize: L.point(25, 25, true)
+		});
+	}
+}).addTo(map);
 const puitsLayerGroup = L.layerGroup();
 const markerEntries = [];
 const markerEntryByLayer = new WeakMap();
@@ -1045,9 +1062,6 @@ async function loadImageCredits() {
 		console.warn("Impossible de charger credits.json", error);
 	}
 }
-
-//var markerclusterLavoirs = L.markerClusterGroup();
-//markerclusterLavoirs.addLayer(visibleLayerGroup);
 
 const advancedLayersControl = L.control.advancedLayers(
 	[
@@ -1804,7 +1818,7 @@ if (locateUserButton) {
 if (shareButton) {
 	shareButton.addEventListener("click", () => {
 		if (currentFeatureId) {
-			copyPermalinkToClipboard(currentFeatureId);
+			copyPermalinkToClipboard(currentFeatureId, currentFeatureLayerKind);
 		}
 	});
 }
@@ -1861,18 +1875,18 @@ window.addEventListener("keydown", (event) => {
 	}
 });
 
-function selectLayerByFeatureId(fid) {
+function selectLayerByFeatureId(fid, layerKind = BASE_LAYER_KIND) {
 	if (!fid) return false;
 	
-	console.log("Looking for feature ID:", fid);
+	console.log("Looking for feature ID:", fid, "in layer:", layerKind);
 	console.log("Available entries:", markerEntries.length);
 	
+	// First try to find in the specified layer
 	const entry = markerEntries.find((e) => {
 		const entryFid = safeText(e.feature.properties?.fid, "");
-		if (entryFid === fid) {
-			return true;
-		}
-		return false;
+		const matchesLayer = e.layerKind === layerKind;
+		const matchesFid = entryFid === fid;
+		return matchesLayer && matchesFid;
 	});
 	
 	if (entry) {
@@ -1908,12 +1922,18 @@ function handlePermalinkHash() {
 	if (!hash) return;
 	
 	const params = new URLSearchParams(hash.substring(1));
-	const featureId = params.get("feature");
+	const featureSpec = params.get("feature");
 	
-	if (featureId) {
-		// Decode the feature ID in case it was encoded
-		const decodedId = decodeURIComponent(featureId);
-		return selectLayerByFeatureId(decodedId);
+	if (featureSpec) {
+		// Decode the feature spec and parse layerKind:fid
+		const decodedSpec = decodeURIComponent(featureSpec);
+		const [layerKind, fid] = decodedSpec.split(":");
+		
+		// For backward compatibility, if no colon, assume base layer
+		const actualLayerKind = layerKind === decodedSpec ? BASE_LAYER_KIND : layerKind;
+		const actualFid = layerKind === decodedSpec ? decodedSpec : fid;
+		
+		return selectLayerByFeatureId(actualFid, actualLayerKind);
 	}
 	return false;
 }
@@ -2063,7 +2083,6 @@ function updatePanel(feature, markerEntry) {
 	setPanelTextBlock(panelLegendes, "Légendes", props.legendes);
 	setPanelTextBlock(panelNomExplication, "Explication du nom", nomExplicationValue);
 
-	const layerKind = markerEntry?.layerKind || BASE_LAYER_KIND;
 	renderPanelImages(props.fid, layerKind);
 }
 
@@ -2159,6 +2178,7 @@ function clearSelection() {
 	}
 	selectedLayer = null;
 	currentFeatureId = null;
+	currentFeatureLayerKind = BASE_LAYER_KIND;
 	resetPanel();
 }
 
@@ -2454,6 +2474,7 @@ function selectLayer(layer, feature, markerEntry = markerEntryByLayer.get(layer)
 	}
 
 	currentFeatureId = feature.properties?.fid || null;
+	currentFeatureLayerKind = markerEntry?.layerKind || BASE_LAYER_KIND;
 	updatePanel(feature, markerEntry);
 }
 

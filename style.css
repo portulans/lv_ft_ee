@@ -1276,3 +1276,27 @@ h1 {
 		padding: 6px;
 	}
 }
+
+
+/* Marker Cluster styles */
+.marker-cluster-custom {
+	background-color: rgba(0, 127, 115, 0.7);
+	border-radius: 50%;
+	border: 2px solid #007f73;
+	color: #fff;
+	font-weight: 700;
+	text-align: center;
+	line-height: 30px;
+}
+
+.marker-cluster-custom div {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.marker-cluster-custom span {
+	font-size: 14px;
+}

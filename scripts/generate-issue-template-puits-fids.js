@@ -61,7 +61,7 @@ function getPuitsEntries(geojson) {
 
 function buildPuitsIssueTemplate(entries) {
 	const optionsYaml = entries
-		.map(({ name }) => `        - '${escapeYamlSingleQuoted(name)}'`)
+		.map(({ fid, name }) => `        - label: '${escapeYamlSingleQuoted(name)}'\n          value: '${fid}'`)
 		.join("\n");
 
 	return `name: Completer un puit existant

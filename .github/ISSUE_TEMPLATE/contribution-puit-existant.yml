@@ -1,9 +1,8 @@
 name: Completer un puit existant
-description: Proposer une correction, precision ou ajout d'information pour un puit deja reference
-title: "[Contribution] Puit ID <a choisir> - <resume>"
+description: Proposer une correction, précision ou ajout d'information pour un puit déjà référencé
+title: "[Contribution] Puit ID ID <a choisir> - <resume>"
 labels:
   - contribution
-  - puit
   - id-existant
   - a-verifier
 body:
@@ -12,8 +11,8 @@ body:
       value: |
         Merci pour votre contribution.
 
-        Ce formulaire sert uniquement a completer un puit deja present dans la base.
-        Si le puit n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
+        Ce formulaire sert uniquement à completer un puit déjà présent dans la base.
+        Si le puit n'éxiste pas encore dans la liste, utilisez le formulaire "Nouveau point".
 
   - type: dropdown
     id: fid
@@ -21,21 +20,146 @@ body:
       label: ID du puit (obligatoire)
       description: Choisissez un ID existant dans la liste des puits
       options:
-        - '1 - Puit'
-        - '2 - Puit'
-        - '3 - Puit'
-        - '4 - Puit'
-        - '5 - Puit'
-        - '6 - Puit'
-        - '7 - Puit'
-        - '8 - Puit'
-        - '9 - Puit'
-        - '10 - Puit'
-        - '11 - Puit'
-        - '12 - Puit'
-        - '13 - Puit'
-        - '14 - Puit'
-        - '15 - Puit'
+        - label: '1 - Puit de Mez Velchennec (Puit)'
+          value: '1'
+        - label: '2 - Puit de Toull Al Lann (Puit)'
+          value: '2'
+        - label: '3 - Sans nom (Puit)'
+          value: '3'
+        - label: '4 - Puns Ledan (Puit)'
+          value: '4'
+        - label: '5 - Puit de Kerandraon (Puit)'
+          value: '5'
+        - label: '7 - Sans nom (Puit)'
+          value: '7'
+        - label: '8 - Puit de Kerivarc''h (Sud) (Puit)'
+          value: '8'
+        - label: '9 - Puit de Kerivarc''h (Nord) (Puit)'
+          value: '9'
+        - label: '10 - Puit du placen de Porz Gwenn (Puit)'
+          value: '10'
+        - label: '11 - Sans nom (Lavoir/Fontaine)'
+          value: '11'
+        - label: '12 - Sans nom (Puit)'
+          value: '12'
+        - label: '13 - Puit de Toull Dreiz (Puit)'
+          value: '13'
+        - label: '14 - Sans nom (Puit)'
+          value: '14'
+        - label: '15 - Puit de Korz (Puit)'
+          value: '15'
+        - label: '16 - Sans nom (Puit)'
+          value: '16'
+        - label: '17 - Puit de Poull Gweguen (Puit)'
+          value: '17'
+        - label: '18 - Pompe à eau du port de Lampaul (Lavoir/Fontaine)'
+          value: '18'
+        - label: '19 - Sans nom (Lavoir/Fontaine)'
+          value: '19'
+        - label: '20 - Sans nom (Puit)'
+          value: '20'
+        - label: '21 - Sans nom (Puit)'
+          value: '21'
+        - label: '22 - Sans nom (Puit)'
+          value: '22'
+        - label: '23 - Sans nom (Lavoir/Fontaine)'
+          value: '23'
+        - label: '24 - Sans nom (Puit)'
+          value: '24'
+        - label: '25 - Sans nom (Lavoir/Fontaine)'
+          value: '25'
+        - label: '26 - Sans nom (Lavoir/Fontaine)'
+          value: '26'
+        - label: '27 - Sans nom (Lavoir/Fontaine)'
+          value: '27'
+        - label: '28 - Sans nom (Lavoir/Fontaine)'
+          value: '28'
+        - label: '29 - Sans nom (Puit)'
+          value: '29'
+        - label: '30 - Sans nom (Lavoir/Fontaine)'
+          value: '30'
+        - label: '31 - Sans nom (Puit)'
+          value: '31'
+        - label: '32 - Sans nom (Puit)'
+          value: '32'
+        - label: '33 - Sans nom (Puit)'
+          value: '33'
+        - label: '34 - Sans nom (Puit)'
+          value: '34'
+        - label: '35 - Sans nom (Puit)'
+          value: '35'
+        - label: '36 - Sans nom (Puit)'
+          value: '36'
+        - label: '37 - Sans nom (Lavoir/Fontaine)'
+          value: '37'
+        - label: '38 - Sans nom (Puit)'
+          value: '38'
+        - label: '39 - Sans nom (Puit)'
+          value: '39'
+        - label: '40 - Sans nom (Puit)'
+          value: '40'
+        - label: '41 - Sans nom (Puit)'
+          value: '41'
+        - label: '42 - Sans nom (Lavoir/Fontaine)'
+          value: '42'
+        - label: '43 - Sans nom (Puit)'
+          value: '43'
+        - label: '44 - Puit de Keranchas (Puit)'
+          value: '44'
+        - label: '45 - Puit de Kerhéré (Puit)'
+          value: '45'
+        - label: '46 - Sans nom (Puit)'
+          value: '46'
+        - label: '47 - Puit près de la chapelle de Loqueltas (Puit)'
+          value: '47'
+        - label: '48 - Penn Jamet #1 (Puit)'
+          value: '48'
+        - label: '49 - Penn Jamet #2 (Puit)'
+          value: '49'
+        - label: '50 - Puit de Paraden (Puit)'
+          value: '50'
+        - label: '51 - Puit de Mez ar Run (Est) (Puit)'
+          value: '51'
+        - label: '52 - Puit du Gouzoul (Puit)'
+          value: '52'
+        - label: '53 - Puit du Niou Huella (Puit)'
+          value: '53'
+        - label: '54 - Puit d''Ar Run (Est) (Puit)'
+          value: '54'
+        - label: '55 - Penn Jamet #3 (Puit)'
+          value: '55'
+        - label: '56 - Sans nom (Puit)'
+          value: '56'
+        - label: '57 - Puit du Stiff (Puit)'
+          value: '57'
+        - label: '58 - Puit de Caraes - Poull Gueguen (Puit)'
+          value: '58'
+        - label: '59 - Puit du Kun (Puit)'
+          value: '59'
+        - label: '60 - Sans nom (Puit)'
+          value: '60'
+        - label: '61 - Sans nom (Puit)'
+          value: '61'
+        - label: '62 - Puit de Pen ar Prat (Puit)'
+          value: '62'
+        - label: '63 - Puit de Penn Norz (Puit)'
+          value: '63'
+        - label: '64 - Puit de Penn Mez Agael (Puit)'
+          value: '64'
+        - label: '65 - Puit de Ar Run (Ouest) (Puit)'
+          value: '65'
+        - label: '66 - Sans nom (Puit)'
+          value: '66'
+        - label: '67 - Puit de Nerodin (Puit)'
+          value: '67'
+        - label: '68 - Saint-Michel (Lavoir/Fontaine)'
+          value: '68'
+        - label: '69 - Sans nom (Lavoir/Fontaine)'
+          value: '69'
+        - label: '70 - Ty Korn (Lavoir/Fontaine)'
+          value: '70'
+        - label: '71 - Sans nom (Puit)'
+          value: '71'
     validations:
       required: true
 
@@ -47,27 +171,23 @@ body:
         - label: Correction de nom / toponyme
         - label: Correction de position
         - label: Correction de type (puit, pompe, citerne, etc.)
-        - label: Mise a jour du statut (existant, detruit, a determiner)
+        - label: Mise à jour du statut (existant, détruit, à déterminer)
         - label: Ajout de description / usage
         - label: Ajout de source bibliographique
-        - label: Ajout de photo / media
-        - label: Ajout d'information sur la profondeur
-        - label: Ajout d'information sur l'accès à l'eau
+        - label: Ajout de photo / média
     validations:
       required: true
 
   - type: textarea
     id: proposition
     attributes:
-      label: Information proposee
-      description: Decrivez precisement ce qui doit etre modifie
+      label: Information proposée
+      description: écrivez précisément ce qui doit être modifié/ajouté
       placeholder: |
         Exemple:
         - Nouveau nom: ...
-        - Correction proposee: ...
+        - Correction proposée: ...
         - Contexte: ...
-        - Profondeur: ...
-        - Niveau d'eau: ...
     validations:
       required: true
 
@@ -75,8 +195,8 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
-      placeholder: Auteur, date, lien, reference
+      description: Indiquez une source (archive, témoignage date, relevé terrain, photo, etc.)
+      placeholder: Auteur, date, lien, référence
     validations:
       required: true
 
@@ -84,12 +204,12 @@ body:
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les credits si votre contribution est integree
+      description: Pour les crédits si votre contribution est integrée
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce depot
+        - label: J'autorise l'utilisation des informations transmises dans ce dépôt sous licence ouverte
           required: true

@@ -1,0 +1,95 @@
+name: Completer un puit existant
+description: Proposer une correction, precision ou ajout d'information pour un puit deja reference
+title: "[Contribution] Puit ID <a choisir> - <resume>"
+labels:
+  - contribution
+  - puit
+  - id-existant
+  - a-verifier
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci pour votre contribution.
+
+        Ce formulaire sert uniquement a completer un puit deja present dans la base.
+        Si le puit n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
+
+  - type: dropdown
+    id: fid
+    attributes:
+      label: ID du puit (obligatoire)
+      description: Choisissez un ID existant dans la liste des puits
+      options:
+        - '1 - Puit'
+        - '2 - Puit'
+        - '3 - Puit'
+        - '4 - Puit'
+        - '5 - Puit'
+        - '6 - Puit'
+        - '7 - Puit'
+        - '8 - Puit'
+        - '9 - Puit'
+        - '10 - Puit'
+        - '11 - Puit'
+        - '12 - Puit'
+        - '13 - Puit'
+        - '14 - Puit'
+        - '15 - Puit'
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: update_type
+    attributes:
+      label: Type de contribution
+      options:
+        - label: Correction de nom / toponyme
+        - label: Correction de position
+        - label: Correction de type (puit, pompe, citerne, etc.)
+        - label: Mise a jour du statut (existant, detruit, a determiner)
+        - label: Ajout de description / usage
+        - label: Ajout de source bibliographique
+        - label: Ajout de photo / media
+        - label: Ajout d'information sur la profondeur
+        - label: Ajout d'information sur l'accès à l'eau
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposition
+    attributes:
+      label: Information proposee
+      description: Decrivez precisement ce qui doit etre modifie
+      placeholder: |
+        Exemple:
+        - Nouveau nom: ...
+        - Correction proposee: ...
+        - Contexte: ...
+        - Profondeur: ...
+        - Niveau d'eau: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source(s)
+      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
+      placeholder: Auteur, date, lien, reference
+    validations:
+      required: true
+
+  - type: input
+    id: contact
+    attributes:
+      label: Nom ou pseudo (optionnel)
+      description: Pour les credits si votre contribution est integree
+
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Autorisation
+      options:
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
+          required: true

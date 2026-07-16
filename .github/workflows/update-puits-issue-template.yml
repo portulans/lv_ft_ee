@@ -1,18 +1,17 @@
-name: Update Issue Template IDs
+name: Update Puits Issue Template
 
 on:
   workflow_dispatch:
   push:
     paths:
-      - data/data.geojson
       - data/puits.geojson
-      - scripts/generate-issue-template-existing-fids.js
+      - scripts/generate-issue-template-puits-fids.js
 
 permissions:
   contents: write
 
 jobs:
-  regenerate-template:
+  regenerate-puits-template:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,11 +22,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Regenerate issue template
-        run: node scripts/generate-issue-template-existing-fids.js
+      - name: Regenerate puits issue template
+        run: node scripts/generate-issue-template-puits-fids.js
 
       - name: Commit updated template
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update issue template IDs"
-          file_pattern: .github/ISSUE_TEMPLATE/contribution-lavoir-existant.yml
+          commit_message: "chore: update puits issue template IDs"
+          file_pattern: .github/ISSUE_TEMPLATE/contribution-puit-existant.yml

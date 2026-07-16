@@ -157,7 +157,7 @@ function isLocalPreview() {
 	return host === "localhost" || host === "127.0.0.1";
 }
 
-function buildContributionIssueUrl(feature) {
+function buildContributionIssueUrl(feature, layerKind = BASE_LAYER_KIND) {
 	const props = feature?.properties || {};
 	const fid = safeText(props.fid, "").trim();
 	if (!fid) return "";
@@ -165,10 +165,13 @@ function buildContributionIssueUrl(feature) {
 	const baseUrl = contributionIssueBaseUrl();
 	if (!baseUrl) return "";
 
-	const name = safeText(props.nom, "Sans nom").trim();
+	const name = safeText(props.nom, layerKind === PUITS_LAYER_KIND ? "Puit sans nom" : "Sans nom").trim();
 	const permalink = featurePermalink(fid);
 
-	const title = `[Contribution] ID ${fid} - ${name}`;
+	const isPuit = layerKind === PUITS_LAYER_KIND;
+	const templateName = isPuit ? "contribution-puit-existant.yml" : "contribution-lavoir-existant.yml";
+	const title = isPuit ? `[Contribution] Puit ID ${fid} - ${name}` : `[Contribution] ID ${fid} - ${name}`;
+
 	const body = [
 		`ID existant: ${fid}`,
 		`Nom actuel: ${name}`,
@@ -184,16 +187,16 @@ function buildContributionIssueUrl(feature) {
 		.join("\n");
 
 	const issueUrl = new URL(baseUrl);
-	issueUrl.searchParams.set("template", "contribution-lavoir-existant.yml");
+	issueUrl.searchParams.set("template", templateName);
 	issueUrl.searchParams.set("title", title);
 	issueUrl.searchParams.set("body", body);
 	return issueUrl.toString();
 }
 
-function updateContributeButton(feature) {
+function updateContributeButton(feature, layerKind = BASE_LAYER_KIND) {
 	if (!contributeButton) return;
 
-	const issueUrl = buildContributionIssueUrl(feature);
+	const issueUrl = buildContributionIssueUrl(feature, layerKind);
 	if (!issueUrl) {
 		contributeButton.disabled = true;
 		if (!githubRepoSlug()) {
@@ -1810,7 +1813,8 @@ if (contributeButton) {
 	contributeButton.addEventListener("click", () => {
 		if (!selectedLayer) return;
 		const selectedEntry = markerEntryByLayer.get(selectedLayer);
-		const issueUrl = buildContributionIssueUrl(selectedEntry?.feature);
+		const layerKind = selectedEntry?.layerKind || BASE_LAYER_KIND;
+		const issueUrl = buildContributionIssueUrl(selectedEntry?.feature, layerKind);
 		if (!issueUrl) return;
 		window.open(issueUrl, "_blank", "noopener,noreferrer");
 	});
@@ -1989,7 +1993,8 @@ function setPanelTextBlock(element, label, value) {
 function updatePanel(feature, markerEntry) {
 	const props = feature.properties || {};
 	const coordinatesText = formatCoordinates(feature);
-	updateContributeButton(feature);
+	const layerKind = markerEntry?.layerKind || BASE_LAYER_KIND;
+	updateContributeButton(feature, layerKind);
 
 	panelType.textContent = typeLabel(props.type);
 	panelTitle.textContent = safeText(props.nom, "Nom non renseigné");

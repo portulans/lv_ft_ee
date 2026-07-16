@@ -1,205 +1,4 @@
-const map = L.map("map", {
-	zoomControl: true,
-	preferCanvas: true
-});
-
-L.control.locate({
-    setViw:true,
-    strings: {
-    title: "Me situer sur la carte !"
-  }}).addTo(map);
-
-///////// Plans //////////
-
-const osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-	maxZoom: 19,
-	attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-});
-
-///////// Images aériennes //////////
-
-var ignaerial1950 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_0_18" +
-    "&FORMAT=image/png"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1950-1965"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 0,
-        maxZoom : 18,
-        attribution : "IGN",
-        tileSize : 256 // les tuiles du Géooportail font 256x256px
-    });
-
-var ignaerial1965 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=BDORTHOHISTORIQUE" +
-    "&TILEMATRIXSET=PM_3_18" +
-    "&FORMAT=image/png"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.1965-1980"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 3,
-        maxZoom : 18,
-        attribution : "IGN",
-        tileSize : 256 // les tuiles du Géooportail font 256x256px
-    });
-
-var ignaerial2000 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_6_18" +
-    "&FORMAT=image/png"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.COAST2000"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 6,
-        maxZoom : 18,
-        attribution : "IGN",
-    });
-
-var ignaerial2005 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_6_18" +
-    "&FORMAT=image/jpeg"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS2000-2005"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 6,
-        maxZoom : 18,
-        attribution : "IGN",
-    });
-
-var ignaerial2009 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_6_18" +
-    "&FORMAT=image/jpeg"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS2006-2010"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 6,
-        maxZoom : 18,
-        attribution : "IGN",
-    });
-
-var ignaerial2015 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_6_18" +
-    "&FORMAT=image/jpeg"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS2011-2015"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 6,
-        maxZoom : 18,
-        attribution : "IGN",
-    });
-
-var ignaerial2018 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_0_18" +
-    "&FORMAT=image/jpeg"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS2018"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 0,
-        maxZoom : 18,
-        attribution : "IGN",
-    });
-
-var ignaerial2023 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM" +
-    "&FORMAT=image/jpeg"+
-    "&LAYER=ORTHOIMAGERY.ORTHOPHOTOS.BDORTHO"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 0,
-        attribution : "IGN",
-        tileSize : 256 // les tuiles du Géooportail font 256x256px
-    });
-
-var ign2023 = L.tileLayer(
-    "https://data.geopf.fr/wmts?" +
-    "&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-    "&STYLE=normal" +
-    "&TILEMATRIXSET=PM_0_19" +
-    "&FORMAT=image/png"+
-    "&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2"+
-    "&TILEMATRIX={z}" +
-    "&TILEROW={y}" +
-    "&TILECOL={x}",
-    {
-        minZoom : 0,
-        maxZoom : 19,
-        attribution : "IGN",
-        tileSize : 256 // les tuiles du Géooportail font 256x256px
-    }).addTo(map);
-
-var lidarhd = L.tileLayer(
-	"https://data.geopf.fr/wmts?" +
-	"&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-	"&STYLE=normal" +
-	"&FORMAT=image/png" +
-	"&TILEMATRIXSET=PM_0_18" +
-	"&LAYER=IGNF_LIDAR-HD_MNT_ELEVATION.ELEVATIONGRIDCOVERAGE.SHADOW" +
-	"&TILEMATRIX={z}" +
-	"&TILEROW={y}" +
-	"&TILECOL={x}",
-	
-	{
-		minZoom : 0,
-		maxZoom : 18,
-		attribution : "IGN",
-	}
-);
-
-var pciexpress = L.tileLayer(
-	"https://data.geopf.fr/wmts?" +
-	"&REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0" +
-	"&STYLE=normal" +
-	"&FORMAT=image/png" +
-	"&TILEMATRIXSET=PM_0_19" +
-	"&LAYER=CADASTRALPARCELS.PARCELLAIRE_EXPRESS" +
-	"&TILEMATRIX={z}" +
-	"&TILEROW={y}" +
-	"&TILECOL={x}",
-	{
-		minZoom : 0,
-		maxZoom : 19,
-		attribution : "IGN",
-	}
-);
-
+///////////////////// DOM ELEMENTS ///////////////////////
 
 const panelType = document.getElementById("feature-type");
 const panelTitle = document.getElementById("feature-title");
@@ -260,6 +59,7 @@ const statsTabButtons = Array.from(document.querySelectorAll(".stats-tab[role='t
 const statsTabPanels = Array.from(document.querySelectorAll(".stats-panel[role='tabpanel']"));
 const histogramByType = document.getElementById("histogram-by-type");
 const histogramByStatut = document.getElementById("histogram-by-statut");
+const histogramByPrecision = document.getElementById("histogram-by-precision");
 
 const REFERENCE_TYPE_LABELS = {
 	archives: "Sources historiques (archives)",
@@ -428,7 +228,8 @@ const TYPE_LABELS = {
 	abreuvoir: "Abreuvoir",
 	"puit sureleve": "Puit surélevé",
 	"puits sureleve": "Puits surélevé",
-	citerne:"citerne",
+	"puit au sol": "Puit au sol",
+	citerne:"Citerne",
 	pompe: "Pompe",
 	"pompe à eau": "Pompe à eau",
 	"pompe manuelle": "Pompe manuelle",
@@ -463,7 +264,16 @@ const TYPE_STYLE = {
 	"doué": { color: "#f0c039", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	routoir: { color: "#8f3b2c", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"marre": { color: "#f27954", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 }
+	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 },
+	// Styles for puits types (used in legend)
+	puit: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"puit sureleve": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"puit au sol": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	pompe: { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"pompe manuelle": { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"autre type de pompe": { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"pompe à eau": { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	citerne: { color: "#01583b", radius: 7, weight: 1.5, fillOpacity: 0.85 }
 };
 
 const TYPE_STYLE_DEFAULT = { color: "#7b8790", radius: 6.5, weight: 1.5, fillOpacity: 0.82 };
@@ -730,25 +540,44 @@ function renderStatsHistogram(container, items, chartTitle, barColor) {
 	);
 }
 
-function updateStatsHistograms(visibleEntries) {
+function updateStatsHistograms(visibleBaseEntries, visiblePuitsEntries) {
 	if (!histogramByType || !histogramByStatut) return;
 
-	const entries = Array.isArray(visibleEntries) ? visibleEntries : [];
-	const typeCounts = countVisibleEntriesByProperty(entries, "type");
-	const statusCounts = countVisibleEntriesByProperty(entries, "statut");
+	const baseEntries = Array.isArray(visibleBaseEntries) ? visibleBaseEntries : [];
+	const puitsEntries = Array.isArray(visiblePuitsEntries) ? visiblePuitsEntries : [];
+	
+	// Combine base and puits entries for type histogram
+	const allEntries = [...baseEntries, ...puitsEntries];
+	const typeCounts = countVisibleEntriesByProperty(allEntries, "type");
+	
+	// Use only base entries for status histogram (as before)
+	const statusCounts = countVisibleEntriesByProperty(baseEntries, "statut");
+	
+	// Create precision counts from all visible entries
+	const precisionCounts = countVisibleEntriesByProperty(allEntries, "precision_geom");
 
 	renderStatsHistogram(
 		histogramByType,
 		typeCounts,
-		`Répartition par type (${entries.length})`,
+		`Répartition par type (${allEntries.length})`,
 		STATS_CHART_STYLE.barType
 	);
 	renderStatsHistogram(
 		histogramByStatut,
 		statusCounts,
-		`Répartition par statut (${entries.length})`,
+		`Répartition par statut (${baseEntries.length})`,
 		STATS_CHART_STYLE.barStatus
 	);
+	
+	// Render precision histogram if container exists
+	if (histogramByPrecision) {
+		renderStatsHistogram(
+			histogramByPrecision,
+			precisionCounts,
+			`Répartition par précision (${allEntries.length})`,
+			STATS_CHART_STYLE.barType
+		);
+	}
 }
 
 function getActiveStatsTabButton() {
@@ -1342,7 +1171,7 @@ function accessClass(accessValueRaw) {
 		accessValue.includes("pente raide") ||
 		accessValue.includes("falaise") ||
 		accessValue.includes("difficile");
-	const isFree = accessValue.includes("libre") || accessValue.includes("bordure de route") || accessValue.includes("bord de route");
+	const isFree = accessValue.includes("libre") || accessValue.includes("bordure de route") || accessValue.includes("bord de route") || accessValue.includes("visible depuis la route");
 
 	if (isPrivate && !isVisibleFromRoad && !isFree) {
 		return "private";
@@ -1421,6 +1250,32 @@ function markerStyleFromType(typeRaw) {
 	if (typeKey.includes("marre")) {
 		return TYPE_STYLE["marre"];
 	}
+	// Handle puits types - use the specific puits colors from TYPE_STYLE
+	if (typeKey.includes("puit")) {
+		if (typeKey.includes("sureleve") || typeKey.includes("surelevé")) {
+			return TYPE_STYLE["puit sureleve"] || TYPE_STYLE.puit;
+		}
+		if (typeKey.includes("au sol")) {
+			return TYPE_STYLE["puit au sol"] || TYPE_STYLE.puit;
+		}
+		return TYPE_STYLE.puit || TYPE_STYLE.inconnu;
+	}
+	if (typeKey.includes("citerne")) {
+		return TYPE_STYLE.citerne || TYPE_STYLE.inconnu; // Use citerne color for cisterns
+	}
+	if (typeKey.includes("pompe")) {
+		// Check for specific pompe types first
+		if (typeKey.includes("manuelle")) {
+			return TYPE_STYLE["pompe manuelle"] || TYPE_STYLE.pompe;
+		}
+		if (typeKey.includes("à eau") || typeKey.includes("a eau")) {
+			return TYPE_STYLE["pompe à eau"] || TYPE_STYLE.pompe;
+		}
+		if (typeKey.includes("autre type")) {
+			return TYPE_STYLE["autre type de pompe"] || TYPE_STYLE.pompe;
+		}
+		return TYPE_STYLE.pompe || TYPE_STYLE.inconnu; // Use pompe color for pumps
+	}
 	if (typeKey.includes("inconnu")) {
 		return TYPE_STYLE.inconnu;
 	}
@@ -1462,16 +1317,75 @@ function selectedMarkerStyle(baseStyle) {
 	};
 }
 
+function getPuitsColor(feature) {
+	if (!colorMode) return null;
+	
+	if (colorMode.value === "type") {
+		const typeStyle = markerStyleFromType(feature.properties?.type);
+		return typeStyle.color;
+	}
+	
+	const color = colorMode.value === "precision"
+		? markerColorFromPrecision(feature.properties?.precision_geom)
+		: markerColorFromStatus(feature.properties?.statut);
+	
+	return color;
+}
+
+function createPuitsIconWithColor(typeValue, isSelected = false, color = null) {
+	const size = isSelected ? 14 : 12;
+	const normalizedType = normalizeText(typeValue);
+	const isPompe = normalizedType.includes("pompe");
+
+	// Use provided color if available, otherwise use TYPE_STYLE colors
+	const baseFill = color || (isPompe ? TYPE_STYLE.pompe?.color : TYPE_STYLE.puit?.color) || "#1c70ca";
+	const selectedFill = color || (isPompe ? "#d57c07" : "#036def");
+	const baseBorder = color ? "#081f3c" : (isPompe ? "#3a062b" : "#081f3c");
+	const selectedBorder = "#c8dcff";
+
+	const borderColor = isSelected ? selectedBorder : baseBorder;
+	const fillColor = isSelected ? selectedFill : baseFill;
+
+	return L.divIcon({
+		className: "puits-marker-icon",
+		html:
+			`<span style="display:block;width:${size}px;height:${size}px;` +
+			`background:${fillColor};border:1px solid ${borderColor};` +
+			`box-sizing:border-box;border-radius:2px;"></span>`,
+		iconSize: [size, size],
+		iconAnchor: [Math.floor(size / 2), Math.floor(size / 2)]
+	});
+}
+
 function applyMarkerStyle(layer, feature) {
 	const markerEntry = markerEntryByLayer.get(layer);
 	if (markerEntry?.layerKind === PUITS_LAYER_KIND && typeof layer.setIcon === "function") {
-		layer.setIcon(createPuitsIcon(feature?.properties?.type, layer === selectedLayer));
+		const color = getPuitsColor(feature);
+		layer.setIcon(createPuitsIconWithColor(feature?.properties?.type, layer === selectedLayer, color));
 		return;
 	}
 
 	const style = markerStyleFromFeature(feature);
 	defaultStyleByLayer.set(layer, style);
 	layer.setStyle(layer === selectedLayer ? selectedMarkerStyle(style) : style);
+}
+
+function getDynamicTypeLegendEntries() {
+	const baseEntries = LEGEND_ENTRIES.type;
+	const puitsVisible = map.hasLayer(puitsLayerGroup);
+	
+	if (!puitsVisible) {
+		return baseEntries;
+	}
+	
+	// Regrouper les types de puits par couleur pour la légende - utiliser les couleurs de TYPE_STYLE
+	const puitsEntries = [
+		{ color: TYPE_STYLE.puit?.color || "#1c70ca", label: "Puits" },
+		{ color: TYPE_STYLE.pompe?.color || "#f99908", label: "Pompes" },
+		{ color: TYPE_STYLE.citerne?.color || "#01583b", label: "Citerne" }
+	];
+	
+	return [...baseEntries, ...puitsEntries];
 }
 
 function updateLegend() {
@@ -1485,9 +1399,12 @@ function updateLegend() {
 	const title = mode === "precision"
 		? "Précision de localisation"
 		: mode === "type"
-			? "Type de point"
+			? "Type d'entité géographique"
 			: "Statut";
-	const entries = LEGEND_ENTRIES[mode];
+	
+	// Use dynamic entries for type mode
+	const entries = mode === "type" ? getDynamicTypeLegendEntries() : LEGEND_ENTRIES[mode];
+	
 	const items = entries
 		.map(
 			(e) =>
@@ -2229,7 +2146,8 @@ function clearSelection() {
 	if (selectedLayer) {
 		const selectedEntry = markerEntryByLayer.get(selectedLayer);
 		if (selectedEntry?.layerKind === PUITS_LAYER_KIND && typeof selectedLayer.setIcon === "function") {
-			selectedLayer.setIcon(createPuitsIcon(selectedEntry.feature?.properties?.type, false));
+			const color = getPuitsColor(selectedEntry.feature);
+			selectedLayer.setIcon(createPuitsIconWithColor(selectedEntry.feature?.properties?.type, false, color));
 		} else if (defaultStyleByLayer.has(selectedLayer)) {
 			selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
 		}
@@ -2409,10 +2327,6 @@ function matchesTextPattern(text, pattern) {
 }
 
 function matchesCurrentFilters(entry) {
-	if (entry?.layerKind === PUITS_LAYER_KIND) {
-		return true;
-	}
-
 	const queryInput = searchInput.value.trim();
 	const queryIdInput = searchIdInput?.value.trim();
 	const selectedTypes = getSelectedDropdownValues(filterTypeOptions, true);
@@ -2482,7 +2396,9 @@ function renderVisibleLayers(zoomToVisible) {
 
 	const visibleEntries = markerEntries.filter(matchesCurrentFilters);
 	const visibleBaseEntries = visibleEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND);
+	const visiblePuitsEntries = visibleEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND);
 	const totalBaseEntries = markerEntries.filter((entry) => entry.layerKind !== PUITS_LAYER_KIND).length;
+	const totalPuitsEntries = markerEntries.filter((entry) => entry.layerKind === PUITS_LAYER_KIND).length;
 	visibleEntries.forEach((entry) => {
 		if (entry.layerKind === PUITS_LAYER_KIND) {
 			puitsLayerGroup.addLayer(entry.layer);
@@ -2490,9 +2406,14 @@ function renderVisibleLayers(zoomToVisible) {
 			visibleLayerGroup.addLayer(entry.layer);
 		}
 	});
-	updateStatsHistograms(visibleBaseEntries);
+	updateStatsHistograms(visibleBaseEntries, visiblePuitsEntries);
 
-	resultsCount.textContent = `${visibleBaseEntries.length} / ${totalBaseEntries} points affichés`;
+	const puitsVisible = map.hasLayer(puitsLayerGroup);
+	if (puitsVisible) {
+		resultsCount.textContent = `${visibleBaseEntries.length} / ${totalBaseEntries} points affichés (lavoirs, fontaines) | ${visiblePuitsEntries.length} / ${totalPuitsEntries} points affichés (puits)`;
+	} else {
+		resultsCount.textContent = `${visibleBaseEntries.length} / ${totalBaseEntries} points affichés`;
+	}
 
 	if (
 		selectedLayer &&
@@ -2512,7 +2433,8 @@ function selectLayer(layer, feature, markerEntry = markerEntryByLayer.get(layer)
 	if (selectedLayer) {
 		const selectedEntry = markerEntryByLayer.get(selectedLayer);
 		if (selectedEntry?.layerKind === PUITS_LAYER_KIND && typeof selectedLayer.setIcon === "function") {
-			selectedLayer.setIcon(createPuitsIcon(selectedEntry.feature?.properties?.type, false));
+			const color = getPuitsColor(selectedEntry.feature);
+			selectedLayer.setIcon(createPuitsIconWithColor(selectedEntry.feature?.properties?.type, false, color));
 		} else if (defaultStyleByLayer.has(selectedLayer)) {
 			selectedLayer.setStyle(defaultStyleByLayer.get(selectedLayer));
 		}
@@ -2520,7 +2442,8 @@ function selectLayer(layer, feature, markerEntry = markerEntryByLayer.get(layer)
 
 	selectedLayer = layer;
 	if (markerEntry?.layerKind === PUITS_LAYER_KIND && typeof layer.setIcon === "function") {
-		layer.setIcon(createPuitsIcon(feature?.properties?.type, true));
+		const color = getPuitsColor(feature);
+		layer.setIcon(createPuitsIconWithColor(feature?.properties?.type, true, color));
 	} else {
 		layer.setStyle(selectedMarkerStyle(defaultStyleByLayer.get(layer) || markerStyleFromFeature(feature)));
 	}
@@ -2576,21 +2499,237 @@ fetch("./data/data.geojson")
 			}
 		});
 
-		const typeValues = uniqueSortedValues(baseFeatures, "type");
-		const typeEntries = typeValues.map((v) => ({ value: v, label: TYPE_LABELS[v] || v }));
-		fillCheckboxOptionsFromEntries(filterTypeOptions, typeEntries);
-		fillCheckboxOptions(filterStatusOptions, uniqueSortedValues(baseFeatures, "statut"));
-		fillCheckboxOptions(filterPrecisionOptions, uniqueSortedValues(baseFeatures, "precision_geom"));
-		fillCheckboxOptions(filterAccesOptions, uniqueSortedAccessValuesWithInconnu(baseFeatures));
-		fillCheckboxOptions(filterEtatOptions, uniqueSortedValuesWithInconnu(baseFeatures, "existant_etat"));
+		const baseTypeValues = uniqueSortedValues(baseFeatures, "type");
+		const puitsTypeValues = uniqueSortedValues(puitsFeatures, "type");
+		const baseStatusValues = uniqueSortedValues(baseFeatures, "statut");
+		const puitsStatusValues = uniqueSortedValues(puitsFeatures, "statut");
+		const basePrecisionValues = uniqueSortedValues(baseFeatures, "precision_geom");
+		const puitsPrecisionValues = uniqueSortedValues(puitsFeatures, "precision_geom");
+		const baseAccesValues = uniqueSortedAccessValuesWithInconnu(baseFeatures);
+		const puitsAccesValues = uniqueSortedAccessValuesWithInconnu(puitsFeatures);
+		const baseEtatValues = uniqueSortedValuesWithInconnu(baseFeatures, "existant_etat");
+		const puitsEtatValues = uniqueSortedValuesWithInconnu(puitsFeatures, "existant_etat");
+		
+		// Store all types separately for dynamic filtering
+		const allBaseTypes = baseTypeValues;
+		const allPuitsTypes = puitsTypeValues;
+		const allBaseStatus = baseStatusValues;
+		const allPuitsStatus = puitsStatusValues;
+		const allBasePrecision = basePrecisionValues;
+		const allPuitsPrecision = puitsPrecisionValues;
+		const allBaseAcces = baseAccesValues;
+		const allPuitsAcces = puitsAccesValues;
+		const allBaseEtat = baseEtatValues;
+		const allPuitsEtat = puitsEtatValues;
+		
+		// Function to update type filter options based on layer visibility
+		function updateTypeFilterOptions() {
+			const puitsVisible = map.hasLayer(puitsLayerGroup);
+			let combinedTypeValues = [...new Set([...allBaseTypes])];
+			
+			if (puitsVisible) {
+				// Include puits types when layer is visible
+				combinedTypeValues = [...new Set([...allBaseTypes, ...allPuitsTypes])];
+			}
+			
+			// Check if "All" was selected before (meaning all types were checked)
+			const allWasSelected = filterTypeAll.checked;
+			const previouslySelectedTypes = getSelectedDropdownValues(filterTypeOptions, true);
+			
+			const typeEntries = combinedTypeValues.sort().map((v) => {
+				const normalizedV = normalizeText(v);
+				return { value: v, label: TYPE_LABELS[normalizedV] || v };
+			});
+			fillCheckboxOptionsFromEntries(filterTypeOptions, typeEntries);
+			
+			// Restore previously selected types
+			// When puits layer becomes visible, check all new puits types by default
+			const newCheckboxes = filterTypeOptions.querySelectorAll('input[type="checkbox"]');
+			const allPuitsTypeValues = new Set(allPuitsTypes.map(v => normalizeText(v)));
+			const allBaseTypeValues = new Set(allBaseTypes.map(v => normalizeText(v)));
+			
+			newCheckboxes.forEach((checkbox) => {
+				const normalizedValue = normalizeText(checkbox.value);
+				const isPuitsType = allPuitsTypeValues.has(normalizedValue);
+				const isBaseType = allBaseTypeValues.has(normalizedValue);
+				
+				// Check if: all was selected, or type was previously selected, or it's a newly added puits type
+				if (allWasSelected || 
+				    previouslySelectedTypes.includes(normalizedValue) ||
+				    (puitsVisible && isPuitsType && !isBaseType)) {
+					checkbox.checked = true;
+				}
+			});
+			
+			// Re-sync the "All" checkbox state
+			syncDropdownAllCheckboxState(filterTypeAll, filterTypeOptions, filterTypeSummary, "type", "types");
+		}
+		
+		// Function to update status filter options based on layer visibility
+		function updateStatusFilterOptions() {
+			const puitsVisible = map.hasLayer(puitsLayerGroup);
+			let combinedStatusValues = [...new Set([...allBaseStatus])];
+			
+			if (puitsVisible) {
+				// Include puits status values when layer is visible
+				combinedStatusValues = [...new Set([...allBaseStatus, ...allPuitsStatus])];
+			}
+			
+			// Check if "All" was selected before (meaning all statuses were checked)
+			const allWasSelected = filterStatusAll.checked;
+			const previouslySelectedStatuses = getSelectedDropdownValues(filterStatusOptions, true);
+			
+			fillCheckboxOptions(filterStatusOptions, combinedStatusValues);
+			
+			// Restore previously selected statuses
+			// When puits layer becomes visible, check all new puits statuses by default
+			const newCheckboxes = filterStatusOptions.querySelectorAll('input[type="checkbox"]');
+			const allPuitsStatusValues = new Set(allPuitsStatus.map(v => normalizeText(v)));
+			const allBaseStatusValues = new Set(allBaseStatus.map(v => normalizeText(v)));
+			
+			newCheckboxes.forEach((checkbox) => {
+				const normalizedValue = normalizeText(checkbox.value);
+				const isPuitsStatus = allPuitsStatusValues.has(normalizedValue);
+				const isBaseStatus = allBaseStatusValues.has(normalizedValue);
+				
+				// Check if: all was selected, or status was previously selected, or it's a newly added puits status
+				if (allWasSelected || 
+				    previouslySelectedStatuses.includes(normalizedValue) ||
+				    (puitsVisible && isPuitsStatus && !isBaseStatus)) {
+					checkbox.checked = true;
+				}
+			});
+			
+			// Re-sync the "All" checkbox state
+			syncDropdownAllCheckboxState(filterStatusAll, filterStatusOptions, filterStatusSummary, "statut", "statuts");
+		}
+		
+		// Function to update precision filter options based on layer visibility
+		function updatePrecisionFilterOptions() {
+			const puitsVisible = map.hasLayer(puitsLayerGroup);
+			let combinedPrecisionValues = [...new Set([...allBasePrecision])];
+			
+			if (puitsVisible) {
+				// Include puits precision values when layer is visible
+				combinedPrecisionValues = [...new Set([...allBasePrecision, ...allPuitsPrecision])];
+			}
+			
+			// Check if "All" was selected before (meaning all precisions were checked)
+			const allWasSelected = filterPrecisionAll.checked;
+			const previouslySelectedPrecisions = getSelectedDropdownValues(filterPrecisionOptions, true);
+			
+			fillCheckboxOptions(filterPrecisionOptions, combinedPrecisionValues);
+			
+			// Restore previously selected precisions
+			// When puits layer becomes visible, check all new puits precisions by default
+			const newCheckboxes = filterPrecisionOptions.querySelectorAll('input[type="checkbox"]');
+			const allPuitsPrecisionValues = new Set(allPuitsPrecision.map(v => normalizeText(v)));
+			const allBasePrecisionValues = new Set(allBasePrecision.map(v => normalizeText(v)));
+			
+			newCheckboxes.forEach((checkbox) => {
+				const normalizedValue = normalizeText(checkbox.value);
+				const isPuitsPrecision = allPuitsPrecisionValues.has(normalizedValue);
+				const isBasePrecision = allBasePrecisionValues.has(normalizedValue);
+				
+				// Check if: all was selected, or precision was previously selected, or it's a newly added puits precision
+				if (allWasSelected || 
+				    previouslySelectedPrecisions.includes(normalizedValue) ||
+				    (puitsVisible && isPuitsPrecision && !isBasePrecision)) {
+					checkbox.checked = true;
+				}
+			});
+			
+			// Re-sync the "All" checkbox state
+			syncDropdownAllCheckboxState(filterPrecisionAll, filterPrecisionOptions, filterPrecisionSummary, "niveau", "niveaux");
+		}
+		
+		// Function to update acces filter options based on layer visibility
+		function updateAccesFilterOptions() {
+			const puitsVisible = map.hasLayer(puitsLayerGroup);
+			let combinedAccesValues = [...new Set([...allBaseAcces])];
+			
+			if (puitsVisible) {
+				// Include puits acces values when layer is visible
+				combinedAccesValues = [...new Set([...allBaseAcces, ...allPuitsAcces])];
+			}
+			
+			// Check if "All" was selected before (meaning all acces were checked)
+			const allWasSelected = filterAccesAll.checked;
+			const previouslySelectedAcces = getSelectedDropdownValues(filterAccesOptions, true);
+			
+			fillCheckboxOptions(filterAccesOptions, combinedAccesValues);
+			
+			// Restore previously selected acces
+			// When puits layer becomes visible, check all new puits acces by default
+			const newCheckboxes = filterAccesOptions.querySelectorAll('input[type="checkbox"]');
+			const allPuitsAccesValues = new Set(allPuitsAcces.map(v => normalizeText(v)));
+			const allBaseAccesValues = new Set(allBaseAcces.map(v => normalizeText(v)));
+			
+			newCheckboxes.forEach((checkbox) => {
+				const normalizedValue = normalizeText(checkbox.value);
+				const isPuitsAcces = allPuitsAccesValues.has(normalizedValue);
+				const isBaseAcces = allBaseAccesValues.has(normalizedValue);
+				
+				// Check if: all was selected, or acces was previously selected, or it's a newly added puits acces
+				if (allWasSelected || 
+				    previouslySelectedAcces.includes(normalizedValue) ||
+				    (puitsVisible && isPuitsAcces && !isBaseAcces)) {
+					checkbox.checked = true;
+				}
+			});
+			
+			// Re-sync the "All" checkbox state
+			syncDropdownAllCheckboxState(filterAccesAll, filterAccesOptions, filterAccesSummary, "accès", "accès");
+		}
+		
+		// Function to update etat filter options based on layer visibility
+		function updateEtatFilterOptions() {
+			const puitsVisible = map.hasLayer(puitsLayerGroup);
+			let combinedEtatValues = [...new Set([...allBaseEtat])];
+			
+			if (puitsVisible) {
+				// Include puits etat values when layer is visible
+				combinedEtatValues = [...new Set([...allBaseEtat, ...allPuitsEtat])];
+			}
+			
+			// Check if "All" was selected before (meaning all etats were checked)
+			const allWasSelected = filterEtatAll.checked;
+			const previouslySelectedEtats = getSelectedDropdownValues(filterEtatOptions, true);
+			
+			fillCheckboxOptions(filterEtatOptions, combinedEtatValues);
+			
+			// Restore previously selected etats
+			// When puits layer becomes visible, check all new puits etats by default
+			const newCheckboxes = filterEtatOptions.querySelectorAll('input[type="checkbox"]');
+			const allPuitsEtatValues = new Set(allPuitsEtat.map(v => normalizeText(v)));
+			const allBaseEtatValues = new Set(allBaseEtat.map(v => normalizeText(v)));
+			
+			newCheckboxes.forEach((checkbox) => {
+				const normalizedValue = normalizeText(checkbox.value);
+				const isPuitsEtat = allPuitsEtatValues.has(normalizedValue);
+				const isBaseEtat = allBaseEtatValues.has(normalizedValue);
+				
+				// Check if: all was selected, or etat was previously selected, or it's a newly added puits etat
+				if (allWasSelected || 
+				    previouslySelectedEtats.includes(normalizedValue) ||
+				    (puitsVisible && isPuitsEtat && !isBaseEtat)) {
+					checkbox.checked = true;
+				}
+			});
+			
+			// Re-sync the "All" checkbox state
+			syncDropdownAllCheckboxState(filterEtatAll, filterEtatOptions, filterEtatSummary, "état", "états");
+		}
+		
+		// Initialize with base types only (puits layer is hidden by default)
+		updateTypeFilterOptions();
+		updateStatusFilterOptions();
+		updatePrecisionFilterOptions();
+		updateAccesFilterOptions();
+		updateEtatFilterOptions();
 		fillCheckboxOptionsFromEntries(filterSourcesOptions, SOURCE_FILTER_OPTIONS);
 		fillCheckboxOptionsFromEntries(filterImagesOptions, MEDIA_FILTER_OPTIONS);
 
-		syncDropdownAllCheckboxState(filterTypeAll, filterTypeOptions, filterTypeSummary, "type", "types");
-		syncDropdownAllCheckboxState(filterStatusAll, filterStatusOptions, filterStatusSummary, "statut", "statuts");
-		syncDropdownAllCheckboxState(filterPrecisionAll, filterPrecisionOptions, filterPrecisionSummary, "niveau", "niveaux");
-		syncDropdownAllCheckboxState(filterAccesAll, filterAccesOptions, filterAccesSummary, "accès", "accès");
-		syncDropdownAllCheckboxState(filterEtatAll, filterEtatOptions, filterEtatSummary, "état", "états");
 		syncDropdownAllCheckboxState(filterSourcesAll, filterSourcesOptions, filterSourcesSummary, "source", "sources");
 		syncDropdownAllCheckboxState(filterImagesAll, filterImagesOptions, filterImagesSummary, "média", "médias");
 
@@ -2651,7 +2790,7 @@ fetch("./data/data.geojson")
 
 		const puitsLayer = L.geoJSON(puitsGeojson, {
 			pointToLayer(feature, latlng) {
-				const marker = L.marker(latlng, { icon: createPuitsIcon(feature?.properties?.type, false) });
+				const marker = L.marker(latlng, { icon: createPuitsIconWithColor(feature?.properties?.type, false) });
 				return marker;
 			},
 			onEachFeature(feature, layer) {
@@ -2786,6 +2925,27 @@ fetch("./data/data.geojson")
 			colorMode.value = DEFAULT_COLOR_MODE;
 			refreshMarkerColors();
 			renderVisibleLayers(true);
+		});
+
+		// Listen for layer visibility changes to update the counter and type filter
+		// This must be outside the reset button handler
+		map.on('layeradd layerremove', function(e) {
+			if (e.layer === puitsLayerGroup) {
+				// Update type filter options based on layer visibility
+				updateTypeFilterOptions();
+				// Update status filter options based on layer visibility
+				updateStatusFilterOptions();
+				// Update precision filter options based on layer visibility
+				updatePrecisionFilterOptions();
+				// Update acces filter options based on layer visibility
+				updateAccesFilterOptions();
+				// Update etat filter options based on layer visibility
+				updateEtatFilterOptions();
+				// Update legend to show/hide puits types
+				updateLegend();
+				// Re-render to update the counter display
+				renderVisibleLayers(false);
+			}
 		});
 	})
 	.catch((error) => {

@@ -426,5 +426,36 @@
     "date":"07-2026",
     "type":"photo",
     "caption":"Intérieur du puit."
-    }
+    },
+    {"id":"72",
+    "img":"72-1.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"72",
+    "img":"72-2.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"72",
+    "img":"72-3.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"72",
+    "img":"72-4.jpg",
+    "author":"Françoise Berthélé",
+    "date":"07-2026",
+    "type":"photo"
+    },
+    {"id":"72",
+    "img":"72-5.jpg",
+    "author":"IGN",
+    "date":"14-04-1963",
+    "type":"photo aérienne",
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.113225&lat=48.458147&z=15.6&pointer=true&layer=pva&year=1962&mission=0316-0041"},
+    
 ]

@@ -66,7 +66,7 @@ body:
           value: '23'
         - label: '24 - Lavoir de Bougue Feunteun (Lavoir/Fontaine)'
           value: '24'
-        - label: '25 - Sans nom (Lavoir/Fontaine)'
+        - label: '25 - Lavoir de Kadoran (Sud) ? (Lavoir/Fontaine)'
           value: '25'
         - label: '26 - Lavoir Kadoran (Lavoir/Fontaine)'
           value: '26'
@@ -358,6 +358,12 @@ body:
           value: '176'
         - label: '177 - Sans nom (Puit)'
           value: '177'
+        - label: '178 - Fontaine du lavoir de Toull Aroz (Lavoir/Fontaine)'
+          value: '178'
+        - label: '179 - Fontaine du lavoir de Kernevez (Lavoir/Fontaine)'
+          value: '179'
+        - label: '180 - Fontaine du lavoir de Pount Salaün (Lavoir/Fontaine)'
+          value: '180'
     validations:
       required: true
 

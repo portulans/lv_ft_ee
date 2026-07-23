@@ -32,8 +32,6 @@ body:
           value: '5'
         - label: '6 - Poull ar C''hrakou (Lavoir/Fontaine)'
           value: '6'
-        - label: '7 - Lavoir d''ar Yourn (?) (Lavoir/Fontaine)'
-          value: '7'
         - label: '8 - Lavoir de Kernevez (Lavoir/Fontaine)'
           value: '8'
         - label: '9 - An Aod Bihan (?) (Lavoir/Fontaine)'
@@ -356,6 +354,10 @@ body:
           value: '174'
         - label: '175 - Fontaine du lavoir de Prat Ar Vitanes (?) (Lavoir/Fontaine)'
           value: '175'
+        - label: '176 - Sans nom (Puit)'
+          value: '176'
+        - label: '177 - Sans nom (Puit)'
+          value: '177'
     validations:
       required: true
 

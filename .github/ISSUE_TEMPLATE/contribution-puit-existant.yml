@@ -163,6 +163,10 @@ body:
           value: '71'
         - label: '72 - Puit de Parluchen (Puit)'
           value: '72'
+        - label: '73 - Puit de la station TSF (Puit)'
+          value: '73'
+        - label: '74 - Kerlaouen (Puit)'
+          value: '74'
     validations:
       required: true
 

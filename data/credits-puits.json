@@ -570,7 +570,15 @@
     "author":"IGN",
     "date":"14-04-1963",
     "type":"photo aérienne",
-    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.113225&lat=48.458147&z=15.6&pointer=true&layer=pva&year=1962&mission=0316-0041"},
+    "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.113225&lat=48.458147&z=15.6&pointer=true&layer=pva&year=1962&mission=0316-0041"
+    },
+    {"id":"73",
+    "img":"73-1.jpg",
+    "author":"Plan de la station TSF d'Ouessant en 1929, issu du blog de Jean Pierre Clochon",  
+    "date":"1929",
+    "type":"plan cadastral",
+    "url":"https://recherches-historiques-leconquet.over-blog.com/article-29539004.html"
+    },
     {"id":"75",
     "img":"75-1.jpg",
     "author":"Solenn Tual",

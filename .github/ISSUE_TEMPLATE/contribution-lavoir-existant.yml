@@ -94,7 +94,7 @@ body:
           value: '37'
         - label: '38 - Lavoir du port (Lavoir/Fontaine)'
           value: '38'
-        - label: '39 - Lavoir de Kermeïn Sud (Puit)'
+        - label: '39 - Lavoir de "la sans fil" (Puit)'
           value: '39'
         - label: '40 - Lavoir de Kernonnen - Ar Poul (Lavoir/Fontaine)'
           value: '40'
@@ -364,6 +364,8 @@ body:
           value: '179'
         - label: '180 - Fontaine du lavoir de Pount Salaün (Lavoir/Fontaine)'
           value: '180'
+        - label: '181 - Lavoir de Pen ar Ruguel (Puit)'
+          value: '181'
     validations:
       required: true
 

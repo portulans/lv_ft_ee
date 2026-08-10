@@ -16,11 +16,6 @@
     "type":"photo aérienne",
     "url":"https://remonterletemps.ign.fr/telecharger/?lon=-5.089252&lat=48.453992&z=15.5&pointer=true&layer=pva&year=1962&mission=0316-0041"},
     {"id":"2",
-    "img":"2-2.jpg",
-    "author":"Archives départementales du Finistère (3P 156/1/25)",
-    "date":"Plan cadastral de 1842 (section J, feuille 2).",
-    "type":"plan cadastral"},
-    {"id":"2",
     "img":"2-1.jpg",
     "author":"IGN",
     "date":"14-04-1963",
@@ -2312,17 +2307,12 @@
     "type":"photo"
     },
     {"id":"174",
-    "img":"174-1.jpg",
-    "author":"Françoise Berthelé",
-    "date":"18-03-2026",
-    "type":"photo"},
-    {"id":"174",
     "img":"174-2.jpg",
     "author":"Françoise Berthelé",
     "date":"18-03-2026",
     "type":"photo"},
     {"id":"174",
-    "img":"2-2.jpg",
+    "img":"174-1.jpg",
     "author":"Archives départementales du Finistère (3P 156/1/25)",
     "date":"Plan cadastral de 1842 (section J, feuille 2).",
     "type":"plan cadastral"},
@@ -2355,5 +2345,10 @@
     "author":"Solenn Tual",
     "date":"08-08-2026",
     "type":"photo"
-    }
+    },
+    {"id":"183",
+    "img":"183-1.jpg",
+    "author":"Françoise Berthelé",
+    "date":"18-03-2026",
+    "type":"photo"}
 ]

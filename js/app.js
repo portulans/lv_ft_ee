@@ -1080,7 +1080,7 @@ const advancedLayersControl = L.control.advancedLayers(
 			collapsed: true,
 			layers: [
 				//{ name: "Tableau d'assemblage (cadastre), 1842", layer: planensembleEM1910, active: false },
-				{ name: "Tableau d'assemblage (v. Etat-Major), 1842", layer: tabassembageEM1844, active: false },
+				{ name: "Tableau d'assemblage (v. Etat-Major), 1842", layer: tabassembageEM1844, active: false, opacityControl: true },
 				//{name: "Plan parcellaire, 1842", layer: planparcellaire, active: false },
 				//{ name: "Plan d'ensemble, 1910", layer: planensembleEM1910, active: false },
 			]

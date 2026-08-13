@@ -1073,7 +1073,16 @@ const advancedLayersControl = L.control.advancedLayers(
 				{ name: "OpenStreetMap", layer: osm, active: false },
 				{ name: "Plan cadastral actuel", layer: pciexpress, active: false },
 				{ name: "MNT (relief 1m, IGN)", layer: lidarhd, active: false },
-				{ name: "Tableau d'assamblage (v. Etat-Major), 1842", layer: tabassembageEM1844, active: false }
+			]
+		},
+		{
+			name: "Cartes anciennes",
+			collapsed: true,
+			layers: [
+				//{ name: "Tableau d'assemblage (cadastre), 1842", layer: planensembleEM1910, active: false },
+				{ name: "Tableau d'assemblage (v. Etat-Major), 1842", layer: tabassembageEM1844, active: false },
+				//{name: "Plan parcellaire, 1842", layer: planparcellaire, active: false },
+				//{ name: "Plan d'ensemble, 1910", layer: planensembleEM1910, active: false },
 			]
 		},
 		{

@@ -1071,8 +1071,9 @@ const advancedLayersControl = L.control.advancedLayers(
 			layers: [
 				{ name: "Plan IGN", layer: ign2023, active: true },
 				{ name: "OpenStreetMap", layer: osm, active: false },
-				{ name: "Plan cadastral", layer: pciexpress, active: false },
-				{ name: "MNT (relief 1m, IGN)", layer: lidarhd, active: false }
+				{ name: "Plan cadastral actuel", layer: pciexpress, active: false },
+				{ name: "MNT (relief 1m, IGN)", layer: lidarhd, active: false },
+				{ name: "Tableau d'assamblage (v. Etat-Major), 1842", layer: tabassembageEM1844, active: false }
 			]
 		},
 		{

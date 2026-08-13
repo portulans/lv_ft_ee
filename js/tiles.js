@@ -190,3 +190,8 @@ var pciexpress = L.tileLayer(
 		attribution : "IGN",
 	}
 );
+
+var tabassembageEM1844 = L.tileLayer("https://allmaps.xyz/images/96fe57f76afc4143/{z}/{x}/{y}@2x.png", {
+	maxZoom: 8,
+	attribution: '&copy; <a href="https://remonterletemps.ign.fr/telecharger/?lon=-5.100493&lat=48.450773&z=12.1&pointer=true&layer=cartes_anciennes&collection=CADASTRE-NAPOLEONIEN&year=1844">Remonter le temps / IGN</a>'
+});

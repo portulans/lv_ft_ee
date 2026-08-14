@@ -366,6 +366,16 @@ body:
           value: '180'
         - label: '181 - Lavoir de Pen ar Ruguel (Puit)'
           value: '181'
+        - label: '182 - Fontaine du lavoir de Keryégu (Lavoir/Fontaine)'
+          value: '182'
+        - label: '183 - Source de Stang Pen Ar Lan (Lavoir/Fontaine)'
+          value: '183'
+        - label: '184 - Fontaine du lavoir de Poull Bridic (Lavoir/Fontaine)'
+          value: '184'
+        - label: '185 - Sans nom (Lavoir/Fontaine)'
+          value: '185'
+        - label: '186 - Fontaine (potentielle) de Lanvras (Lavoir/Fontaine)'
+          value: '186'
     validations:
       required: true
 

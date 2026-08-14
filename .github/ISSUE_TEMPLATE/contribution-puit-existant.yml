@@ -1,5 +1,5 @@
-name: Completer un puit existant
-description: Proposer une correction, precision ou ajout d'information pour un puit deja reference
+name: Compléter un puit existant
+description: Proposer une correction, précision ou ajout d'information pour un puit déjà référencé
 title: "[Contribution] Puit ID <a choisir> - <resume>"
 labels:
   - contribution
@@ -12,7 +12,7 @@ body:
       value: |
         Merci pour votre contribution.
 
-        Ce formulaire sert uniquement a completer un puit deja present dans la base.
+        Ce formulaire sert uniquement à compléter un puit déjà présent dans la base.
         Si le puit n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
 
   - type: dropdown
@@ -111,7 +111,7 @@ body:
         - label: Correction de nom / toponyme
         - label: Correction de position
         - label: Correction de type (puit, pompe, citerne, etc.)
-        - label: Mise a jour du statut (existant, detruit, a determiner)
+        - label: Mise à jour du statut (existant, détruit, à déterminer)
         - label: Ajout de description / usage
         - label: Ajout de source bibliographique
         - label: Ajout de photo / media
@@ -123,12 +123,12 @@ body:
   - type: textarea
     id: proposition
     attributes:
-      label: Information proposee
-      description: Decrivez precisement ce qui doit etre modifie
+      label: Information proposée
+      description: Décrivez précisement ce qui doit etre modifié
       placeholder: |
         Exemple:
         - Nouveau nom: ...
-        - Correction proposee: ...
+        - Correction proposée: ...
         - Contexte: ...
         - Profondeur: ...
         - Niveau d'eau: ...
@@ -139,8 +139,8 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
-      placeholder: Auteur, date, lien, reference
+      description: Indiquez une source (archive, témoignage, date, relevé terrain, photo, etc.)
+      placeholder: Auteur, date, lien, référence
     validations:
       required: true
 
@@ -148,12 +148,12 @@ body:
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les credits si votre contribution est integree
+      description: Pour les crédits si votre contribution est integrée
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce depot
+        - label: J'autorise l'utilisation des informations transmises dans ce dépôt
           required: true

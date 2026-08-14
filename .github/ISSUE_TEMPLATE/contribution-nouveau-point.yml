@@ -1,0 +1,71 @@
+name: Ajouter un nouvel élément (puit, lavoir, fontaine, etc.)
+description: Proposer un nouvel élément à ajouter à la base de données
+title: "[Contribution] Nouveau point - <resume>"
+labels:
+  - contribution
+  - nouveau-point
+  - a-verifier
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci pour votre contribution.
+
+        Ce formulaire sert uniquement à proposer un nouvel élément à ajouter dans la base.
+        Si l'élément existe déjà dans la liste, utilisez le formulaire "Compléter un puit existant" ou "Compléter un lavoir existant".
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type d'élément (obligatoire)
+      description: Choisissez le type d'élément que vous proposez d'ajouter
+      options:
+        - 'Lavoir'
+        - 'Fontaine'
+        - 'Source'
+        - 'Abreuvoir'
+        - 'Puit'
+        - 'Pompe'
+        - 'Citerne ancienne'
+        - 'Autre'
+
+  - type: input
+    id: nom
+    attributes:
+      label: Nom ou toponyme (optionnel)
+      description: Indiquez le nom ou toponyme de l'élément si connu. SI plusieurs séparer par un point-virgule (;)
+      placeholder: Exemple: Puit de Kerandraon
+
+  - type: input
+    id: position
+    attributes:
+      label: Position (obligatoire)
+      description: Indiquez la position de l'élément en coordonnées GPS (latitude, longitude). Vous pouvez utiliser Google Maps (clic droit sur la carte, copier les coordonnées).
+      placeholder: Exemple: 48.4632, -5.1234
+  
+  - type: textarea
+    id: description
+    attributes:
+      label: Description (obligatoire)
+      description: Décrivez l'élément proposé, son état, son usage, etc.
+      placeholder: Exemple: Puit en pierre situé dans un jardin, fermé par une porte.
+
+  - type: textarea
+    id: source
+    attributes:
+      label: Source(s) (obligatoire)
+      description: Indiquez une source (archive, témoignage, date, relevé terrain, etc.)
+      placeholder: Auteur, date, lien, référence
+
+  - type: input
+    id: contact
+    attributes:
+      label: Nom ou pseudo (optionnel)
+      description: Pour les crédits si votre contribution est intégrée
+
+  - type: checkboxes
+    id: rights
+    attributes:
+      label: Autorisation (obligatoire)
+      options:
+        - label: J'autorise l'utilisation des informations transmises dans ce dépôt

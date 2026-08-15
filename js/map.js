@@ -1,7 +1,11 @@
 ///////////////////////// MAIN MAP PART //////////////////////////
 const map = L.map("map", {
 	zoomControl: true,
-	preferCanvas: true
+	preferCanvas: true,
+  fullscreenControl: true,
+  fullscreenControlOptions: {
+      position: 'topleft'
+  },
 });
 
 L.control.locate({

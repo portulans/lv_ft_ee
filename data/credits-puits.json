@@ -199,10 +199,35 @@
     "date":"Plan cadastral de 1842 (section M, feuille 1).",
     "type":"plan cadastral"},
     {"id":"13",
+    "img":"13-2.jpg",
+    "author":"Jean-Jacques Berthelé",
+    "date":"15-08-2026",
+    "type":"photo"
+    },
+    {"id":"13",
+    "img":"13-3.jpg",
+    "author":"Jean-Jacques Berthelé",
+    "date":"15-08-2026",
+    "type":"photo"
+    },
+    {"id":"13",
+    "img":"13-4.jpg",
+    "author":"Jean-Jacques Berthelé",
+    "date":"15-08-2026",
+    "type":"photo"
+    },
+    {"id":"13",
     "img":"13-1.jpg",
     "author":"Françoise Berthélé",
     "date":"04-06-2026",
     "type":"photo"
+    },
+    {"id":"13",
+    "img":"13-5.jpg",
+    "author":"Jean-Jacques Berthelé",
+    "date":"15-08-2026",
+    "type":"photo",
+    "caption":"Caisse à laver."
     },
     {"id":"14",
     "img":"14-2.jpg",
@@ -751,6 +776,12 @@
     "img":"80-2.jpg",
     "author":"Solenn Tual",
     "date":"10-08-2026",
+    "type":"photo"
+    },
+    {"id":"82",
+    "img":"82-1.jpg",
+    "author":"Maryse Guille",
+    "date":"13-08-2026",
     "type":"photo"
     }
 ]

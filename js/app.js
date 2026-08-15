@@ -1664,7 +1664,6 @@ function createPanelImageFigure(url, altText, urls, index) {
 	image.addEventListener("click", () => {
 		openImageViewer(url, altText, urls, index);
 	});
-
 	const figure = document.createElement("figure");
 	figure.className = "feature-images__item";
 	figure.appendChild(image);

@@ -1,5 +1,5 @@
-name: Compléter un lavoir existant
-description: Proposer une correction, précision ou ajout d'information pour un point déjà référencé
+name: Completer un lavoir existant
+description: Proposer une correction, precision ou ajout d'information pour un point deja reference
 title: "[Contribution] ID <a choisir> - <resume>"
 labels:
   - contribution
@@ -11,7 +11,7 @@ body:
       value: |
         Merci pour votre contribution.
 
-        Ce formulaire sert uniquement à compléter un point déjà présent dans la base.
+        Ce formulaire sert uniquement a completer un point deja present dans la base.
         Si le lavoir n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
 
   - type: dropdown
@@ -198,6 +198,7 @@ body:
         - '184 - Fontaine du lavoir de Poull Bridic (Lavoir/Fontaine)'
         - '185 - Sans nom (Lavoir/Fontaine)'
         - '186 - Fontaine (potentielle) de Lann Vraz (Lavoir/Fontaine)'
+        - '187 - Lavoir de Toull Dreiz (Puit)'
     validations:
       required: true
 
@@ -209,7 +210,7 @@ body:
         - label: Correction de nom / toponyme
         - label: Correction de position
         - label: Correction de type (lavoir, fontaine, etc.)
-        - label: Mise à jour du statut (existant, détruit, à déterminer)
+        - label: Mise a jour du statut (existant, detruit, a determiner)
         - label: Ajout de description / usages / legendes
         - label: Ajout de source bibliographique
         - label: Ajout de photo / media
@@ -219,12 +220,12 @@ body:
   - type: textarea
     id: proposition
     attributes:
-      label: Information proposée
-      description: Décrivez précisement ce qui doit être modifié
+      label: Information proposee
+      description: Decrivez precisement ce qui doit etre modifie
       placeholder: |
         Exemple:
         - Nouveau nom: ...
-        - Correction proposée: ...
+        - Correction proposee: ...
         - Contexte: ...
     validations:
       required: true
@@ -233,8 +234,8 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, témoignage, date, relevé terrain, photo, etc.)
-      placeholder: Auteur, date, lien, référence
+      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
+      placeholder: Auteur, date, lien, reference
     validations:
       required: true
 
@@ -242,12 +243,12 @@ body:
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les crédits si votre contribution est intégrée
+      description: Pour les credits si votre contribution est integree
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce depôt
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
           required: true

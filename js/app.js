@@ -166,12 +166,12 @@ function buildContributionIssueUrl(feature, layerKind = BASE_LAYER_KIND) {
 	const baseUrl = contributionIssueBaseUrl();
 	if (!baseUrl) return "";
 
-	const name = safeText(props.nom, layerKind === PUITS_LAYER_KIND ? "Puit sans nom" : "Sans nom").trim();
+	const name = safeText(props.nom, layerKind === PUITS_LAYER_KIND ? "puits sans nom" : "Sans nom").trim();
 	const permalink = featurePermalink(fid);
 
-	const isPuit = layerKind === PUITS_LAYER_KIND;
-	const templateName = isPuit ? "contribution-puit-existant.yml" : "contribution-lavoir-existant.yml";
-	const title = isPuit ? `[Contribution] Puit ID ${fid} - ${name}` : `[Contribution] ID ${fid} - ${name}`;
+	const ispuits = layerKind === PUITS_LAYER_KIND;
+	const templateName = ispuits ? "contribution-puit-existant.yml" : "contribution-lavoir-existant.yml";
+	const title = ispuits ? `[Contribution] puits ID ${fid} - ${name}` : `[Contribution] ID ${fid} - ${name}`;
 
 	const body = [
 		`ID existant: ${fid}`,
@@ -233,9 +233,9 @@ const TYPE_LABELS = {
 	marre: "Mare",
 	puit: "Puit",
 	puits: "Puits",
-	"puit sureleve": "Puit surélevé",
+	"puits sureleve": "puits surélevé",
 	"puits sureleve": "Puits surélevé",
-	"puit au sol": "Puit au sol",
+	"puits au sol": "puits au sol",
 	pompe: "Pompe",
 	"pompe à eau": "Pompe à eau",
 	"pompe manuelle": "Pompe manuelle",
@@ -273,8 +273,8 @@ const TYPE_STYLE = {
 	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 },
 	// Styles for puits types (used in legend)
 	puit: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	"puit sureleve": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
-	"puit au sol": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"puits sureleve": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	"puits au sol": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	pompe: { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"pompe manuelle": { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"autre type de pompe": { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },
@@ -302,7 +302,7 @@ const LEGEND_ENTRIES = {
 		{ color: TYPE_STYLE.fontaine.color, label: TYPE_LABELS.fontaine },
 		{ color: TYPE_STYLE.lavoir.color, label: TYPE_LABELS.lavoir },
 		{ color: TYPE_STYLE.lavoir_fontaine.color, label: TYPE_LABELS.lavoir_fontaine },
-		{ color: TYPE_STYLE.lavoir_puit.color, label: TYPE_LABELS.lavoir_puit },
+		{ color: TYPE_STYLE.lavoir_puit.color, label: TYPE_LABELS.lavoir_puits },
 		{ color: TYPE_STYLE["lavoir en bordure de greve"].color, label: TYPE_LABELS["lavoir en bordure de greve"] },
 		{ color: TYPE_STYLE["doué"].color, label: TYPE_LABELS["doué"] },
 		{ color: TYPE_STYLE["aiguade"].color, label: TYPE_LABELS["aiguade"] },
@@ -1243,7 +1243,7 @@ function markerColorFromPrecision(precisionRaw) {
 
 function markerStyleFromType(typeRaw) {
 	const typeKey = normalizeText(typeRaw).replace(/_/g, " ");
-	// Handle combined lavoir + puit (and common misspelling 'lavoit')
+	// Handle combined lavoir + puits (and common misspelling 'lavoit')
 	if ((typeKey.includes("lavoir") || typeKey.includes("lavoit")) && typeKey.includes("puit")) {
 		return TYPE_STYLE.lavoir_puit;
 	}
@@ -1280,12 +1280,12 @@ function markerStyleFromType(typeRaw) {
 	// Handle puits types - use the specific puits colors from TYPE_STYLE
 	if (typeKey.includes("puit")) {
 		if (typeKey.includes("sureleve") || typeKey.includes("surelevé")) {
-			return TYPE_STYLE["puit sureleve"] || TYPE_STYLE.puit;
+			return TYPE_STYLE["puits sureleve"] || TYPE_STYLE.puit;
 		}
 		if (typeKey.includes("au sol")) {
-			return TYPE_STYLE["puit au sol"] || TYPE_STYLE.puit;
+			return TYPE_STYLE["puits au sol"] || TYPE_STYLE.puit;
 		}
-		return TYPE_STYLE.puit || TYPE_STYLE.inconnu;
+		return TYPE_STYLE.puits || TYPE_STYLE.inconnu;
 	}
 	if (typeKey.includes("citerne")) {
 		return TYPE_STYLE.citerne || TYPE_STYLE.inconnu; // Use citerne color for cisterns
@@ -2830,7 +2830,7 @@ fetch("./data/data.geojson")
 			},
 			onEachFeature(feature, layer) {
 				const rawName = safeText(feature.properties?.nom, "");
-				const title = rawName || "Puit sans nom";
+				const title = rawName || "puits sans nom";
 				const kind = typeLabel(feature.properties?.type);
 				const altName = safeText(feature.properties?.["alt-name"], "");
 				const fid = safeText(feature.properties?.fid, "");

@@ -1,5 +1,5 @@
-name: Compléter un puit existant
-description: Proposer une correction, précision ou ajout d'information pour un puit déjà référencé
+name: Completer un puit existant
+description: Proposer une correction, precision ou ajout d'information pour un puit deja reference
 title: "[Contribution] Puit ID <a choisir> - <resume>"
 labels:
   - contribution
@@ -12,7 +12,7 @@ body:
       value: |
         Merci pour votre contribution.
 
-        Ce formulaire sert uniquement à compléter un puit déjà présent dans la base.
+        Ce formulaire sert uniquement a completer un puit deja present dans la base.
         Si le puit n'existe pas encore dans la liste, utilisez le formulaire "Nouveau point".
 
   - type: dropdown
@@ -100,6 +100,8 @@ body:
         - '78 - Puit sans nom (Puit)'
         - '79 - Puit sans nom (Puit)'
         - '80 - Puit sans nom (Puit)'
+        - '81 - Puit sans nom (Puit)'
+        - '82 - Puit sans nom (Puit)'
     validations:
       required: true
 
@@ -111,7 +113,7 @@ body:
         - label: Correction de nom / toponyme
         - label: Correction de position
         - label: Correction de type (puit, pompe, citerne, etc.)
-        - label: Mise à jour du statut (existant, détruit, à déterminer)
+        - label: Mise a jour du statut (existant, detruit, a determiner)
         - label: Ajout de description / usage
         - label: Ajout de source bibliographique
         - label: Ajout de photo / media
@@ -123,12 +125,12 @@ body:
   - type: textarea
     id: proposition
     attributes:
-      label: Information proposée
-      description: Décrivez précisement ce qui doit etre modifié
+      label: Information proposee
+      description: Decrivez precisement ce qui doit etre modifie
       placeholder: |
         Exemple:
         - Nouveau nom: ...
-        - Correction proposée: ...
+        - Correction proposee: ...
         - Contexte: ...
         - Profondeur: ...
         - Niveau d'eau: ...
@@ -139,8 +141,8 @@ body:
     id: source
     attributes:
       label: Source(s)
-      description: Indiquez une source (archive, témoignage, date, relevé terrain, photo, etc.)
-      placeholder: Auteur, date, lien, référence
+      description: Indiquez une source (archive, temoignage date, releve terrain, photo, etc.)
+      placeholder: Auteur, date, lien, reference
     validations:
       required: true
 
@@ -148,12 +150,12 @@ body:
     id: contact
     attributes:
       label: Nom ou pseudo (optionnel)
-      description: Pour les crédits si votre contribution est integrée
+      description: Pour les credits si votre contribution est integree
 
   - type: checkboxes
     id: rights
     attributes:
       label: Autorisation
       options:
-        - label: J'autorise l'utilisation des informations transmises dans ce dépôt
+        - label: J'autorise l'utilisation des informations transmises dans ce depot
           required: true

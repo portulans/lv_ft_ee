@@ -231,7 +231,7 @@ const TYPE_LABELS = {
 	lavoir_puits: "Lavoir avec puit",
 	abreuvoir: "Abreuvoir",
 	marre: "Mare",
-	puit: "Puit",
+	puit: "Puits",
 	puits: "Puits",
 	"puits sureleve": "puits surélevé",
 	"puits sureleve": "Puits surélevé",
@@ -272,7 +272,7 @@ const TYPE_STYLE = {
 	"marre": { color: "#f27954", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	inconnu: { color: "#7b8790", radius: 7, weight: 1.5, fillOpacity: 0.82 },
 	// Styles for puits types (used in legend)
-	puit: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
+	puits: { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"puits sureleve": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	"puits au sol": { color: "#1c70ca", radius: 7, weight: 1.5, fillOpacity: 0.85 },
 	pompe: { color: "#f99908", radius: 7, weight: 1.5, fillOpacity: 0.85 },

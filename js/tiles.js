@@ -132,7 +132,7 @@ var ignaerial2023 = L.tileLayer(
     "&TILEROW={y}" +
     "&TILECOL={x}",
     {
-        minZoom : 0,
+        minZoom : -2,
         attribution : "IGN",
         tileSize : 256 // les tuiles du Géooportail font 256x256px
     });

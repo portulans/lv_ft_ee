@@ -102,6 +102,14 @@ body:
         - '80 - Puit sans nom (Puit)'
         - '81 - Puit sans nom (Puit)'
         - '82 - Puit sans nom (Puit)'
+        - '83 - Puit sans nom (Puit)'
+        - '84 - Puit sans nom (Puit)'
+        - '85 - Puit sans nom (Puit)'
+        - '86 - Puit sans nom (Citerne)'
+        - '87 - Puit sans nom (Citerne)'
+        - '88 - Puit sans nom (Puit)'
+        - '89 - Puit sans nom (Puit)'
+        - '90 - Puit sans nom (Puit)'
     validations:
       required: true
 

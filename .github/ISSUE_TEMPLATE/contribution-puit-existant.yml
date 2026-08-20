@@ -110,6 +110,8 @@ body:
         - '88 - Puit sans nom (Puit)'
         - '89 - Puit sans nom (Puit)'
         - '90 - Puit sans nom (Puit)'
+        - '91 - Puit sans nom (Puit)'
+        - '92 - Puit sans nom (Puit)'
     validations:
       required: true
 

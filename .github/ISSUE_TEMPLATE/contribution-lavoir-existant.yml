@@ -200,6 +200,7 @@ body:
         - '186 - Fontaine (potentielle) de Lann Vraz (Lavoir/Fontaine)'
         - '187 - Lavoir de Toull Dreiz (Puit)'
         - '188 - Sans nom (Lavoir/Fontaine)'
+        - '189 - Fontaine de Yusin (Lavoir/Fontaine)'
     validations:
       required: true
 

@@ -163,9 +163,9 @@ body:
         - '149 - Lavoir de Porz Noan (Lavoir/Fontaine)'
         - '150 - Fontaine du lavoir de Porz Guéguen (Lavoir/Fontaine)'
         - '151 - Fontaine de Poull Bojer (Lavoir/Fontaine)'
-        - '152 - Fontaine du Prat (Lavoir/Fontaine)'
-        - '153 - Sans nom (Lavoir/Fontaine)'
-        - '154 - Sans nom (Lavoir/Fontaine)'
+        - '152 - Fontaine du Prat (Ouest) (Lavoir/Fontaine)'
+        - '153 - Fontaine du Prat (Est) (Lavoir/Fontaine)'
+        - '154 - Fontaine du Prat (centrale) (Lavoir/Fontaine)'
         - '155 - Fontaine du lavoir de Pen Arlan (Lavoir/Fontaine)'
         - '156 - Abreuvoir du lavoir de Pen Arlan (Lavoir/Fontaine)'
         - '157 - Fontaine de Lann ar C''hrac''h (Lavoir/Fontaine)'
@@ -199,6 +199,7 @@ body:
         - '185 - Sans nom (Lavoir/Fontaine)'
         - '186 - Fontaine (potentielle) de Lann Vraz (Lavoir/Fontaine)'
         - '187 - Lavoir de Toull Dreiz (Puit)'
+        - '188 - Sans nom (Lavoir/Fontaine)'
     validations:
       required: true
 

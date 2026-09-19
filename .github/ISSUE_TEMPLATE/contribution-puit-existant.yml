@@ -113,6 +113,8 @@ body:
         - '91 - Puit sans nom (Puit)'
         - '92 - Puit sans nom (Puit)'
         - '93 - Puit de Lann Vraz (Puit)'
+        - '94 - Puit de Loqueltas (Puit)'
+        - '95 - Puit sans nom (Puit)'
     validations:
       required: true
 

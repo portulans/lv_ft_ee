@@ -115,6 +115,7 @@ body:
         - '93 - Puit de Lann Vraz (Puit)'
         - '94 - Puit de Loqueltas (Puit)'
         - '95 - Puit sans nom (Puit)'
+        - '96 - Kerveur (Puit)'
     validations:
       required: true
 
